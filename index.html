@@ -5479,6 +5479,47 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   .portfolio-performance-file{font-size:10px;}
 }
 
+/* Móvil y tablet: conserva la lógica de escritorio sin sacrificar el espacio táctil. */
+@media (max-width:768px), (pointer:coarse){
+  :root{--safe-bottom:max(16px, env(safe-area-inset-bottom, 0px));}
+
+  .ventana:not(.max){
+    width:min(94vw, 680px) !important;
+    max-width:94vw !important;
+    max-height:calc(100dvh - 104px) !important;
+  }
+
+  .ventana:not(.max) .texto{
+    max-height:calc(100dvh - 150px) !important;
+  }
+
+  #modoJuegoGlobal{
+    right:max(16px, env(safe-area-inset-right, 0px) + 12px) !important;
+    bottom:var(--safe-bottom) !important;
+  }
+
+  #teclado{
+    right:max(16px, env(safe-area-inset-right, 0px) + 12px) !important;
+    bottom:calc(var(--safe-bottom) + 56px) !important;
+  }
+
+  #teclado .teclado-toggle{
+    font-size:0 !important;
+  }
+
+  #teclado .teclado-toggle::before{
+    content:"";
+    width:21px;
+    height:14px;
+    box-sizing:border-box;
+    border:1.5px solid currentColor;
+    border-radius:2px;
+    background:repeating-linear-gradient(90deg, transparent 0 4px, currentColor 4px 5px),
+      repeating-linear-gradient(0deg, transparent 0 4px, currentColor 4px 5px);
+    opacity:.72;
+  }
+}
+
 </style>
 
 <style>
@@ -17295,7 +17336,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 });</script>
 
 <div id="teclado" aria-label="teclado móvil">
-  <div class="teclado-toggle" role="button" aria-label="abrir teclado">⌨︎</div>
+  <div class="teclado-toggle" role="button" aria-label="abrir teclado"></div>
 
   <div class="teclado-panel">
     <div class="teclado-row">
