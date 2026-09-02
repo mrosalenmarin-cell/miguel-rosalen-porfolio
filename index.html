@@ -13428,7 +13428,7 @@ entre Asturias (Oviedo) y Valencia (Valencia)`
 
 let i=0;
 
-function mostrarAvisoProtegido(){
+function mostrarAvisoProtegido(duracion=1250){
   const anterior=document.querySelector(".aviso-protegido");
   if(anterior) anterior.remove();
   const aviso=document.createElement("div");
@@ -13439,7 +13439,7 @@ function mostrarAvisoProtegido(){
     WebkitBackdropFilter:"blur(28px) saturate(.45)"
   });
   document.body.appendChild(aviso);
-  setTimeout(()=>aviso.remove(),1250);
+  setTimeout(()=>aviso.remove(),duracion);
 }
 
 document.addEventListener("contextmenu",e=>{
@@ -13466,6 +13466,17 @@ document.addEventListener("keydown",e=>{
     mostrarAvisoProtegido();
   }
 },true);
+
+/* En móvil solo es posible reaccionar cuando el sistema avisa que la web pierde foco. */
+const activarVeloMovil=()=>{
+  if(window.matchMedia?.("(pointer:coarse)").matches || window.isMobileMode){
+    mostrarAvisoProtegido(2200);
+  }
+};
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden) activarVeloMovil();
+},true);
+window.addEventListener("blur",activarVeloMovil,true);
 
 document.addEventListener(
 "touchstart",
