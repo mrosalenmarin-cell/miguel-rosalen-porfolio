@@ -7292,7 +7292,9 @@ body.modo-juego-global .mundo-menu-capa *{
   font-family:"Comic Sans MS","Comic Sans","Chalkboard SE",cursive !important;
 }
 
-/* Un único HUD para las cinco partidas: progreso discreto y menú siempre accesible. */
+/* En pantallas táctiles el HUD se compacta. En escritorio cada juego conserva
+   su composición original. */
+@media (max-width:700px), (pointer:coarse){
 body.modo-juego-global .ventana.max .mundo-menu-toggle,
 body.modo-juego-global .ventana.juego-pantalla .mundo-menu-toggle{
   position:absolute!important;
@@ -7352,7 +7354,7 @@ body.modo-juego-global .ventana.portfolio-3d-activo .portfolio-3d-canvas{
   image-rendering:auto!important;
   filter:saturate(.96) contrast(1.03)!important;
 }
-@media(max-width:700px){
+
   body.modo-juego-global .ventana.portfolio-3d-activo .museo-intro{padding:16px!important;}
   body.modo-juego-global .ventana.portfolio-3d-activo .museo-intro-dialogo{font-size:11px!important;}
 }
