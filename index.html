@@ -5577,7 +5577,7 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 
   #teclado{
     right:max(16px, env(safe-area-inset-right, 0px) + 12px) !important;
-    bottom:calc(var(--safe-bottom) + 56px) !important;
+    bottom:var(--safe-bottom) !important;
   }
 
   #teclado .teclado-toggle{
@@ -5611,7 +5611,7 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 
 @media (max-width:768px), (pointer:coarse){
   #menuSistema{
-    top:calc(env(safe-area-inset-top, 0px) + 68px) !important;
+    top:calc(env(safe-area-inset-top, 0px) + 82px) !important;
     bottom:auto !important;
     width:max-content;
     max-width:calc(100vw - 28px);
@@ -5622,30 +5622,32 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
     right:auto !important;
   }
 
-  /* Un teclado dibujado como herramienta de escritorio, no como icono del sistema. */
+  /* Un teclado ligero, construido con el mismo material que los controles. */
   #teclado .teclado-toggle{
     width:42px !important;
-    height:30px !important;
-    border-radius:3px !important;
-    border:1px solid rgba(255,255,255,.52) !important;
-    background:rgba(18,18,18,.58) !important;
-    box-shadow:0 8px 24px rgba(0,0,0,.18) !important;
+    height:42px !important;
+    border-radius:50% !important;
+    border:1px solid rgba(0,0,0,.13) !important;
+    background:rgba(255,255,255,.25) !important;
+    box-shadow:0 8px 24px rgba(0,0,0,.045), inset 0 1px 0 rgba(255,255,255,.65) !important;
+    backdrop-filter:blur(14px) saturate(125%) !important;
+    -webkit-backdrop-filter:blur(14px) saturate(125%) !important;
   }
 
   #teclado .teclado-toggle::before{
     width:24px !important;
     height:15px !important;
-    border:1px solid rgba(255,255,255,.76) !important;
+    border:1px solid rgba(0,0,0,.56) !important;
     border-radius:1px !important;
     background:
-      repeating-linear-gradient(90deg, transparent 0 4px, rgba(255,255,255,.72) 4px 5px),
-      repeating-linear-gradient(0deg, transparent 0 4px, rgba(255,255,255,.72) 4px 5px) !important;
-    opacity:1 !important;
+      repeating-linear-gradient(90deg, transparent 0 4px, rgba(0,0,0,.5) 4px 5px),
+      repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,0,0,.5) 4px 5px) !important;
+    opacity:.72 !important;
   }
 
   #teclado .teclado-toggle:active{
-    transform:translateY(1px) !important;
-    background:rgba(18,18,18,.8) !important;
+    transform:translateY(1px) scale(.96) !important;
+    background:rgba(255,255,255,.48) !important;
   }
 }
 
