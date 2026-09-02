@@ -39,7 +39,7 @@ href="logo-cuadrados.svg">
 <meta name="author" content="Miguel Rosalén">
 <meta name="creator" content="Miguel Rosalén">
 <title>MIGUEL ROSALÉN</title>
-<!-- JUEGOS-MOVIL-RUNTIME-V2 -->
+<!-- JUEGOS-MOVIL-RUNTIME-V2 · FONT-MUSEO-MENU-OK -->
 
 <style>
 
@@ -6836,8 +6836,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 
 @keyframes juegoFondoGlobal{0%{background-color:#e64d20}34%{background-color:#ef6324}67%{background-color:#d94335}100%{background-color:#f06d28}}
 body.modo-juego-global{animation:juegoFondoGlobal 16s ease-in-out infinite alternate;background-image:radial-gradient(circle at 16% 22%,rgba(255,231,91,.22),transparent 28%),radial-gradient(circle at 82% 72%,rgba(255,88,171,.16),transparent 29%)}
-body.modo-juego-global,body.modo-juego-global button,body.modo-juego-global input,body.modo-juego-global textarea{font-family:"Comic Sans MS","Comic Sans",cursive!important}
-body.modo-juego-global #nombre{font-family:"Comic Sans MS","Comic Sans",cursive!important;font-weight:900!important;letter-spacing:-.045em!important;color:#fff!important;filter:none!important;text-shadow:3px 3px 0 #26236b,6px 6px 0 rgba(0,0,0,.26)!important}
+body.modo-juego-global,body.modo-juego-global button,body.modo-juego-global input,body.modo-juego-global textarea{font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive!important}
+body.modo-juego-global #nombre{font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive!important;font-weight:900!important;letter-spacing:-.045em!important;color:#fff!important;filter:none!important;text-shadow:3px 3px 0 #26236b,6px 6px 0 rgba(0,0,0,.26)!important}
 body.modo-juego-global #nombre::before,body.modo-juego-global #nombre::after,body.modo-juego-global #nombre .nombre-char::before,body.modo-juego-global #nombre .nombre-char::after{display:none!important;content:none!important}
 body.modo-juego-global #nombre .nombre-char{filter:none!important;animation:none!important;color:var(--game-letter,#fff)!important;text-shadow:2px 2px 0 #fff,4px 4px 0 #20205f,7px 7px 0 rgba(0,0,0,.24)!important;transform:translateY(var(--game-y,0)) rotate(var(--game-r,0deg))!important}
 body.modo-juego-global #nombre .nombre-char:nth-child(6n+1){--game-letter:#ffe44b;--game-y:-4px;--game-r:-2deg}
@@ -7169,7 +7169,7 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
   body.modo-juego-global .ventana.juego-pantalla *,
   body.modo-juego-global .ventana.ia-captura,
   body.modo-juego-global .ventana.ia-captura *{
-    font-family:"Comic Sans MS","Comic Sans",cursive !important;
+    font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
     font-style:normal !important;
   }
 
@@ -7177,7 +7177,7 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
   body.modo-juego-global .ventana.ia-captura .ia-perfil-burbuja,
   body.modo-juego-global .ventana.ia-captura .ia-perfil-respuestas button,
   body.modo-juego-global .ventana.ia-captura input{
-    font-family:"Comic Sans MS","Comic Sans",cursive !important;
+    font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
     font-style:normal !important;
   }
 
@@ -7233,12 +7233,12 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
 
   body.modo-juego-global .juegos-hub-cabecera h1{
     font-size:27px !important;
-    font-family:"Comic Sans MS","Comic Sans",cursive !important;
+    font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
   }
 
   body.modo-juego-global .juegos-hub-cabecera p{
     font-size:9px !important;
-    font-family:"Comic Sans MS","Comic Sans",cursive !important;
+    font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
   }
 
   /* Los minijuegos funcionan en vertical SOLO en móvil. */
@@ -7307,7 +7307,7 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
     z-index:1190 !important;
     opacity:.68 !important;
     color:rgba(25,25,25,.72) !important;
-    font:700 6px/1 "Comic Sans MS","Comic Sans",cursive !important;
+    font:700 6px/1 "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
     letter-spacing:0 !important;
   }
 
@@ -7340,7 +7340,7 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
   body.modo-juego-global .museo-intro *,
   body.modo-juego-global .museo-postal-final,
   body.modo-juego-global .museo-postal-final *{
-    font-family:"Comic Sans MS","Comic Sans",cursive !important;
+    font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
     font-style:normal !important;
   }
 
@@ -7510,6 +7510,42 @@ body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio
   border-color:rgba(25,25,25,.14) !important;
   backdrop-filter:blur(7px) !important;
   -webkit-backdrop-filter:blur(7px) !important;
+}
+
+
+
+/* =========================================================
+   SOLO TIPOGRAFÍA MÓVIL — MENÚ + MUSEO
+   No modifica layout, tamaños ni escritorio.
+   ========================================================= */
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-capa,
+body.juegos-movil-real.modo-juego-global .mundo-menu-capa *,
+body.juegos-movil-real.modo-juego-global .mundo-menu-cuadro,
+body.juegos-movil-real.modo-juego-global .mundo-menu-titulo,
+body.juegos-movil-real.modo-juego-global .mundo-menu-titulo small,
+body.juegos-movil-real.modo-juego-global .mundo-menu-titulo strong,
+body.juegos-movil-real.modo-juego-global .mundo-menu-acciones,
+body.juegos-movil-real.modo-juego-global .mundo-menu-acciones button,
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar,
+body.juegos-movil-real.modo-juego-global .mundo-menu-estado,
+body.juegos-movil-real.modo-juego-global .mundo-menu-toggle{
+  font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
+  font-style:normal !important;
+}
+
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio-3d-hud,
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio-3d-hud *,
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio-3d-ficha,
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio-3d-ficha *,
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio-3d-inventario,
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio-3d-inventario *,
+body.juegos-movil-real.modo-juego-global .museo-intro,
+body.juegos-movil-real.modo-juego-global .museo-intro *,
+body.juegos-movil-real.modo-juego-global .museo-postal-final,
+body.juegos-movil-real.modo-juego-global .museo-postal-final *{
+  font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
+  font-style:normal !important;
 }
 
 </style>
@@ -18188,9 +18224,9 @@ function activarMuseoPortfolioSalas(v){
     ctx.fillStyle="#2a2a2a";
     ctx.textAlign="left";
     ctx.textBaseline="top";
-    ctx.font=`700 ${vertical?10:11}px "Comic Sans MS","Comic Sans",cursive`;
+    ctx.font=`700 ${vertical?10:11}px "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive`;
     ctx.fillText(hablante,bx+11,by+8);
-    ctx.font=`${vertical?10:12}px "Comic Sans MS","Comic Sans",cursive`;
+    ctx.font=`${vertical?10:12}px "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive`;
     const palabras=dialogo.split(" "),lineas=[];
     let linea="";
     palabras.forEach(p=>{
@@ -18206,7 +18242,7 @@ function activarMuseoPortfolioSalas(v){
       ctx.fillStyle="rgba(205,18,18,.18)";
       ctx.fillRect(0,0,w,h);
       ctx.fillStyle="#b91520";
-      ctx.font=`900 ${Math.min(46,w*.075)}px "Comic Sans MS","Comic Sans",cursive`;
+      ctx.font=`900 ${Math.min(46,w*.075)}px "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive`;
       ctx.textAlign="center";
       ctx.textBaseline="middle";
       ctx.fillText("TE HA VISTO",w/2,h*.48);
@@ -18218,12 +18254,12 @@ function activarMuseoPortfolioSalas(v){
       ctx.fillStyle="#171717";
       ctx.textAlign="center";
       ctx.textBaseline="middle";
-      ctx.font=`900 ${Math.min(48,w*.075)}px "Comic Sans MS","Comic Sans",cursive`;
+      ctx.font=`900 ${Math.min(48,w*.075)}px "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive`;
       ctx.fillText(transicionTitulo,w/2,h*.34);
-      ctx.font=`700 ${Math.min(26,w*.04)}px "Comic Sans MS","Comic Sans",cursive`;
+      ctx.font=`700 ${Math.min(26,w*.04)}px "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive`;
       ctx.fillStyle="#343434";
       ctx.fillText(transicionSubtitulo,w/2,h*.45);
-      ctx.font=`${Math.max(12,Math.min(17,w*.019))}px "Comic Sans MS","Comic Sans",cursive`;
+      ctx.font=`${Math.max(12,Math.min(17,w*.019))}px "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive`;
       ctx.fillStyle="#595959";
       const palabras=transicionTexto.split(" "),lineas=[];
       let linea="";
@@ -18234,7 +18270,7 @@ function activarMuseoPortfolioSalas(v){
       });
       if(linea)lineas.push(linea);
       lineas.slice(0,3).forEach((l,i)=>ctx.fillText(l,w/2,h*.56+i*23));
-      ctx.font=`700 ${Math.max(10,Math.min(13,w*.014))}px "Comic Sans MS","Comic Sans",cursive`;
+      ctx.font=`700 ${Math.max(10,Math.min(13,w*.014))}px "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive`;
       ctx.fillStyle="#777";
       ctx.fillText(transicionCuenta,w/2,h*.73);
     }
