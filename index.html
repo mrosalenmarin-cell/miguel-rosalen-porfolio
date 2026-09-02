@@ -6063,7 +6063,8 @@ function hablarRobot(texto){
   window.ultimaVozIASistema=Date.now();
 
   const voz = vozEspanol || seleccionarVozEspanol();
-  const frases = humanizarTextoVoz(suavizarPronunciacionIngles(texto));
+  /* La voz acompaña al chat: una o dos frases bastan para que no invada la lectura. */
+  const frases = humanizarTextoVoz(suavizarPronunciacionIngles(texto)).slice(0,2);
   const partes = frases.flatMap((frase,fraseIndex)=>{
     const fragmentos = [{ lang:"es-ES", text:frase }];
     if(fraseIndex < frases.length-1){
@@ -6073,9 +6074,10 @@ function hablarRobot(texto){
   });
 
   speechSynthesis.cancel();
+  try{ speechSynthesis.resume(); }catch(err){}
   detenerBocaMicroIA();
 
-  setTimeout(()=>{
+  (()=>{
     iniciarBocaMicroIA(texto);
     let vocesPendientes=partes.filter(parte=>parte.lang!=="pausa").length;
     partes.forEach((parte,indice)=>{
@@ -6105,7 +6107,7 @@ function hablarRobot(texto){
       configurarMatizVoz(msg, parte, indice, partes.length);
       speechSynthesis.speak(msg);
     });
-  },40);
+  })();
 
 
 
@@ -15309,6 +15311,7 @@ function procesarEntradaIA(){
 
 const raw=input.value.trim();
 if(!raw) return;
+if(typeof desbloquearVozMovil==="function") desbloquearVozMovil();
 if("speechSynthesis" in window) speechSynthesis.cancel();
 if(esContenidoNoRespondibleIA(raw)){
   input.value="";
