@@ -4716,12 +4716,12 @@ max-height:none !important;
   }
 
   .portfolio-editorial{
-    inset:48px 0 44px;
+    inset:48px 0 18px;
   }
 
   .portfolio-wrap[data-mode="editorial"]{
-    height:min(76vh,680px);
-    min-height:500px;
+    height:min(80vh,730px);
+    min-height:540px;
   }
 
   .portfolio-editorial-intro,
@@ -4824,6 +4824,14 @@ max-height:none !important;
     flex:0 0 auto;
     color:rgba(0,0,0,.76);
     font-weight:500;
+  }
+
+  .portfolio-editorial-group--focus-hover .portfolio-editorial-shot.is-visible{
+    opacity:.26;
+  }
+
+  .portfolio-editorial-group--focus-hover .portfolio-editorial-shot.is-visible.is-featured{
+    opacity:1;
   }
 
   .portfolio-editorial-intro p{
@@ -7913,13 +7921,14 @@ function renderPortfolioEditorial(v,sec,parent){
     }
     grupo.items.push({obra,index});
   });
+  const focoVisual=sec.mosaicoFocoHover !== false;
   const gruposHTML=grupos.map(grupo=>`
-    <section class="portfolio-editorial-group${sec.mosaicoCompacto ? " portfolio-editorial-group--compact" : ""}${sec.mosaicoFocoHover ? " portfolio-editorial-group--focus-hover" : ""}">
+    <section class="portfolio-editorial-group${sec.mosaicoCompacto ? " portfolio-editorial-group--compact" : ""}${focoVisual ? " portfolio-editorial-group--focus-hover" : ""}">
       <div class="portfolio-editorial-label">${escaparHTMLPortfolio(grupo.nombre)}</div>
       <div class="portfolio-editorial-strip">${grupo.items.map(({obra,index})=>{
         const ampliable=sec.mosaicoAmpliable!==false && (!sec.soloAmpliarMerch || obra.grupo==="merchandising");
         const etiqueta=ampliable ? "button" : "div";
-        return `<${etiqueta} class="portfolio-editorial-shot${sec.mosaicoFocoHover && index===0 ? " is-featured" : ""}" ${ampliable ? `type="button" data-ampliable="1"` : ""} data-index="${index}" data-span="${escaparHTMLPortfolio(obra.span || 6)}" aria-label="${escaparHTMLPortfolio(obra.titulo || "imagen")}">
+        return `<${etiqueta} class="portfolio-editorial-shot${focoVisual && index===0 ? " is-featured" : ""}" ${ampliable ? `type="button" data-ampliable="1"` : ""} data-index="${index}" data-span="${escaparHTMLPortfolio(obra.span || 6)}" aria-label="${escaparHTMLPortfolio(obra.titulo || "imagen")}">
           <img data-src="${escaparHTMLPortfolio(obra.thumb || obra.full || "")}" width="${escaparHTMLPortfolio(obra.ancho || 4)}" height="${escaparHTMLPortfolio(obra.alto || 3)}" loading="lazy" decoding="async" fetchpriority="low" alt="">
           <span class="portfolio-editorial-caption"><b>(${String(index+1).padStart(2,"0")})</b>${escaparHTMLPortfolio(obra.titulo || "imagen")}</span>
         </${etiqueta}>`;
@@ -8093,11 +8102,25 @@ if(nodosInline.length){
   });
 }
 
-if(sec.mosaicoFocoHover){
-  editorial.querySelectorAll(".portfolio-editorial-shot").forEach(shot=>{
-    shot.addEventListener("pointerenter",()=>{
-      editorial.querySelectorAll(".portfolio-editorial-shot").forEach(item=>item.classList.toggle("is-featured",item===shot));
+if(focoVisual){
+  editorial.querySelectorAll(".portfolio-editorial-group--focus-hover").forEach(grupo=>{
+    const shots=[...grupo.querySelectorAll(".portfolio-editorial-shot")];
+    const activar=shot=>shots.forEach(item=>item.classList.toggle("is-featured",item===shot));
+    shots.forEach(shot=>{
+      shot.addEventListener("pointerenter",()=>activar(shot));
+      shot.addEventListener("pointerdown",()=>activar(shot),{passive:true});
+      shot.addEventListener("focusin",()=>activar(shot));
     });
+    const tira=grupo.querySelector(".portfolio-editorial-strip");
+    let cuadro;
+    tira?.addEventListener("scroll",()=>{
+      cancelAnimationFrame(cuadro);
+      cuadro=requestAnimationFrame(()=>{
+        const centro=tira.getBoundingClientRect().left+tira.clientWidth/2;
+        const cercana=shots.reduce((mejor,shot)=>Math.abs(shot.getBoundingClientRect().left+shot.offsetWidth/2-centro)<Math.abs(mejor.getBoundingClientRect().left+mejor.offsetWidth/2-centro)?shot:mejor,shots[0]);
+        if(cercana) activar(cercana);
+      });
+    },{passive:true});
   });
 }
 
@@ -9406,8 +9429,10 @@ function ajustarGrupoMosaicoPortfolio(grupo){
       const proporcion=Math.max(.1,(Number(img?.getAttribute("width"))||4)/(Number(img?.getAttribute("height"))||3));
       const ancho=compacto ? (anchoGrupo-hueco)/2 : anchoGrupo;
       shot.style.width=`${ancho}px`;
-      shot.style.height=`${ancho/proporcion}px`;
+      const altoImagen=Math.max(140,Math.min(300,ancho/proporcion));
+      shot.style.height="auto";
       shot.style.flexBasis=`${ancho}px`;
+      if(img) img.style.height=`${altoImagen}px`;
       shot.style.gridColumn="";
       shot.style.gridRow="";
     });
@@ -9442,6 +9467,7 @@ function ajustarGrupoMosaicoPortfolio(grupo){
 
   shots.forEach(shot=>{
     const img=shot.querySelector("img");
+    if(img) img.style.height="";
     const proporcion=Math.max(.1,(Number(img?.getAttribute("width"))||4)/(Number(img?.getAttribute("height"))||3));
     fila.push({shot,proporcion});
     sumaProporciones+=proporcion;
