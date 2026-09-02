@@ -6243,8 +6243,88 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   }
 }
 
+
+
+/* =========================================================
+   MUSEOGRAFÍA — NODOS COMPACTOS Y DESPLAZABLES
+   ========================================================= */
+
+/* Ventanas principales: tamaño compacto.
+   El cuadro no crece con todo el texto: el texto se desplaza dentro. */
+.portfolio-nodos-overlay .portfolio-nodo-ventana{
+  width:240px;
+  height:260px;
+  min-width:180px;
+  min-height:150px;
+  max-width:min(72%,420px);
+  max-height:min(62%,430px);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.portfolio-nodos-overlay .portfolio-nodo-cabecera{
+  flex:0 0 30px;
+}
+
+.portfolio-nodos-overlay .portfolio-nodo-contenido{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Dinamizadores / nodos internos: algo más anchos por la galería,
+   pero también compactos y con scroll interno. */
+.portfolio-inline-nodos{
+  z-index:14;
+}
+
+.portfolio-inline-nodo-ventana{
+  width:min(500px,calc(100% - 24px));
+  height:min(360px,62%);
+  min-height:190px;
+  max-height:calc(100% - 24px);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.portfolio-inline-nodo-ventana .portfolio-nodo-cabecera{
+  flex:0 0 30px;
+}
+
+.portfolio-inline-nodo-ventana .portfolio-nodo-contenido{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+@media (max-width:768px), (pointer:coarse){
+  .portfolio-nodos-overlay .portfolio-nodo-ventana{
+    width:min(230px,72vw);
+    height:min(235px,42dvh);
+    min-width:155px;
+    min-height:145px;
+    max-width:82vw;
+    max-height:56dvh;
+  }
+
+  .portfolio-inline-nodo-ventana{
+    width:min(88vw,420px);
+    height:min(330px,54dvh);
+    min-height:190px;
+    max-height:62dvh;
+  }
+}
+
 </style>
-<!-- MUSEOGRAFIA-NODOS-LIBRES-V2 -->
+<!-- MUSEOGRAFIA-NODOS-LIBRES-V3 · COMPACTOS · DINAMIZADORES-OK -->
 </head>
 
 <body>
@@ -8651,62 +8731,101 @@ if(nodosInline.length){
   const capaInline=document.createElement("div");
   capaInline.className="portfolio-inline-nodos";
   capaInline.innerHTML=nodosInline.map(nodo=>`<section class="portfolio-nodo-ventana portfolio-inline-nodo-ventana" data-inline-ventana="${escaparHTMLPortfolio(nodo.id)}"><div class="portfolio-nodo-cabecera"><strong class="portfolio-nodo-titulo">${escaparHTMLPortfolio(nodo.titulo)}</strong><button class="portfolio-nodo-cerrar" type="button" aria-label="Cerrar">×</button></div><div class="portfolio-nodo-contenido"><div class="portfolio-nodo-texto">${nodo.html}</div></div></section>`).join("");
-  const sincronizarCapaInline=()=>{
-    capaInline.style.left=editorial.offsetLeft+"px";
-    capaInline.style.top=editorial.offsetTop+"px";
-    capaInline.style.width=editorial.clientWidth+"px";
-    capaInline.style.height=editorial.clientHeight+"px";
-  };
-  sincronizarCapaInline();
-  new ResizeObserver(sincronizarCapaInline).observe(editorial);
+
+  /* Esta capa ocupa todo el portfolio, igual que las ventanas principales. */
   wrap.appendChild(capaInline);
-  editorial.querySelectorAll("[data-inline-nodo]").forEach(enlace=>{
+
+  /* Los links pueden estar en editorial o dentro de una ventana principal
+     que ya fue trasladada al overlay. */
+  const enlacesInline=[
+    ...editorial.querySelectorAll("[data-inline-nodo]"),
+    ...(capaNodosGlobal ? capaNodosGlobal.querySelectorAll("[data-inline-nodo]") : [])
+  ];
+
+  [...new Set(enlacesInline)].forEach(enlace=>{
     enlace.addEventListener("pointerdown",e=>e.stopPropagation());
     enlace.addEventListener("click",e=>{
+      e.preventDefault();
       e.stopPropagation();
+
       const panel=capaInline.querySelector(`[data-inline-ventana="${enlace.dataset.inlineNodo}"]`);
       if(!panel) return;
+
       const abierto=panel.classList.contains("is-open");
-      capaInline.querySelectorAll(".portfolio-inline-nodo-ventana").forEach(item=>item.classList.remove("is-open"));
+      capaInline.querySelectorAll(".portfolio-inline-nodo-ventana")
+        .forEach(item=>item.classList.remove("is-open"));
+
       if(abierto) return;
-      const contRect=editorial.getBoundingClientRect();
+
+      panel.classList.add("is-open");
+
+      const base=capaInline.getBoundingClientRect();
       const enlaceRect=enlace.getBoundingClientRect();
-      const ancho=Math.min(520,editorial.clientWidth-24);
-      const left=Math.max(8,Math.min(enlaceRect.left-contRect.left+editorial.scrollLeft,editorial.clientWidth-ancho-8));
-      const top=enlaceRect.bottom-contRect.top+editorial.scrollTop+10;
+      const margen=10;
+
+      let left=enlaceRect.left-base.left;
+      let top=enlaceRect.bottom-base.top+10;
+
+      const maxLeft=Math.max(margen,capaInline.clientWidth-panel.offsetWidth-margen);
+      const maxTop=Math.max(margen,capaInline.clientHeight-panel.offsetHeight-margen);
+
+      left=Math.max(margen,Math.min(left,maxLeft));
+      top=Math.max(margen,Math.min(top,maxTop));
+
       panel.style.left=left+"px";
       panel.style.top=top+"px";
-      panel.classList.add("is-open");
-      const arriba=Math.max(8,Math.min(top,editorial.clientHeight-panel.offsetHeight-8));
-      panel.style.top=arriba+"px";
+      panel.style.zIndex=String(Date.now());
     });
   });
+
   capaInline.querySelectorAll(".portfolio-nodo-cerrar").forEach(cerrar=>{
     cerrar.addEventListener("pointerdown",e=>e.stopPropagation());
-    cerrar.addEventListener("click",e=>{e.stopPropagation();cerrar.closest(".portfolio-inline-nodo-ventana")?.classList.remove("is-open");});
+    cerrar.addEventListener("click",e=>{
+      e.stopPropagation();
+      cerrar.closest(".portfolio-inline-nodo-ventana")?.classList.remove("is-open");
+    });
   });
+
+  /* Ratón: arrastre por toda la ventana del portfolio.
+     En táctil lo gestiona además el listener global de abajo. */
   capaInline.querySelectorAll(".portfolio-inline-nodo-ventana").forEach(panel=>{
     const cabecera=panel.querySelector(".portfolio-nodo-cabecera");
     if(!cabecera) return;
+
     cabecera.addEventListener("pointerdown",e=>{
       if(e.target.closest(".portfolio-nodo-cerrar")) return;
+      if(e.pointerType==="touch" || e.pointerType==="pen") return;
+
       e.preventDefault();
       e.stopPropagation();
-      const inicio={x:e.clientX,y:e.clientY,left:parseFloat(panel.style.left)||0,top:parseFloat(panel.style.top)||0};
+
+      const inicio={
+        x:e.clientX,
+        y:e.clientY,
+        left:parseFloat(panel.style.left)||0,
+        top:parseFloat(panel.style.top)||0
+      };
+
+      panel.style.zIndex=String(Date.now());
       cabecera.setPointerCapture?.(e.pointerId);
+
       const mover=ev=>{
         const margen=8;
-        const izquierda=Math.max(margen,Math.min(inicio.left+ev.clientX-inicio.x,editorial.clientWidth-panel.offsetWidth-margen));
-        const arriba=Math.max(8,Math.min(inicio.top+ev.clientY-inicio.y,editorial.clientHeight-panel.offsetHeight-8));
+        const maxX=Math.max(margen,capaInline.clientWidth-panel.offsetWidth-margen);
+        const maxY=Math.max(margen,capaInline.clientHeight-panel.offsetHeight-margen);
+        const izquierda=Math.max(margen,Math.min(inicio.left+ev.clientX-inicio.x,maxX));
+        const arriba=Math.max(margen,Math.min(inicio.top+ev.clientY-inicio.y,maxY));
         panel.style.left=izquierda+"px";
         panel.style.top=arriba+"px";
       };
+
       const terminar=ev=>{
         cabecera.releasePointerCapture?.(ev.pointerId);
         cabecera.removeEventListener("pointermove",mover);
         cabecera.removeEventListener("pointerup",terminar);
         cabecera.removeEventListener("pointercancel",terminar);
       };
+
       cabecera.addEventListener("pointermove",mover);
       cabecera.addEventListener("pointerup",terminar);
       cabecera.addEventListener("pointercancel",terminar);
@@ -8885,6 +9004,15 @@ if(sec.nodosInfo?.length){
       )
     );
 
+
+    const maxTop=Math.max(
+      margen,
+      capaNodos.clientHeight -
+      ventana.offsetHeight -
+      margen
+    );
+
+    top=Math.max(margen,Math.min(top,maxTop));
 
     ventana.style.left=`${left}px`;
     ventana.style.top=`${top}px`;
@@ -9127,24 +9255,28 @@ if(sec.nodosInfo?.length){
           const margen=5;
 
 
+          const maxLeft=Math.max(
+            margen,
+            capaNodos.clientWidth -
+            ventana.offsetWidth -
+            margen
+          );
+
+          const maxTop=Math.max(
+            margen,
+            capaNodos.clientHeight -
+            ventana.offsetHeight -
+            margen
+          );
+
           nuevoLeft=Math.max(
             margen,
-            Math.min(
-              nuevoLeft,
-              capaNodos.clientWidth -
-              ventana.offsetWidth -
-              margen
-            )
+            Math.min(nuevoLeft,maxLeft)
           );
 
           nuevoTop=Math.max(
             margen,
-            Math.min(
-              nuevoTop,
-              capaNodos.clientHeight -
-              ventana.offsetHeight -
-              margen
-            )
+            Math.min(nuevoTop,maxTop)
           );
 
 
