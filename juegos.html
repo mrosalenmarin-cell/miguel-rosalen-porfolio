@@ -7349,6 +7349,38 @@ body.modo-juego-global .ventana.portfolio-3d-activo .portfolio-3d-canvas{
   }
 }
 
+/* Museo móvil: una sala directa, sin perspectiva forzada ni obras deformadas. */
+.museo-movil-mundo{background:#f7f7f4!important;color:#20201e!important;}
+.museo-movil-cabecera{position:absolute;z-index:8;left:12px;right:12px;top:12px;display:flex;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(28,28,26,.2);font:700 9px/1 Arial,sans-serif!important;}
+.museo-movil-pared{position:absolute;inset:48px 11px 96px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:9px;padding:12px;background:#fcfcfa;border:1px solid #dbdbd5;box-shadow:inset 0 0 0 9px #f1f1ed,0 9px 20px rgba(25,25,22,.08);}
+.museo-movil-obra{position:relative;min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:4px;padding:5px;border:2px solid #242422;background:#fff;box-shadow:2px 3px 0 rgba(20,20,18,.16);overflow:hidden;cursor:pointer;transition:opacity .16s ease,transform .16s ease,border-color .16s ease;}
+.museo-movil-obra img{display:block;width:100%;height:100%;min-height:0;object-fit:contain;background:#f7f7f5;}
+.museo-movil-obra small{overflow:hidden;color:#262623;text-overflow:ellipsis;white-space:nowrap;font:700 7px/1.1 Arial,sans-serif!important;text-align:left;}
+.museo-movil-obra.vigilada{border-color:#d5443e;box-shadow:0 0 0 2px rgba(213,68,62,.18),2px 3px 0 rgba(20,20,18,.16);}
+.museo-movil-obra.robada{pointer-events:none;opacity:.13;transform:scale(.93);}
+.museo-movil-alex{position:absolute;z-index:7;right:8px;bottom:37px;width:72px;height:108px;pointer-events:none;}
+.museo-movil-alex img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(3px 5px 3px rgba(0,0,0,.13));}
+.museo-movil-dialogo{position:absolute;z-index:8;left:11px;bottom:44px;width:min(142px,42vw);min-height:72px;padding:9px 10px;border:1px solid rgba(34,34,31,.48);background:rgba(255,255,252,.94);box-shadow:3px 4px 0 rgba(29,29,26,.13);font:10px/1.3 Arial,sans-serif!important;}
+.museo-movil-dialogo b{display:block;margin-bottom:5px;font:700 8px/1 Arial,sans-serif!important;letter-spacing:.06em;}
+.museo-movil-intro{z-index:40!important;}
+.museo-movil-intro .museo-intro-dialogo{width:min(170px,52vw);max-width:none;min-height:138px;padding:14px!important;}
+.museo-movil-intro .museo-intro-dialogo p{font:11px/1.35 Arial,sans-serif!important;}
+
+/* La respuesta de la IA deja una reserva real para el menú inferior. */
+@media(max-width:700px){
+  .ventana.ia-captura .ia-perfil-respuestas{padding:9px 10px 58px!important;}
+  .ventana.ia-captura .ia-perfil-respuestas form{margin-bottom:0!important;}
+}
+
+/* La X del menú no comparte la tipografía de los juegos. */
+.mundo-menu-cerrar,.mundo-menu-cerrar *{
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-size:20px!important;
+  font-weight:400!important;
+  line-height:22px!important;
+  transform:none!important;
+}
+
 /* Las ventanas con texto conservan una cabecera fija y un cuerpo nativamente desplazable. */
 .ventana:not(.max):not(.min) > .texto{
   min-height:0;
@@ -17880,7 +17912,7 @@ function activarMuseoPortfolioSalas(v){
     salas[sala].obras.forEach((item,i)=>{item.hit=null;if(item.robada)return;const p=mapas[sala][i%mapas[sala].length],ox=w*p.x,oy=h*p.y,ow=w*p.w,oh=h*p.h;insertarObra(item,ox,oy,ow,oh,p.oval);if(zonasVigiladas.includes(item.zona)){ctx.save();ctx.shadowColor="rgba(255,18,28,.98)";ctx.shadowBlur=Math.max(12,Math.min(ow,oh)*.28);ctx.fillStyle="rgba(255,20,30,.24)";ctx.strokeStyle="rgba(255,38,45,.98)";ctx.lineWidth=Math.max(3,Math.min(ow,oh)*.055);ctx.beginPath();if(p.oval)ctx.ellipse(ox+ow/2,oy+oh/2,ow/2,oh/2,0,0,Math.PI*2);else ctx.rect(ox,oy,ow,oh);ctx.fill();ctx.stroke();ctx.restore()}});
     const gh=Math.min(h*.44,360),gw=guardia.complete&&guardia.naturalWidth?gh*(guardia.naturalWidth/guardia.naturalHeight):gh*.54,gx=Math.max(gw*.62,w*.09),gy=h*.98;ctx.fillStyle="rgba(20,20,20,.15)";ctx.beginPath();ctx.ellipse(gx,gy-2,gw*.34,gh*.025,0,0,Math.PI*2);ctx.fill();if(guardia.complete&&guardia.naturalWidth)ctx.drawImage(guardia,gx-gw/2,gy-gh,gw,gh);
     const ojoX=gx+gw*.2,ojoY=Math.max(22,gy-gh*.81);dibujarMirada(ojoX,ojoY,zonaGuardia,"ÁLEX",w,h);if(sala>=1){const origenSecundario=sala<3?{x:w*.65,y:h*.5,n:"VISITANTE 1"}:{x:w*.8,y:h*.52,n:"GUARDIA 2"};dibujarMirada(origenSecundario.x,origenSecundario.y,(zonaGuardia+1)%3,origenSecundario.n,w,h)}
-    const bw=Math.min(w*.48,520),bh=Math.min(h*.14,88),bx=Math.min(w-bw-12,Math.max(gw*.92,w*.2)),by=Math.max(16,gy-gh*.72);ctx.save();ctx.fillStyle="rgba(249,248,243,.92)";ctx.strokeStyle="rgba(52,54,56,.55)";ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(bx,by,bw,bh,6);ctx.fill();ctx.stroke();ctx.fillStyle="#242526";ctx.textAlign="left";ctx.textBaseline="top";ctx.font=`700 ${Math.max(10,Math.min(12,w*.012))}px Arial`;ctx.fillText(hablante,bx+12,by+9);ctx.font=`${Math.max(11,Math.min(14,w*.014))}px Arial`;const palabras=dialogo.split(" "),lineas=[];let linea="";palabras.forEach(p=>{const prueba=(linea+" "+p).trim();if(ctx.measureText(prueba).width>bw-24&&linea){lineas.push(linea);linea=p}else linea=prueba});if(linea)lineas.push(linea);lineas.slice(0,2).forEach((l,i)=>ctx.fillText(l,bx+12,by+29+i*17));ctx.restore();
+    const bw=Math.min(w*.32,250),bh=Math.min(h*.22,132),bx=Math.min(w-bw-12,Math.max(gw*.92,w*.2)),by=Math.max(16,gy-gh*.72);ctx.save();ctx.fillStyle="rgba(249,248,243,.92)";ctx.strokeStyle="rgba(52,54,56,.55)";ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(bx,by,bw,bh,6);ctx.fill();ctx.stroke();ctx.fillStyle="#242526";ctx.textAlign="left";ctx.textBaseline="top";ctx.font=`700 ${Math.max(9,Math.min(11,w*.011))}px Arial`;ctx.fillText(hablante,bx+10,by+9);ctx.font=`${Math.max(10,Math.min(12,w*.012))}px Arial`;const palabras=dialogo.split(" "),lineas=[];let linea="";palabras.forEach(p=>{const prueba=(linea+" "+p).trim();if(ctx.measureText(prueba).width>bw-20&&linea){lineas.push(linea);linea=p}else linea=prueba});if(linea)lineas.push(linea);lineas.slice(0,4).forEach((l,i)=>ctx.fillText(l,bx+10,by+27+i*14));ctx.restore();
     if(t<alarmaHasta){ctx.fillStyle="rgba(205,18,18,.3)";ctx.fillRect(0,0,w,h);ctx.fillStyle="#fff";ctx.font=`900 ${Math.min(54,w*.08)}px Arial`;ctx.textAlign="center";ctx.fillText("TE HA VISTO",w/2,h/2)}
     if(t<transicionHasta){ctx.fillStyle="rgba(245,245,242,.97)";ctx.fillRect(0,0,w,h);ctx.fillStyle="#151515";ctx.textAlign="center";ctx.textBaseline="middle";ctx.font=`900 ${Math.min(56,w*.08)}px Arial`;ctx.fillText(transicionTitulo,w/2,h*.34);ctx.font=`700 ${Math.min(30,w*.043)}px Arial`;ctx.fillStyle="#343434";ctx.fillText(transicionSubtitulo,w/2,h*.45);ctx.font=`${Math.max(13,Math.min(18,w*.021))}px Arial`;ctx.fillStyle="#595959";const palabras=transicionTexto.split(" "),lineas=[];let linea="";palabras.forEach(p=>{const prueba=(linea+" "+p).trim();if(ctx.measureText(prueba).width>w*.72&&linea){lineas.push(linea);linea=p}else linea=prueba});if(linea)lineas.push(linea);lineas.slice(0,3).forEach((l,i)=>ctx.fillText(l,w/2,h*.56+i*23));ctx.font=`700 ${Math.max(11,Math.min(14,w*.016))}px Arial`;ctx.fillStyle="#777";ctx.fillText(transicionCuenta,w/2,h*.73)}
   }
@@ -17888,8 +17920,8 @@ function activarMuseoPortfolioSalas(v){
   function loop(t){if(!activo)return;if(t-ultimoDibujo<32){raf=requestAnimationFrame(loop);return}ultimoDibujo=t;if(juegoIniciado&&t>=proximoCambio){let nueva=Math.floor(Math.random()*3);if(nueva===zonaGuardia)nueva=(nueva+1+Math.floor(Math.random()*2))%3;zonaGuardia=nueva;const direcciones=["izquierda","centro","derecha"];hablante="ÁLEX";dialogo=`Estoy mirando las obras de ${direcciones[zonaGuardia]}.`;proximoCambio=t+Math.max(3900,5700-sala*260)+Math.random()*1700;actualizarHud()}if(juegoIniciado&&t>=proximoDialogo){const repertorio=dialogosSala[sala],entrada=repertorio[Math.floor(Math.random()*repertorio.length)];hablante=entrada.habla;dialogo=entrada.texto;proximoDialogo=t+7200+Math.random()*4200}dibujar(t);raf=requestAnimationFrame(loop)}
   canvas.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();if(!juegoIniciado||performance.now()<transicionHasta||performance.now()<alarmaHasta)return;const r=canvas.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top,item=salas[sala].obras.find(o=>o.hit&&px>=o.hit.x&&px<=o.hit.x+o.hit.w&&py>=o.hit.y&&py<=o.hit.y+o.hit.h);if(!item)return;const vigiladas=sala>=1?[zonaGuardia,(zonaGuardia+1)%3]:[zonaGuardia];if(vigiladas.includes(item.zona)){alarmaHasta=performance.now()+1300;hablante="ÁLEX";dialogo="Esa pieza pertenece al museo. La sala vuelve a su estado inicial.";salas[sala].obras.forEach(o=>o.robada=false);mensaje.textContent="Álex recuperó la sala";actualizarHud();return}item.robada=true;hablante="ÁLEX";dialogo="Un momento... ese marco ha cambiado.";mensaje.textContent="algo ha desaparecido";actualizarHud();if(salas[sala].obras.every(o=>o.robada)){if(sala<salas.length-1){const siguiente=sala+1,cap=capitulos[siguiente];transicionTitulo=cap.sala;transicionSubtitulo=cap.nombre;transicionTexto=cap.texto;transicionCuenta=`${salas[siguiente].obras.length} OBRAS EN ESTA SALA`;hablante="ÁLEX";dialogo="La sala ha quedado vacía.";transicionHasta=performance.now()+4200;setTimeout(()=>{if(!activo)return;sala=siguiente;const entrada=dialogosSala[sala][0];hablante=entrada.habla;dialogo=entrada.texto;mensaje.textContent="nueva sala · observa las miradas";proximoDialogo=performance.now()+7200;actualizarHud()},3600)}else{if(typeof recuperarTiempo==="function")recuperarTiempo(10);if(typeof mostrarVictoriaMundo==="function")mostrarVictoriaMundo(v,10,()=>mostrarPostalMuseo(v,salas))}}},{signal});
   introduccion.querySelector("button").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();juegoIniciado=true;introduccion.hidden=true;proximoCambio=performance.now()+2300;proximoDialogo=performance.now()+9000;canvas.focus({preventScroll:true})},{signal});
-  const sospechas=["Juraría que había una obra ahí. Justo cuando no miro... qué despiste.","Creo que falta algo en esta sala. Y creo que empiezo a sospechar de alguien.","Ese marco estaba ocupado hace un momento. Ya sé quién es el ladrón.","No he visto nada. Eso es lo peor: alguien está aprovechando cada giro."];
-  const comentariosGuardia=["Mantengan cierta distancia de las obras, por favor.","En esta sala conviene mirar despacio: hay detalles que no parecen estar quietos.","La colección sigue completa. Eso creo.","Si buscan información, pueden empezar por la obra del centro.","No crucen la línea. La línea está ahí por una razón.","Hay visitantes que vienen por una pieza concreta y se van pensando en otra."];
+  const sospechas=["Juraría que había una obra ahí.","Creo que falta algo.","Ese marco estaba ocupado.","Ya sé quién es el ladrón."];
+  const comentariosGuardia=["Mantengan distancia, por favor.","Miren despacio.","La colección sigue completa. Creo.","Empiecen por la obra del centro.","No crucen la línea.","Cada sala cambia un poco."];
   let robosRegistrados=0,dialogoGuardiaHasta=0,proximoComentarioGuardia=performance.now()+5600,rafSilencioGuardia=0;
   const controlarCharlasGuardia=()=>{
     if(!activo) return;
@@ -17914,7 +17946,141 @@ function activarMuseoPortfolioSalas(v){
   actualizarHud();v._portfolioInmersivoCleanup=()=>{activo=false;cancelAnimationFrame(raf);cancelAnimationFrame(rafSilencioGuardia);resize.disconnect();controlador.abort();introduccion.remove();mundo.remove();v.classList.remove("portfolio-inmersivo","portfolio-3d-activo");v._portfolioInmersivoCleanup=null};raf=requestAnimationFrame(loop);
 }
 
+function activarMuseoPortfolioMovil(v){
+  if(!v || v.dataset.tipo!=="PORTFOLIO" || v._portfolioInmersivoCleanup) return;
+  v.classList.add("portfolio-inmersivo","portfolio-3d-activo","museo-movil-activo");
+
+  const fuentes=[
+    {nombre:"PORRÓN",obras:obtenerSalaPortfolio("diseno-grafico","porron")?.obras||[]},
+    {nombre:"TATUAJES",obras:obtenerSalaPortfolio("artes-visuales","tatuaje")?.obras||[]},
+    {nombre:"PINTURA",obras:obtenerSalaPortfolio("artes-plasticas","pintura")?.obras||[]},
+    {nombre:"INSTALACIÓN",obras:obtenerSalaPortfolio("artes-plasticas","instalacion")?.obras||[]}
+  ];
+  const salas=fuentes.map(sala=>({
+    nombre:sala.nombre,
+    obras:(sala.obras.length?sala.obras:[{titulo:"obra sin título"}]).slice(0,6).map((obra,i)=>({obra,robada:false,zona:i%3}))
+  }));
+  const total=salas.reduce((n,s)=>n+s.obras.length,0);
+  let sala=0,zonaVigilada=1,activo=true,proximoCambio=0;
+
+  const mundo=document.createElement("section");
+  mundo.className="portfolio-3d-mundo museo-movil-mundo";
+  mundo.innerHTML=`
+    <header class="museo-movil-cabecera"><strong data-museo-movil-sala>SALA 01 · PORRÓN</strong><span data-museo-movil-cuenta>0/${total}</span></header>
+    <section class="museo-movil-pared" aria-label="Pared del museo"></section>
+    <div class="museo-movil-alex"><img src="assets/museum/guardia-detective.webp" alt="Álex, guardia del museo" decoding="async"></div>
+    <aside class="museo-movil-dialogo" aria-live="polite"><b>ÁLEX</b><span data-museo-movil-dialogo>Estoy mirando el centro.</span></aside>`;
+  const intro=document.createElement("section");
+  intro.className="museo-intro museo-movil-intro";
+  intro.innerHTML='<img src="assets/museum/guardia-detective.webp" alt="Álex, guardia de seguridad" decoding="async"><div class="museo-intro-dialogo"><strong>ÁLEX</strong><p>Cuatro salas. No toques la pared que estoy mirando.</p><button type="button">ENTRAR AL MUSEO</button></div>';
+  v.append(mundo,intro);
+
+  const controlador=new AbortController(),{signal}=controlador;
+  const pared=mundo.querySelector(".museo-movil-pared");
+  const salaEl=mundo.querySelector("[data-museo-movil-sala]");
+  const cuentaEl=mundo.querySelector("[data-museo-movil-cuenta]");
+  const dialogoEl=mundo.querySelector("[data-museo-movil-dialogo]");
+  const direcciones=["izquierda","centro","derecha"];
+  const sospechas=["Juraría que había algo ahí.","Ese marco estaba ocupado.","Creo que ya sé quién es.","Justo cuando no miraba."];
+  const comentarios=["No cruces la línea.","Miro las obras despacio.","Esta sala sigue completa. Creo.","No pierdas de vista el centro."];
+
+  const robadas=()=>salas.reduce((n,s)=>n+s.obras.filter(o=>o.robada).length,0);
+  const actualizar=()=>{
+    const actual=salas[sala];
+    salaEl.textContent=`SALA ${String(sala+1).padStart(2,"0")} · ${actual.nombre}`;
+    cuentaEl.textContent=`${robadas()}/${total}`;
+    actualizarProgresoMundo(v,total?robadas()/total*100:0,"COLECCIÓN");
+  };
+  const renderSala=()=>{
+    const actual=salas[sala];
+    pared.replaceChildren();
+    actual.obras.forEach((item,i)=>{
+      const boton=document.createElement("button");
+      boton.type="button";
+      boton.className="museo-movil-obra";
+      boton.dataset.zona=String(item.zona);
+      boton.dataset.indice=String(i);
+      boton.setAttribute("aria-label",item.obra.titulo||"obra del museo");
+      const img=document.createElement("img");
+      img.loading="eager";
+      img.decoding="async";
+      img.src=item.obra.thumb||item.obra.full||"";
+      img.alt="";
+      const etiqueta=document.createElement("small");
+      etiqueta.textContent=item.obra.titulo||"sin título";
+      boton.append(img,etiqueta);
+      if(item.robada) boton.classList.add("robada");
+      if(item.zona===zonaVigilada) boton.classList.add("vigilada");
+      pared.appendChild(boton);
+    });
+    actualizar();
+  };
+  const cambiarMirada=()=>{
+    if(!activo || intro.hidden===false) return;
+    zonaVigilada=(zonaVigilada+1+Math.floor(Math.random()*2))%3;
+    dialogoEl.textContent=`Miro ${direcciones[zonaVigilada]}.`;
+    renderSala();
+    proximoCambio=window.setTimeout(cambiarMirada,3400+Math.random()*1800);
+  };
+  const siguienteSala=()=>{
+    if(sala>=salas.length-1){
+      dialogoEl.textContent="La sala está vacía. No entiendo nada.";
+      mostrarVictoriaMundo(v,10);
+      return;
+    }
+    sala++;
+    zonaVigilada=(zonaVigilada+1)%3;
+    dialogoEl.textContent="La puerta de la siguiente sala se ha abierto.";
+    renderSala();
+  };
+
+  pared.addEventListener("click",e=>{
+    const boton=e.target.closest(".museo-movil-obra");
+    if(!boton || !activo || !intro.hidden) return;
+    const item=salas[sala].obras[Number(boton.dataset.indice)];
+    if(!item || item.robada) return;
+    if(item.zona===zonaVigilada){
+      salas[sala].obras.forEach(obra=>obra.robada=false);
+      dialogoEl.textContent="Esa pared estaba vigilada.";
+      renderSala();
+      return;
+    }
+    item.robada=true;
+    dialogoEl.textContent=sospechas[(robadas()-1)%sospechas.length];
+    renderSala();
+    if(salas[sala].obras.every(obra=>obra.robada)) window.setTimeout(siguienteSala,620);
+  },{signal});
+
+  intro.querySelector("button").addEventListener("click",e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    intro.hidden=true;
+    dialogoEl.textContent="Miro el centro.";
+    renderSala();
+    proximoCambio=window.setTimeout(cambiarMirada,2600);
+  },{signal});
+
+  const comentarioCada=window.setInterval(()=>{
+    if(activo && intro.hidden) dialogoEl.textContent=comentarios[Math.floor(Math.random()*comentarios.length)];
+  },8500);
+  renderSala();
+  v._portfolioInmersivoCleanup=()=>{
+    activo=false;
+    clearTimeout(proximoCambio);
+    clearInterval(comentarioCada);
+    controlador.abort();
+    intro.remove();
+    mundo.remove();
+    v.classList.remove("portfolio-inmersivo","portfolio-3d-activo","museo-movil-activo");
+    v._portfolioInmersivoCleanup=null;
+  };
+}
+
 function activarMuseoPortfolioNuevo(v){
+  if(matchMedia("(max-width:700px), (pointer:coarse)").matches){
+    activarMuseoPortfolioMovil(v);
+    return;
+  }
   activarMuseoPortfolioSalas(v);
 }
 
