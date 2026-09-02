@@ -5694,6 +5694,45 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   }
 }
 
+/* Teclado geométrico propio: evita los pictogramas variables del sistema. */
+#teclado .teclado-toggle{
+  position:relative !important;
+  display:grid !important;
+  place-items:center !important;
+  width:42px !important;
+  height:42px !important;
+  padding:0 !important;
+  border:1px solid rgba(0,0,0,.52) !important;
+  border-radius:50% !important;
+  color:rgba(0,0,0,.78) !important;
+  background:rgba(255,255,255,.18) !important;
+  box-shadow:0 4px 15px rgba(0,0,0,.06), inset 0 0 0 1px rgba(255,255,255,.58) !important;
+  touch-action:manipulation;
+}
+
+#teclado .teclado-toggle::before{
+  content:"" !important;
+  position:absolute !important;
+  width:21px !important;
+  height:13px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:
+    linear-gradient(currentColor,currentColor) 50% 100% / 13px 3px no-repeat,
+    repeating-linear-gradient(90deg,currentColor 0 3px,transparent 3px 5px) 50% 0 / 21px 3px no-repeat,
+    repeating-linear-gradient(90deg,currentColor 0 3px,transparent 3px 5px) 50% 5px / 21px 3px no-repeat,
+    repeating-linear-gradient(90deg,currentColor 0 3px,transparent 3px 5px) 50% 10px / 21px 3px no-repeat !important;
+  opacity:.72 !important;
+  box-shadow:none !important;
+}
+
+#teclado .teclado-toggle::after{content:none !important;}
+#teclado .teclado-toggle:hover{background:rgba(255,255,255,.42) !important;}
+#teclado.abierto .teclado-toggle{
+  color:#fff !important;
+  background:rgba(25,31,33,.56) !important;
+}
+
 </style>
 
 <style>
