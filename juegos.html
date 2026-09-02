@@ -7275,6 +7275,7 @@ body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-stats span{min-
   .ventana.ia-captura .ia-perfil-avatar{padding-top:38px!important;}
   .ventana.ia-captura .ia-perfil-avatar canvas{top:52%!important;}
   .ventana.ia-captura .ia-perfil-identidad{bottom:13px!important;}
+  .ventana.ia-captura.ia-escribiendo{position:fixed!important;left:0!important;top:0!important;right:auto!important;bottom:auto!important;width:100vw!important;height:var(--ia-viewport-visible,100dvh)!important;max-height:none!important;min-height:0!important;transform:none!important;overflow:hidden!important;z-index:2147483600!important;}
   .ventana.ia-captura.ia-escribiendo .ia-perfil-avatar{display:none!important;}
   .ventana.ia-captura.ia-escribiendo .ia-captura-mundo{position:fixed!important;inset:0!important;width:100vw!important;height:var(--ia-viewport-visible,100dvh)!important;min-height:0!important;background:#fff!important;z-index:2147483600!important;}
   .ventana.ia-captura.ia-escribiendo .ia-perfil-chat{top:0!important;}
@@ -7382,11 +7383,10 @@ body.modo-juego-global .ventana.portfolio-3d-activo .portfolio-3d-canvas{
 /* Museo móvil: una sala directa, sin perspectiva forzada ni obras deformadas. */
 .museo-movil-mundo{background:#f7f7f4!important;color:#20201e!important;}
 .museo-movil-cabecera{position:absolute;z-index:8;left:12px;right:12px;top:12px;display:flex;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(28,28,26,.2);font:700 9px/1 Arial,sans-serif!important;}
-.museo-movil-pared{position:absolute;top:48px;right:11px;bottom:150px;left:11px;display:flex;align-items:stretch;gap:9px;padding:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;background:#fcfcfa;border:1px solid #dbdbd5;box-shadow:inset 0 0 0 9px #f1f1ed,0 9px 20px rgba(25,25,22,.08);}
-.museo-movil-pared::-webkit-scrollbar{display:none;}
-.museo-movil-obra{position:relative;flex:0 0 min(46%,172px);min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:4px;padding:5px;border:2px solid #242422;background:#fff;box-shadow:2px 3px 0 rgba(20,20,18,.16);overflow:hidden;cursor:pointer;scroll-snap-align:start;transition:opacity .16s ease,transform .16s ease,border-color .16s ease;}
+.museo-movil-pared{position:absolute;top:48px;right:11px;bottom:150px;left:11px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:6px;padding:9px;overflow:hidden;background:#fcfcfa;border:1px solid #dbdbd5;box-shadow:inset 0 0 0 9px #f1f1ed,0 9px 20px rgba(25,25,22,.08);}
+.museo-movil-obra{position:relative;min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:3px;padding:4px;border:2px solid #242422;background:#fff;box-shadow:2px 3px 0 rgba(20,20,18,.16);overflow:hidden;cursor:pointer;transition:opacity .16s ease,transform .16s ease,border-color .16s ease;}
 .museo-movil-obra img{display:block;width:100%;height:100%;min-height:0;object-fit:contain;background:#f7f7f5;}
-.museo-movil-obra small{overflow:hidden;color:#262623;text-overflow:ellipsis;white-space:nowrap;font:700 7px/1.1 Arial,sans-serif!important;text-align:left;}
+.museo-movil-obra small{overflow:hidden;color:#262623;text-overflow:ellipsis;white-space:nowrap;font:700 6px/1.1 Arial,sans-serif!important;text-align:left;}
 .museo-movil-obra.vigilada{border:3px solid #d91b21;box-shadow:0 0 0 3px rgba(217,27,33,.35),0 0 18px rgba(217,27,33,.38),2px 3px 0 rgba(20,20,18,.2);}
 .museo-movil-obra.robada{pointer-events:none;opacity:.13;transform:scale(.93);}
 .museo-movil-alex{position:absolute;z-index:7;left:10px;right:auto;bottom:12px;width:72px;height:110px;pointer-events:none;}
@@ -17394,7 +17394,9 @@ function activarModoIACaptura(v){
        reservar dos veces la altura que ocupa el teclado. */
     const altoVentana=Math.round(v.getBoundingClientRect().height);
     const ventanaAjustada=v.classList.contains("max") && Math.abs(altoVentana-viewport.height)<6;
-    mundo.style.setProperty("--ia-viewport-visible",`${Math.round(viewport.height)}px`);
+    const altoVisible=`${Math.round(viewport.height)}px`;
+    v.style.setProperty("--ia-viewport-visible",altoVisible);
+    mundo.style.setProperty("--ia-viewport-visible",altoVisible);
     mundo.style.setProperty("--ia-teclado",`${ventanaAjustada || v.classList.contains("ia-escribiendo")?0:oculto}px`);
   };
   window.visualViewport?.addEventListener("resize",ajustarTecladoIA,{signal});
@@ -18058,7 +18060,7 @@ function activarMuseoPortfolioMovil(v){
     obras:(sala.obras.length?sala.obras:[{titulo:"obra sin título"}]).slice(0,6).map((obra,i)=>({obra,robada:false,zona:i%3}))
   }));
   const total=salas.reduce((n,s)=>n+s.obras.length,0);
-  let sala=0,zonaVigilada=1,activo=true,proximoCambio=0;
+  let sala=0,vigiladas=new Set([1]),activo=true,proximoCambio=0;
 
   const mundo=document.createElement("section");
   mundo.className="portfolio-3d-mundo museo-movil-mundo";
@@ -18107,17 +18109,19 @@ function activarMuseoPortfolioMovil(v){
       etiqueta.textContent=item.obra.titulo||"sin título";
       boton.append(img,etiqueta);
       if(item.robada) boton.classList.add("robada");
-      if(item.zona===zonaVigilada) boton.classList.add("vigilada");
+      if(vigiladas.has(i)) boton.classList.add("vigilada");
       pared.appendChild(boton);
     });
     actualizar();
   };
   const cambiarMirada=()=>{
     if(!activo || intro.hidden===false) return;
-    zonaVigilada=(zonaVigilada+1+Math.floor(Math.random()*2))%3;
-    dialogoEl.textContent=`Miro ${direcciones[zonaVigilada]}.`;
+    const cantidad=sala===0?1:2;
+    const candidatas=[...salas[sala].obras.keys()].sort(()=>Math.random()-.5);
+    vigiladas=new Set(candidatas.slice(0,cantidad));
+    dialogoEl.textContent=cantidad===1?`No pierdo de vista ${direcciones[salas[sala].obras[[...vigiladas][0]].zona]}.`:"Hoy estoy mirando más de un sitio.";
     renderSala();
-    proximoCambio=window.setTimeout(cambiarMirada,3400+Math.random()*1800);
+    proximoCambio=window.setTimeout(cambiarMirada,1700+Math.random()*1500);
   };
   const siguienteSala=()=>{
     if(sala>=salas.length-1){
@@ -18126,7 +18130,7 @@ function activarMuseoPortfolioMovil(v){
       return;
     }
     sala++;
-    zonaVigilada=(zonaVigilada+1)%3;
+    vigiladas=new Set([Math.floor(Math.random()*salas[sala].obras.length)]);
     dialogoEl.textContent="La puerta de la siguiente sala se ha abierto.";
     renderSala();
   };
@@ -18136,7 +18140,7 @@ function activarMuseoPortfolioMovil(v){
     if(!boton || !activo || !intro.hidden) return;
     const item=salas[sala].obras[Number(boton.dataset.indice)];
     if(!item || item.robada) return;
-    if(item.zona===zonaVigilada){
+    if(vigiladas.has(Number(boton.dataset.indice))){
       salas[sala].obras.forEach(obra=>obra.robada=false);
       dialogoEl.textContent="Esa pared estaba vigilada.";
       renderSala();
@@ -18154,7 +18158,7 @@ function activarMuseoPortfolioMovil(v){
     intro.hidden=true;
     dialogoEl.textContent="Miro el centro.";
     renderSala();
-    proximoCambio=window.setTimeout(cambiarMirada,2600);
+    proximoCambio=window.setTimeout(cambiarMirada,1800);
   },{signal});
 
   const comentarioCada=window.setInterval(()=>{
