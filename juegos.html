@@ -6950,6 +6950,116 @@ body.modo-juego-global>#juegosHub:not([hidden])~*:not(#modoJuegoGlobal):not(.avi
 }
 @media(max-width:760px){.juegos-hub{padding:10px!important;overflow:auto!important}.juegos-hub-cabecera{margin-bottom:8px!important}.juegos-hub-cabecera h1{font-size:24px!important}.juegos-hub-cabecera p{font-size:8px!important}.juegos-red{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:repeat(3,minmax(190px,1fr))!important;align-content:start!important;gap:7px!important}.juego-tarjeta:first-child{grid-column:auto!important}.juego-tarjeta:last-child{grid-column:1/-1!important;width:calc(50% - 4px);justify-self:center}.juego-tarjeta-texto{padding:6px!important}.juego-tarjeta-texto strong{font-size:12px!important}.juego-tarjeta-texto small{font-size:7px!important;margin-top:3px}}
 
+/* Móvil: una estantería horizontal, no una cuadrícula comprimida. */
+@media(max-width:760px),(pointer:coarse){
+  .juegos-hub{
+    position:fixed!important;
+    display:grid!important;
+    grid-template-rows:auto minmax(0,1fr)!important;
+    overflow:hidden!important;
+    padding:12px 0 18px!important;
+  }
+
+  .juegos-hub-cabecera{
+    padding:0 16px 10px!important;
+    margin:0!important;
+  }
+
+  .juegos-hub-cartela{display:none!important;}
+  .juegos-hub-cabecera h1{font-size:27px!important;}
+  .juegos-hub-cabecera p{font-size:9px!important;}
+
+  .juegos-red{
+    display:flex!important;
+    align-items:center!important;
+    gap:18px!important;
+    min-height:0!important;
+    padding:10px calc(50vw - 42vw) 22px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scroll-snap-type:x mandatory;
+    scroll-behavior:smooth;
+    scrollbar-width:none;
+    perspective:1000px;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .juegos-red::-webkit-scrollbar{display:none;}
+
+  .juego-tarjeta,.juego-tarjeta:nth-child(n),.juego-tarjeta:last-child{
+    display:grid!important;
+    flex:0 0 84vw!important;
+    width:84vw!important;
+    height:min(64dvh,540px)!important;
+    min-height:0!important;
+    grid-column:auto!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+    justify-self:auto!important;
+    scroll-snap-align:center;
+    scroll-snap-stop:always;
+    border-radius:8px!important;
+    opacity:.54;
+    transform:scale(.86) rotateY(18deg)!important;
+    transform-origin:center center;
+    transition:transform .32s ease,opacity .28s ease,filter .28s ease!important;
+  }
+
+  .juego-tarjeta.is-hub-activa{
+    z-index:2;
+    opacity:1;
+    transform:scale(1) rotateY(0)!important;
+    filter:brightness(1.04) saturate(1.08)!important;
+  }
+
+  .juego-tarjeta>img{object-fit:cover!important;}
+  .juego-tarjeta-texto{padding:12px 13px 15px!important;}
+  .juego-tarjeta-texto strong{font-size:18px!important;}
+  .juego-tarjeta-texto small{margin-top:6px!important;font-size:9px!important;}
+
+  .juegos-hub-nav{
+    position:absolute;
+    z-index:5;
+    left:7px;
+    right:7px;
+    top:50%;
+    display:flex;
+    justify-content:space-between;
+    pointer-events:none;
+  }
+
+  .juegos-hub-nav button{
+    width:38px;
+    height:38px;
+    padding:0;
+    border:1px solid rgba(255,255,255,.72);
+    border-radius:50%;
+    color:#fff;
+    background:rgba(30,31,70,.25);
+    box-shadow:0 5px 14px rgba(27,18,58,.16);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    pointer-events:auto;
+  }
+
+  .juegos-hub-nav i{
+    position:relative;
+    display:block;
+    width:8px;
+    height:8px;
+    margin:auto;
+    border-top:1.5px solid currentColor;
+    border-right:1.5px solid currentColor;
+    transform:rotate(-135deg);
+  }
+
+  .juegos-hub-nav button:last-child i{transform:rotate(45deg);}
+}
+
+/* Todos los mundos comparten una voz deliberadamente lúdica. */
+.juegos-hub,.juegos-hub button,.ventana.juego-pantalla,.ventana.juego-pantalla *{
+  font-family:"Comic Sans MS","Comic Sans",cursive!important;
+}
+
 /* El menu se comporta como una pantalla de pausa ilustrada; el sonido vive aparte. */
 .mundo-menu-capa{background:rgba(21,31,48,.5)!important;backdrop-filter:blur(4px)!important}
 .mundo-menu-cuadro{width:min(320px,calc(100% - 40px))!important;padding:17px 18px 20px!important;color:#4a260c!important;border:4px solid #6d3514!important;border-radius:10px!important;outline:3px solid #f4bf3e!important;background:repeating-linear-gradient(0deg,rgba(91,42,15,.16) 0 2px,transparent 2px 24px),linear-gradient(90deg,#9c5022,#c8782e 48%,#96501f)!important;box-shadow:0 8px 0 #3c1d0d,0 13px 25px rgba(20,17,34,.38),inset 0 0 0 3px #e69d35!important}
@@ -7038,6 +7148,11 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
 .museo-postal-panel canvas,.museo-postal-panel img{display:block;width:100%;max-height:72vh;object-fit:contain;background:#fff;box-shadow:10px 12px 0 rgba(0,0,0,.12);transform:rotate(-1deg)}
 .museo-postal-copy{font:11px/1.5 "Courier New",monospace}.museo-postal-copy strong{display:block;margin-bottom:10px;font:900 clamp(28px,6vw,58px)/.9 'MiguelRosalen',Arial,sans-serif}.museo-postal-copy div{display:flex;gap:8px;margin-top:18px}.museo-postal-copy button{padding:9px 13px;border:1px solid #222;border-radius:999px;background:#fff;cursor:pointer;font:700 9px/1 "Courier New",monospace}
 @media(max-width:700px){.mundo-progreso{top:39px;width:calc(100% - 112px)}.museo-intro{grid-template-columns:34% 1fr;padding:12px}.museo-intro-dialogo{padding:12px;font-size:10px}.museo-postal-panel{grid-template-columns:1fr}.museo-postal-panel canvas,.museo-postal-panel img{max-height:55vh}.museo-postal-copy{text-align:center}.museo-postal-copy div{justify-content:center}}
+
+/* Tipografía final de los minijuegos. */
+.juegos-hub,.juegos-hub button,.ventana.juego-pantalla,.ventana.juego-pantalla *{
+  font-family:"Comic Sans MS","Comic Sans",cursive!important;
+}
 
 </style>
 
@@ -17593,7 +17708,28 @@ function asegurarHubJuegos(){
     ["PORTFOLIO","Roba las obras cuando nadie esté mirando.","assets/multiverse/hub-portfolio.webp"],
     ["IA","Responde al chat para construir y guardar tu avatar.","assets/multiverse/hub-ia-custom.webp"]
   ];
-  hub.innerHTML=`<header class="juegos-hub-cabecera"><div><h1>JUEGOS</h1><p>elige una partida</p></div><aside class="juegos-hub-cartela"><strong>EL RECREO DE LA WEB</strong><p>Cinco partidas pequeñas para perder el tiempo con toda la intención.</p></aside></header><section class="juegos-red">${juegos.map(([tipo,bajada,imagen])=>`<button class="juego-tarjeta" type="button" data-juego-tipo="${tipo}"><img src="${imagen}" alt="" loading="eager" decoding="async"><span class="juego-tarjeta-texto"><strong>${tipo}</strong><small>${bajada}</small></span></button>`).join("")}</section>`;
+  hub.innerHTML=`<header class="juegos-hub-cabecera"><div><h1>JUEGOS</h1><p>elige una partida</p></div><aside class="juegos-hub-cartela"><strong>EL RECREO DE LA WEB</strong><p>Cinco partidas pequeñas para perder el tiempo con toda la intención.</p></aside></header><nav class="juegos-hub-nav" aria-label="Cambiar de juego"><button type="button" data-hub-nav="-1" aria-label="Juego anterior"><i aria-hidden="true"></i></button><button type="button" data-hub-nav="1" aria-label="Juego siguiente"><i aria-hidden="true"></i></button></nav><section class="juegos-red">${juegos.map(([tipo,bajada,imagen])=>`<button class="juego-tarjeta" type="button" data-juego-tipo="${tipo}"><img src="${imagen}" alt="" loading="eager" decoding="async"><span class="juego-tarjeta-texto"><strong>${tipo}</strong><small>${bajada}</small></span></button>`).join("")}</section>`;
+  const red=hub.querySelector(".juegos-red");
+  const tarjetas=[...hub.querySelectorAll(".juego-tarjeta")];
+  const actualizarTarjetaActiva=()=>{
+    const centro=red.scrollLeft+red.clientWidth/2;
+    let activa=tarjetas[0],distancia=Infinity;
+    tarjetas.forEach(tarjeta=>{
+      const d=Math.abs(tarjeta.offsetLeft+tarjeta.offsetWidth/2-centro);
+      if(d<distancia){distancia=d;activa=tarjeta;}
+    });
+    tarjetas.forEach(tarjeta=>tarjeta.classList.toggle("is-hub-activa",tarjeta===activa));
+  };
+  let rafHub=0;
+  red.addEventListener("scroll",()=>{if(!rafHub)rafHub=requestAnimationFrame(()=>{rafHub=0;actualizarTarjetaActiva();});},{passive:true});
+  hub.querySelectorAll("[data-hub-nav]").forEach(boton=>boton.addEventListener("click",e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const actual=tarjetas.findIndex(tarjeta=>tarjeta.classList.contains("is-hub-activa"));
+    const siguiente=Math.max(0,Math.min(tarjetas.length-1,actual+Number(boton.dataset.hubNav)));
+    tarjetas[siguiente]?.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});
+  }));
+  requestAnimationFrame(actualizarTarjetaActiva);
   hub.addEventListener("click",e=>{const tarjeta=e.target.closest("[data-juego-tipo]");if(!tarjeta)return;e.preventDefault();abrirJuegoDesdeHub(tarjeta.dataset.juegoTipo)});
   document.body.appendChild(hub);return hub;
 }
