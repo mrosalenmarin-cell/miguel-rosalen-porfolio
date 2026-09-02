@@ -150,7 +150,8 @@ font-smooth:auto;
 -webkit-font-smoothing:antialiased;
 text-rendering:optimizeLegibility;
 filter:none;
-pointer-events:none;
+pointer-events:auto;
+cursor:pointer;
 transition:0.6s;
 isolation:isolate;
 }
@@ -502,6 +503,14 @@ transform:translateY(5px);
 }
 #timer.timer-reward{color:#178f78;opacity:.88!important;transform:translateY(-2px) scale(1.08);transition:.18s}
 #timer.timer-reward::after{color:#178f78;opacity:.82;transform:translateY(5px)}
+#timer{pointer-events:auto;cursor:pointer;}
+
+.ventana-tiempo{min-width:min(420px,calc(100vw - 32px));background:rgba(250,251,247,.72);}
+.ventana-tiempo .texto{height:calc(100% - 30px);padding:0;overflow:auto;opacity:.72;}
+.tiempo-panel{padding:18px 20px 22px;color:rgba(20,25,24,.82);font:11px/1.55 Arial,Helvetica,sans-serif;}
+.tiempo-panel h2{margin:0 -20px 16px;padding:0 20px 14px;border-bottom:1px solid rgba(20,25,24,.18);font:500 15px/1.2 Arial,Helvetica,sans-serif;letter-spacing:.05em;}
+.tiempo-panel p{margin:0 0 14px;}.tiempo-panel table{width:100%;margin:16px 0;border-collapse:collapse;font-size:10px;}.tiempo-panel th,.tiempo-panel td{padding:8px 9px;border:1px solid rgba(20,25,24,.18);text-align:left;vertical-align:top;}.tiempo-panel th{font-size:8px;letter-spacing:.07em;font-weight:600;}.tiempo-panel td:last-child{white-space:nowrap;}.tiempo-panel .tiempo-movil{padding:8px 9px;border:1px solid rgba(20,25,24,.18);border-top:0;font-size:9px;}.tiempo-panel .tiempo-cierre{margin-top:18px;margin-bottom:0;}.tiempo-panel .tiempo-final{margin:16px 0 0;padding-top:12px;border-top:1px solid rgba(20,25,24,.18);font-size:9px;letter-spacing:.06em;font-weight:600;}
+@media(max-width:620px){.ventana-tiempo{min-width:0;}.tiempo-panel{padding:15px 16px 18px;font-size:10px;}.tiempo-panel h2{margin:0 -16px 13px;padding:0 16px 12px;font-size:13px;}.tiempo-panel th,.tiempo-panel td{padding:7px;font-size:9px;}.tiempo-panel .tiempo-movil{font-size:8px;}}
 
 #menuSistema{
 position:fixed;
@@ -5944,7 +5953,7 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 </nav>
 <div id="sub">toca para abrir · baja para perderte</div>
 
-<div id="timer">
+<div id="timer" role="button" tabindex="0" aria-label="abrir información sobre el tiempo">
 
 10:00
 
@@ -14742,6 +14751,28 @@ let inner=`
 <div class="texto">${info[1]||""}</div>
 `;
 
+if(info[0]==="TIEMPO"){
+  v.classList.add("ventana-tiempo");
+  v.style.width="min(470px,calc(100vw - 32px))";
+  v.style.height="min(650px,calc(100dvh - 70px))";
+  inner=`
+<div class="barra"><div>TIEMPO</div><div style="display:flex;gap:10px"><div class="btn mini">—</div><div class="btn maxi">□</div><div class="btn cerrar">×</div></div></div>
+<div class="texto"><article class="tiempo-panel">
+  <h2>¿QUÉ LE PASA AL TIEMPO?</h2>
+  <p>Aquí el tiempo no pasa igual.<br>Tienes 10 minutos, pero navegar también los consume.</p>
+  <table aria-label="Acciones que consumen tiempo"><thead><tr><th>ACCIÓN</th><th>TIEMPO</th></tr></thead><tbody>
+    <tr><td>abrir una ventana</td><td>−10 s</td></tr>
+    <tr><td>seguir bajando</td><td>−1 s / 180 px</td></tr>
+    <tr><td>preguntar por el tiempo a la IA</td><td>−30 s</td></tr>
+  </tbody></table>
+  <div class="tiempo-movil">móvil: −1 s / 210 px</div>
+  <p class="tiempo-cierre">Cuanto más intentas recorrer la página, menos tiempo tienes para hacerlo.</p>
+  <p>No necesitas verlo todo.<br>Probablemente no puedas.</p>
+  <p>00:00 → la web decide que has terminado.</p>
+  <p class="tiempo-final">EL TIEMPO TAMBIÉN FORMA PARTE<br>DE LA INTERFAZ.</p>
+</article></div>`;
+}
+
 
 /* =========================
 CURRICULUM VIVO
@@ -17024,6 +17055,24 @@ function resetCronometro(){
 }
 
 timer.innerHTML = formatTimer(tiempo);
+
+function abrirPanelTiempo(evento){
+  evento?.preventDefault?.();
+  evento?.stopPropagation?.();
+  const existente=[...document.querySelectorAll('.ventana[data-tipo="TIEMPO"]')].find(v=>v.style.display!=="none");
+  if(existente){
+    existente.classList.remove("min");
+    traerVentanaAlFrente(existente);
+    return;
+  }
+  const x=evento?.clientX ?? Math.max(24,window.innerWidth-320);
+  const y=evento?.clientY ?? 70;
+  crearVentana(x,y,["TIEMPO",""]);
+}
+timer?.addEventListener("click",abrirPanelTiempo);
+timer?.addEventListener("keydown",evento=>{
+  if(evento.key==="Enter" || evento.key===" ") abrirPanelTiempo(evento);
+});
 
 const cuenta=setInterval(()=>{
   penalizarTiempo(1, "reloj");
