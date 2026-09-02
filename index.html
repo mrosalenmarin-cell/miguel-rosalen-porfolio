@@ -526,6 +526,7 @@ transform:translateY(5px);
 .aviso-tiempo.desaparecer{opacity:0;transform:translateY(-4px)}
 .aviso-tiempo strong{display:block;margin-bottom:10px;font:500 12px/1.1 Arial,Helvetica,sans-serif;letter-spacing:.05em;}
 .aviso-tiempo p{margin:0 0 10px;}.aviso-tiempo p:last-child{margin-bottom:0;}
+.aviso-tiempo table{width:100%;margin:12px 0;border-collapse:collapse;font-size:9px;}.aviso-tiempo th,.aviso-tiempo td{padding:6px 7px;border:1px solid rgba(28,36,32,.16);text-align:left;vertical-align:top;}.aviso-tiempo th{font-size:8px;font-weight:600;letter-spacing:.06em;}.aviso-tiempo td:last-child{white-space:nowrap;}
 @media(max-width:620px){.aviso-tiempo{padding:12px 14px 14px;font-size:10px;}.aviso-tiempo strong{font-size:11px;}}
 
 .ventana-tiempo{min-width:min(420px,calc(100vw - 32px));background:rgba(250,251,247,.72);}
@@ -6008,6 +6009,7 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   overscroll-behavior:contain!important;
   -webkit-overflow-scrolling:touch!important;
   touch-action:pan-y!important;
+  scrollbar-gutter:stable;
 }
 @media (max-width:768px), (pointer:coarse){
   .ventana.ventana-lectura:not(.max):not(.min){
@@ -14518,6 +14520,35 @@ if(typeof MutationObserver!=="undefined"){
   }
 }
 
+function prepararLecturaTactilVentana(v){
+  const texto=v?.querySelector(":scope > .texto");
+  if(!texto || texto.dataset.lecturaTactil || texto.classList.contains("ia-panel")) return;
+  texto.dataset.lecturaTactil="1";
+  let ultimoY=0;
+  let gestoActivo=false;
+
+  texto.addEventListener("touchstart",e=>{
+    if(e.touches?.length!==1) return;
+    ultimoY=e.touches[0].clientY;
+    gestoActivo=texto.scrollHeight>texto.clientHeight+1;
+  },{passive:true});
+
+  texto.addEventListener("touchmove",e=>{
+    if(!gestoActivo || e.touches?.length!==1) return;
+    const y=e.touches[0].clientY;
+    const delta=ultimoY-y;
+    ultimoY=y;
+    texto.scrollTop+=delta;
+    window._ventanaScrollInternoHasta=Date.now()+1000;
+    if(e.cancelable) e.preventDefault();
+    e.stopPropagation();
+  },{passive:false});
+
+  const terminar=()=>{gestoActivo=false;};
+  texto.addEventListener("touchend",terminar,{passive:true});
+  texto.addEventListener("touchcancel",terminar,{passive:true});
+}
+
 function crearVentana(x,y,info){
 
   if(!info || !info[0]) return;
@@ -15087,6 +15118,7 @@ v.innerHTML=inner;
 if(!["CURRICULUM","IA","TIEMPO","RECONOCIMIENTO"].includes(info[0])){
   v.classList.add("ventana-lectura");
 }
+prepararLecturaTactilVentana(v);
 
 v.addEventListener(
 "pointerdown",
@@ -17240,15 +17272,15 @@ function abrirPanelTiempo(evento){
   const aviso=document.createElement("aside");
   aviso.className="aviso-tiempo";
   aviso.setAttribute("role","status");
-  aviso.innerHTML=`<strong>¿QUÉ LE PASA AL TIEMPO?</strong><p>Aquí el tiempo no pasa igual.<br>Tienes 10 minutos, pero navegar también los consume.</p><p>Cuanto más intentas recorrer la página, menos tiempo tienes para hacerlo.<br><br>No necesitas verlo todo.<br>Probablemente no puedas.</p>`;
+  aviso.innerHTML=`<strong>¿QUÉ LE PASA AL TIEMPO?</strong><p>Aquí el tiempo no pasa igual.<br>Tienes 10 minutos, pero navegar también los consume.</p><table aria-label="Acciones que consumen tiempo"><thead><tr><th>ACCIÓN</th><th>TIEMPO</th></tr></thead><tbody><tr><td>abrir una ventana</td><td>−10 s</td></tr><tr><td>seguir bajando</td><td>−1 s / 180 px</td></tr><tr><td>preguntar por el tiempo a la IA</td><td>−30 s</td></tr></tbody></table><p>móvil: −1 s / 210 px</p><p>Cuanto más intentas recorrer la página, menos tiempo tienes para hacerlo.<br><br>No necesitas verlo todo.<br>Probablemente no puedas.</p><p>00:00 → la web decide que has terminado.</p><p>EL TIEMPO TAMBIÉN FORMA PARTE DE LA INTERFAZ.</p>`;
   document.body.appendChild(aviso);
   const reloj=timer.getBoundingClientRect();
   const ancho=aviso.offsetWidth;
   aviso.style.left=Math.max(12,reloj.left-ancho-12)+"px";
-  aviso.style.top=Math.max(12,reloj.top)+"px";
+  aviso.style.top=Math.max(118,reloj.bottom+14)+"px";
   requestAnimationFrame(()=>aviso.classList.add("visible"));
-  setTimeout(()=>aviso.classList.add("desaparecer"),11000);
-  setTimeout(()=>aviso.remove(),13600);
+  setTimeout(()=>aviso.classList.add("desaparecer"),17000);
+  setTimeout(()=>aviso.remove(),19600);
 }
 timer?.addEventListener("click",abrirPanelTiempo);
 timer?.addEventListener("keydown",evento=>{
