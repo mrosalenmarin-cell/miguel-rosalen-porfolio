@@ -5104,14 +5104,14 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 
 .portfolio-nodos-info{
   max-width:1040px;
-  min-height:140px;
+  min-height:clamp(420px,62vh,680px);
   margin:0 auto 18px;
   padding:6px 10px;
 
   position:relative;
 
   display:flex;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   align-items:flex-start;
   gap:10px 26px;
 
@@ -5142,6 +5142,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   cursor:pointer;
 
   text-decoration:none;
+  white-space:nowrap;
+  flex:0 0 auto;
 
   transition:
     color .18s ease,
@@ -5339,6 +5341,18 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   opacity:1;
 }
 
+.portfolio-nodo-resize{
+  position:absolute;
+  right:3px;
+  bottom:3px;
+  width:13px;
+  height:13px;
+  cursor:nwse-resize;
+  touch-action:none;
+  opacity:.38;
+  background:linear-gradient(135deg,transparent 0 42%,currentColor 43% 49%,transparent 50% 60%,currentColor 61% 67%,transparent 68%);
+}
+
 
 /* texto interior */
 
@@ -5364,12 +5378,17 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 @media (max-width:768px){
 
   .portfolio-nodos-info{
-    min-height:360px;
-    gap:9px 16px;
+    min-height:min(66dvh,620px);
+    gap:8px 12px;
+    padding-inline:8px;
   }
+
+  .portfolio-nodo-link{font-size:8.5px;}
 
   .portfolio-nodo-ventana{
     width:min(250px,78vw);
+    min-width:150px;
+    min-height:130px;
   }
 
 }
@@ -5935,6 +5954,22 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
     grid-template-columns:repeat(2,minmax(0,1fr));
     grid-auto-rows:96px;
     gap:6px;
+  }
+
+  /* Las galerías tienen un lienzo propio: el archivo completo se recorre dentro
+     de la ventana, sin cortar miniaturas por la altura general del sistema. */
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min){
+    height:min(78dvh,720px)!important;
+    max-height:min(78dvh,720px)!important;
+  }
+  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap{
+    height:calc(100% - 50px)!important;
+    min-height:0!important;
+  }
+  .ventana[data-tipo="PORTFOLIO"] .portfolio-performance-archivo{
+    overflow:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-y!important;
   }
 }
 
@@ -7413,6 +7448,7 @@ const portfolioSecciones=[
         id:"tatuaje",
         titulo:"TATUAJE",
         nota:"archivo de piel · dibujo directo",
+        layout:"archivo-miniaturas",
         obras:[
           {
             titulo:"Dibujo prestado",
@@ -8348,6 +8384,8 @@ const nodosHTML = sec.nodosInfo?.length
               : `<p class="portfolio-nodo-texto">${escaparHTMLPortfolio(nodo.texto)}</p>`}
           </div>
 
+          <span class="portfolio-nodo-resize" aria-hidden="true"></span>
+
         </div>
 
       `).join("")}
@@ -8768,6 +8806,40 @@ if(sec.nodosInfo?.length){
       const cabecera =
         ventana.querySelector(".portfolio-nodo-cabecera");
 
+      const redimensionar=ventana.querySelector(".portfolio-nodo-resize");
+
+      if(redimensionar){
+        redimensionar.addEventListener("pointerdown",e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          const inicio={
+            x:e.clientX,
+            y:e.clientY,
+            w:ventana.offsetWidth,
+            h:ventana.offsetHeight,
+            left:parseFloat(ventana.style.left)||0,
+            top:parseFloat(ventana.style.top)||0
+          };
+          redimensionar.setPointerCapture?.(e.pointerId);
+          const mover=ev=>{
+            const maxW=Math.max(150,contenedorNodos.clientWidth-inicio.left-5);
+            const maxH=Math.max(130,contenedorNodos.clientHeight-inicio.top-5);
+            ventana.style.width=Math.max(150,Math.min(inicio.w+ev.clientX-inicio.x,maxW))+"px";
+            ventana.style.height=Math.max(130,Math.min(inicio.h+ev.clientY-inicio.y,maxH))+"px";
+            actualizarLineaNodo(ventana.dataset.ventanaNodo);
+          };
+          const terminar=ev=>{
+            redimensionar.releasePointerCapture?.(ev.pointerId);
+            redimensionar.removeEventListener("pointermove",mover);
+            redimensionar.removeEventListener("pointerup",terminar);
+            redimensionar.removeEventListener("pointercancel",terminar);
+          };
+          redimensionar.addEventListener("pointermove",mover);
+          redimensionar.addEventListener("pointerup",terminar);
+          redimensionar.addEventListener("pointercancel",terminar);
+        });
+      }
+
 
       if(!cabecera) return;
 
@@ -8851,7 +8923,7 @@ if(sec.nodosInfo?.length){
 
           nuevoTop=Math.max(
             30,
-            nuevoTop
+            Math.min(nuevoTop,contenedorNodos.clientHeight-ventana.offsetHeight-margen)
           );
 
 
