@@ -7349,6 +7349,39 @@ body.modo-juego-global .ventana.portfolio-3d-activo .portfolio-3d-canvas{
   }
 }
 
+/* Las ventanas con texto conservan una cabecera fija y un cuerpo nativamente desplazable. */
+.ventana:not(.max):not(.min) > .texto{
+  min-height:0;
+  overscroll-behavior:contain;
+  scroll-behavior:auto;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+}
+
+.ventana-micro-aviso{
+  position:absolute;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  opacity:0;
+  transform:translateY(-8px);
+  transition:opacity .22s ease,transform .22s ease;
+  box-shadow:0 12px 34px rgba(15,31,25,.12)!important;
+}
+.ventana-micro-aviso.visible{opacity:1;transform:translateY(0)}
+.ventana-micro-aviso .barra{min-height:28px!important}
+.ventana-micro-aviso .texto{
+  max-height:none!important;
+  overflow:hidden!important;
+  padding:12px 14px 14px!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+  color:rgba(28,42,35,.72)!important;
+}
+
 </style>
 
 </head>
@@ -12800,6 +12833,25 @@ function prepararMicroIA(){
   let pausadoPorRespuesta=false;
   let reconocimientoCorriendo=false;
 
+  const mostrarAvisoMicrofono=()=>{
+    if(document.querySelector(".ventana-micro-aviso")) return;
+    const v=document.createElement("section");
+    v.className="ventana ventana-micro-aviso";
+    v.setAttribute("aria-live","polite");
+    v.innerHTML=`<div class="barra"><div>MICRÓFONO</div></div><div class="texto">ahora puedes hablar.<br>la IA te escuchará para responder con más precisión.</div>`;
+    const ancho=Math.min(310,Math.max(236,window.innerWidth-32));
+    v.style.width=ancho+"px";
+    v.style.left=Math.max(16,window.scrollX+window.innerWidth-ancho-22)+"px";
+    v.style.top=Math.max(16,window.scrollY+window.innerHeight*.18)+"px";
+    v.style.zIndex=String(++ventanaActiva);
+    document.body.appendChild(v);
+    requestAnimationFrame(()=>v.classList.add("visible"));
+    setTimeout(()=>{
+      v.classList.remove("visible");
+      setTimeout(()=>v.remove(),240);
+    },4200);
+  };
+
   const pedirPermisoMicrofonoUnaVez=async()=>{
     if(window._permisoMicroIAConcedido) return true;
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return true;
@@ -12811,6 +12863,7 @@ function prepararMicroIA(){
       });
       stream.getTracks().forEach(track=>track.stop());
       window._permisoMicroIAConcedido=true;
+      mostrarAvisoMicrofono();
       return true;
     }catch(err){
       return false;
@@ -19886,20 +19939,10 @@ document.addEventListener("touchmove",(e)=>{
   if(texto){
     window._ventanaScrollInternoHasta = Date.now() + 900;
     const touch=e.touches && e.touches[0];
-    const anterior=window._textoVentanaTactil;
     const y=touch ? touch.clientY : 0;
-    const dy=anterior && anterior.el===texto ? y-anterior.y : 0;
-    const puedeScroll=texto.scrollHeight > texto.clientHeight + 2;
-    const arriba=texto.scrollTop <= 1;
-    const abajo=texto.scrollTop + texto.clientHeight >= texto.scrollHeight - 1;
-
-    if(!puedeScroll || (arriba && dy>0) || (abajo && dy<0)){
-      if(e.cancelable) e.preventDefault();
-    }
-
     window._textoVentanaTactil = {el:texto,y};
   }
-},{passive:false,capture:true});
+},{passive:true,capture:true});
 
 document.addEventListener("touchend",()=>{
   window._textoVentanaTactil = null;
