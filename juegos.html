@@ -7404,6 +7404,17 @@ body.modo-juego-global .ventana.portfolio-3d-activo .portfolio-3d-canvas{
 .museo-movil-intro .museo-intro-dialogo{width:min(170px,52vw);max-width:none;min-height:138px;padding:14px!important;}
 .museo-movil-intro .museo-intro-dialogo p{font:11px/1.35 Arial,sans-serif!important;}
 
+/* La misma sala que en móvil, con una pared más amplia en escritorio. */
+@media (min-width:701px) and (pointer:fine){
+  .museo-movil-cabecera{left:24px;right:24px;top:18px;font-size:11px!important;}
+  .museo-movil-pared{top:64px;right:28px;bottom:165px;left:28px;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:18px;}
+  .museo-movil-obra{padding:8px;border-width:2px;}
+  .museo-movil-obra small{font-size:9px!important;}
+  .museo-movil-alex{left:28px;bottom:22px;width:94px;height:128px;}
+  .museo-movil-dialogo{right:28px;bottom:30px;left:140px;height:102px;padding:13px 15px;font-size:12px!important;}
+  .museo-movil-dialogo b{font-size:9px!important;}
+}
+
 /* La respuesta de la IA deja una reserva real para el menú inferior. */
 @media(max-width:700px){
   .ventana.ia-captura .ia-perfil-respuestas{padding:9px 10px 58px!important;}
@@ -18193,11 +18204,7 @@ function activarMuseoPortfolioMovil(v){
 }
 
 function activarMuseoPortfolioNuevo(v){
-  if(matchMedia("(max-width:700px), (pointer:coarse)").matches){
-    activarMuseoPortfolioMovil(v);
-    return;
-  }
-  activarMuseoPortfolioSalas(v);
+  activarMuseoPortfolioMovil(v);
 }
 
 function iniciarMinijuego(v){
@@ -18464,6 +18471,41 @@ function prepararLecturaTactilVentana(v){
   texto.dataset.lecturaTactil="1";
   texto.style.touchAction="pan-y";
   texto.style.webkitOverflowScrolling="touch";
+  let inicioY=0,ultimoY=0,ultimoTiempo=0,velocidad=0,activa=false,arrastre=false,cuadro=0;
+  const detenerInercia=()=>{ if(cuadro) cancelAnimationFrame(cuadro); cuadro=0; };
+  const continuar=()=>{
+    if(Math.abs(velocidad)<.08){ cuadro=0; return; }
+    texto.scrollTop+=velocidad*16;
+    velocidad*=.91;
+    cuadro=requestAnimationFrame(continuar);
+  };
+  texto.addEventListener("touchstart",e=>{
+    if(!matchMedia("(max-width:768px), (pointer:coarse)").matches || e.touches.length!==1) return;
+    detenerInercia();
+    inicioY=ultimoY=e.touches[0].clientY;
+    ultimoTiempo=performance.now(); velocidad=0; arrastre=false;
+    activa=texto.scrollHeight>texto.clientHeight+1;
+  },{passive:true});
+  texto.addEventListener("touchmove",e=>{
+    if(!activa || e.touches.length!==1) return;
+    const ahora=performance.now(),y=e.touches[0].clientY,delta=ultimoY-y;
+    if(Math.abs(delta)<.2) return;
+    arrastre=arrastre || Math.abs(y-inicioY)>4;
+    const acelerado=delta*1.55;
+    texto.scrollTop+=acelerado;
+    velocidad=velocidad*.34+(acelerado/Math.max(8,ahora-ultimoTiempo))*.66;
+    ultimoY=y; ultimoTiempo=ahora;
+    window._ventanaScrollInternoHasta=Date.now()+750;
+    if(arrastre && e.cancelable) e.preventDefault();
+    e.stopPropagation();
+  },{passive:false});
+  const finalizar=()=>{
+    if(!activa) return;
+    activa=false;
+    if(arrastre){ velocidad*=10; cuadro=requestAnimationFrame(continuar); }
+  };
+  texto.addEventListener("touchend",finalizar,{passive:true});
+  texto.addEventListener("touchcancel",finalizar,{passive:true});
 }
 
 function crearVentana(x,y,info){
@@ -20615,6 +20657,24 @@ function traerVentanaAlFrente(v){
   }
 }
 
+function ocultarContenidoVentanaMinimizada(v){
+  [...v.children].forEach(hijo=>{
+    if(hijo.classList.contains("barra")) return;
+    if(!Object.prototype.hasOwnProperty.call(hijo.dataset,"displayAntesDeMinimizar")) hijo.dataset.displayAntesDeMinimizar=hijo.style.getPropertyValue("display");
+    hijo.style.setProperty("display","none","important");
+  });
+}
+
+function restaurarContenidoVentanaMinimizada(v){
+  [...v.children].forEach(hijo=>{
+    if(hijo.classList.contains("barra") || !Object.prototype.hasOwnProperty.call(hijo.dataset,"displayAntesDeMinimizar")) return;
+    const display=hijo.dataset.displayAntesDeMinimizar;
+    if(display) hijo.style.setProperty("display",display);
+    else hijo.style.removeProperty("display");
+    delete hijo.dataset.displayAntesDeMinimizar;
+  });
+}
+
 function alternarMinimizarVentana(v){
   if(!v) return;
 
@@ -20631,6 +20691,7 @@ function alternarMinimizarVentana(v){
   if(!v.dataset.top) v.dataset.top = v.style.top || v.offsetTop + "px";
 
   if(v.classList.contains("min")){
+    restaurarContenidoVentanaMinimizada(v);
     v.classList.remove("min");
     v.style.width = String(v.dataset.w).includes("px") ? v.dataset.w : v.dataset.w + "px";
     v.style.height = String(v.dataset.h).includes("px") ? v.dataset.h : v.dataset.h + "px";
@@ -20643,6 +20704,7 @@ function alternarMinimizarVentana(v){
 
   const minimizadaMovil=matchMedia("(max-width:768px), (pointer:coarse)").matches;
   v.classList.add("min");
+  ocultarContenidoVentanaMinimizada(v);
   v.style.width = minimizadaMovil ? "min(82vw, 340px)" : "190px";
   v.style.height = minimizadaMovil ? "54px" : "30px";
   v.style.overflow = "hidden";
