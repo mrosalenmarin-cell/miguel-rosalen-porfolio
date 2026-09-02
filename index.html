@@ -5544,6 +5544,32 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
     left:max(16px, env(safe-area-inset-left, 0px) + 12px) !important;
     right:auto !important;
   }
+
+  /* Un teclado dibujado como herramienta de escritorio, no como icono del sistema. */
+  #teclado .teclado-toggle{
+    width:42px !important;
+    height:30px !important;
+    border-radius:3px !important;
+    border:1px solid rgba(255,255,255,.52) !important;
+    background:rgba(18,18,18,.58) !important;
+    box-shadow:0 8px 24px rgba(0,0,0,.18) !important;
+  }
+
+  #teclado .teclado-toggle::before{
+    width:24px !important;
+    height:15px !important;
+    border:1px solid rgba(255,255,255,.76) !important;
+    border-radius:1px !important;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 4px, rgba(255,255,255,.72) 4px 5px),
+      repeating-linear-gradient(0deg, transparent 0 4px, rgba(255,255,255,.72) 4px 5px) !important;
+    opacity:1 !important;
+  }
+
+  #teclado .teclado-toggle:active{
+    transform:translateY(1px) !important;
+    background:rgba(18,18,18,.8) !important;
+  }
 }
 
 </style>
