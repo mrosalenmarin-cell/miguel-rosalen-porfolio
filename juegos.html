@@ -39,7 +39,7 @@ href="logo-cuadrados.svg">
 <meta name="author" content="Miguel Rosalén">
 <meta name="creator" content="Miguel Rosalén">
 <title>MIGUEL ROSALÉN</title>
-<!-- JUEGOS-MOVIL-RUNTIME-V2 · FONT-MUSEO-MENU-OK · GUARDIA-DIFICIL-MOVIL · MENU-CERRAR-ESTILO -->
+<!-- JUEGOS-MOVIL-RUNTIME-V2 · FONT-MUSEO-MENU-OK · GUARDIA-OBRAS-ALEATORIAS-MOVIL · MENU-X-CIRCULAR -->
 
 <style>
 
@@ -7596,6 +7596,73 @@ body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar{
 
 body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar::before{
   font-size:10px !important;
+}
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
+  transform:translateY(1px) !important;
+}
+
+
+
+/* =========================================================
+   MÓVIL — CERRAR MENÚ CIRCULAR
+   Misma piel que NUEVA PARTIDA / VOLVER AL INICIO.
+   ========================================================= */
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar{
+  position:absolute !important;
+  z-index:10 !important;
+  top:9px !important;
+  right:9px !important;
+  left:auto !important;
+  bottom:auto !important;
+
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  min-height:38px !important;
+  margin:0 !important;
+  padding:0 !important;
+
+  display:grid !important;
+  place-items:center !important;
+
+  border:2px solid #71350e !important;
+  border-radius:50% !important;
+
+  color:#4b260b !important;
+  background:linear-gradient(#ffe16c,#e9a72c) !important;
+  box-shadow:
+    inset 0 2px #fff4aa,
+    inset 0 -3px #bd6a18,
+    0 3px 0 #5d2c0b !important;
+
+  font-size:0 !important;
+  line-height:1 !important;
+  opacity:1 !important;
+  transform:none !important;
+}
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar::before{
+  content:"×" !important;
+  position:static !important;
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  background:none !important;
+  box-shadow:none !important;
+  transform:none !important;
+
+  color:#4b260b !important;
+  font:900 23px/1 "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
+}
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:hover,
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:focus-visible{
+  color:#4b260b !important;
+  background:linear-gradient(#fff08e,#f0b438) !important;
+  outline:2px solid #fff !important;
+  outline-offset:2px !important;
 }
 
 body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
@@ -18112,7 +18179,7 @@ function activarMuseoPortfolioSalas(v){
     return{nombre:fuente.nombre,obras:unicas.map((obra,i)=>{const img=new Image();img.decoding="async";img.src=obra.full||obra.thumb||"";return{obra,img,robada:false,hit:null,zona:i%3}})};
   });
   const total=salas.reduce((n,s)=>n+s.obras.length,0),cuenta=mundo.querySelector("[data-museo-cuenta]"),salaEl=mundo.querySelector("[data-museo-sala]"),mensaje=mundo.querySelector("[data-museo-mensaje]"),zonaEl=mundo.querySelector("[data-museo-zona]");
-  let sala=0,zonaGuardia=1,zonaGuardiaExtra=null,proximoCambio=performance.now()+2600,proximoDialogo=performance.now()+7000,activo=true,raf=0,transicionHasta=0,alarmaHasta=0,juegoIniciado=false,hablante="ÁLEX",dialogo="Porrón reúne dirección de arte, identidad y producto.",transicionTitulo="",transicionSubtitulo="",transicionTexto="",transicionCuenta="";
+  let sala=0,zonaGuardia=1,zonaGuardiaExtra=null,obrasVigiladasMovil=new Set(),proximoCambio=performance.now()+2600,proximoDialogo=performance.now()+7000,activo=true,raf=0,transicionHasta=0,alarmaHasta=0,juegoIniciado=false,hablante="ÁLEX",dialogo="Porrón reúne dirección de arte, identidad y producto.",transicionTitulo="",transicionSubtitulo="",transicionTexto="",transicionCuenta="";
 
   /* DIFICULTAD PROGRESIVA — SOLO MUSEO MÓVIL.
      En escritorio se conserva exactamente la lógica original. */
@@ -18145,31 +18212,39 @@ function activarMuseoPortfolioSalas(v){
   }
 
   function elegirNuevaMiradaMovil(){
-    const anterior=zonaGuardia;
+    /* En móvil el guardia ya no vigila filas o zonas:
+       elige obras concretas al azar en cada cambio. */
+    const obras=salas[sala].obras;
+    const disponibles=obras
+      .map((obra,i)=>obra.robada?null:i)
+      .filter(i=>i!==null);
 
-    /* Puede mantener la mirada ocasionalmente: evita un ritmo predecible
-       de izquierda-centro-derecha. Cuanto más avanza, menos descansa. */
-    const probMantener=[.12,.08,.04,.02][Math.min(sala,3)];
-
-    if(Math.random()>=probMantener){
-      const candidatas=[0,1,2].filter(z=>z!==anterior);
-      zonaGuardia=candidatas[Math.floor(Math.random()*candidatas.length)];
-    }
-
+    obrasVigiladasMovil.clear();
     zonaGuardiaExtra=null;
 
-    /* Probabilidad de doble vigilancia según la sala. */
-    const probDoble=[.10,.38,.72,.92][Math.min(sala,3)];
+    if(disponibles.length<=1) return;
 
-    /* En salas 3 y 4 puede hacer un barrido completo muy breve. */
-    const probBarrido=[0,0,.12,.24][Math.min(sala,3)];
+    /* Más obras rojas conforme avanzan las salas.
+       Siempre queda al menos una obra sin vigilar. */
+    const rangos=[
+      [2,3],
+      [2,4],
+      [3,4],
+      [3,5]
+    ][Math.min(sala,3)];
 
-    if(Math.random()<probBarrido){
-      zonaGuardiaExtra=3;
-    }else if(Math.random()<probDoble){
-      const extras=[0,1,2].filter(z=>z!==zonaGuardia);
-      zonaGuardiaExtra=extras[Math.floor(Math.random()*extras.length)];
+    const maximo=Math.max(1,Math.min(rangos[1],disponibles.length-1));
+    const minimo=Math.min(rangos[0],maximo);
+    const cantidad=minimo+Math.floor(Math.random()*(maximo-minimo+1));
+
+    /* Fisher-Yates para que la selección no siga patrón espacial. */
+    const mezcla=[...disponibles];
+    for(let i=mezcla.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [mezcla[i],mezcla[j]]=[mezcla[j],mezcla[i]];
     }
+
+    mezcla.slice(0,cantidad).forEach(i=>obrasVigiladasMovil.add(i));
   }
 
   function programarSiguienteMirada(t){
@@ -18248,7 +18323,7 @@ function activarMuseoPortfolioSalas(v){
   }
   function restaurarPrimerPlano(img,r,w,h){if(!img.complete||!img.naturalWidth)return;ctx.drawImage(img,img.naturalWidth*r.x,img.naturalHeight*r.y,img.naturalWidth*r.w,img.naturalHeight*r.h,w*r.x,h*r.y,w*r.w,h*r.h)}
   function dibujarMirada(){/* La vigilancia se comunica directamente sobre las obras. */}
-  function actualizarHud(){const robadas=salas.reduce((n,s)=>n+s.obras.filter(o=>o.robada).length,0),direcciones=["IZQUIERDA","CENTRO","DERECHA"];cuenta.textContent=`${robadas}/${total}`;salaEl.textContent=`SALA ${String(sala+1).padStart(2,"0")} · ${salas[sala].nombre}`;const zonas=zonasVigiladasMuseo();zonaEl.textContent=zonas.map(z=>direcciones[z]).join(" + ");actualizarProgresoMundo(v,total?robadas/total*100:0,"COLECCIÓN")}
+  function actualizarHud(){const robadas=salas.reduce((n,s)=>n+s.obras.filter(o=>o.robada).length,0),direcciones=["IZQUIERDA","CENTRO","DERECHA"];cuenta.textContent=`${robadas}/${total}`;salaEl.textContent=`SALA ${String(sala+1).padStart(2,"0")} · ${salas[sala].nombre}`;if(museoEsMovil()){zonaEl.textContent=`${obrasVigiladasMovil.size} OBRAS`}else{const zonas=zonasVigiladasMuseo();zonaEl.textContent=zonas.map(z=>direcciones[z]).join(" + ")}actualizarProgresoMundo(v,total?robadas/total*100:0,"COLECCIÓN")}
   function dibujarEscritorio(t){
     const w=canvas.clientWidth,h=canvas.clientHeight,fondo=fondos[sala];ctx.fillStyle="#20252a";ctx.fillRect(0,0,w,h);if(fondo.complete&&fondo.naturalWidth)ctx.drawImage(fondo,0,0,w,h);
     const mapas=[
@@ -18304,8 +18379,6 @@ function activarMuseoPortfolioSalas(v){
           {x:.68,y:.48,w:.24,h:.25,zona:2}
         ];
 
-    const zonasVigiladas=zonasVigiladasMuseo();
-
     salas[sala].obras.forEach((item,i)=>{
       item.hit=null;
       if(item.robada)return;
@@ -18313,7 +18386,7 @@ function activarMuseoPortfolioSalas(v){
       item.zona=p.zona;
       insertarObraMovil(item,w*p.x,h*p.y,w*p.w,h*p.h);
 
-      if(item.hit && zonasVigiladas.includes(item.zona)){
+      if(item.hit && obrasVigiladasMovil.has(i)){
         const r=item.hit;
         ctx.save();
         ctx.shadowColor="rgba(255,32,38,.82)";
@@ -18415,9 +18488,9 @@ function activarMuseoPortfolioSalas(v){
     else dibujarEscritorio(t);
   }
   let ultimoDibujo=0;
-  function loop(t){if(!activo)return;if(t-ultimoDibujo<32){raf=requestAnimationFrame(loop);return}ultimoDibujo=t;if(juegoIniciado&&t>=proximoCambio){if(museoEsMovil()){elegirNuevaMiradaMovil()}else{let nueva=Math.floor(Math.random()*3);if(nueva===zonaGuardia)nueva=(nueva+1+Math.floor(Math.random()*2))%3;zonaGuardia=nueva;zonaGuardiaExtra=null}const direcciones=["izquierda","centro","derecha"];const vigiladasAhora=zonasVigiladasMuseo();hablante="ÁLEX";dialogo=vigiladasAhora.length===3?`Estoy vigilando toda la sala.`:vigiladasAhora.length>1?`Estoy vigilando ${direcciones[vigiladasAhora[0]]} y ${direcciones[vigiladasAhora[1]]}.`:`Estoy mirando las obras de ${direcciones[zonaGuardia]}.`;programarSiguienteMirada(t);actualizarHud()}if(juegoIniciado&&t>=proximoDialogo){const repertorio=dialogosSala[sala],entrada=repertorio[Math.floor(Math.random()*repertorio.length)];hablante=entrada.habla;dialogo=entrada.texto;proximoDialogo=t+7200+Math.random()*4200}dibujar(t);raf=requestAnimationFrame(loop)}
-  canvas.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();if(!juegoIniciado||performance.now()<transicionHasta||performance.now()<alarmaHasta)return;const r=canvas.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top,item=salas[sala].obras.find(o=>o.hit&&px>=o.hit.x&&px<=o.hit.x+o.hit.w&&py>=o.hit.y&&py<=o.hit.y+o.hit.h);if(!item)return;const vigiladas=zonasVigiladasMuseo();if(vigiladas.includes(item.zona)){alarmaHasta=performance.now()+1300;hablante="ÁLEX";dialogo="Esa pieza pertenece al museo. La sala vuelve a su estado inicial.";salas[sala].obras.forEach(o=>o.robada=false);mensaje.textContent="Álex recuperó la sala";actualizarHud();return}item.robada=true;hablante="ÁLEX";dialogo="Un momento... ese marco ha cambiado.";mensaje.textContent="algo ha desaparecido";actualizarHud();if(salas[sala].obras.every(o=>o.robada)){if(sala<salas.length-1){const siguiente=sala+1,cap=capitulos[siguiente];transicionTitulo=cap.sala;transicionSubtitulo=cap.nombre;transicionTexto=cap.texto;transicionCuenta=`${salas[siguiente].obras.length} OBRAS EN ESTA SALA`;hablante="ÁLEX";dialogo="La sala ha quedado vacía.";transicionHasta=performance.now()+4200;setTimeout(()=>{if(!activo)return;sala=siguiente;zonaGuardiaExtra=null;const entrada=dialogosSala[sala][0];hablante=entrada.habla;dialogo=entrada.texto;mensaje.textContent="nueva sala · observa las miradas";proximoDialogo=performance.now()+7200;programarSiguienteMirada(performance.now());actualizarHud()},3600)}else{if(typeof recuperarTiempo==="function")recuperarTiempo(10);if(typeof mostrarVictoriaMundo==="function")mostrarVictoriaMundo(v,10,()=>mostrarPostalMuseo(v,salas))}}},{signal});
-  introduccion.querySelector("button").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();juegoIniciado=true;introduccion.hidden=true;zonaGuardiaExtra=null;programarSiguienteMirada(performance.now());proximoDialogo=performance.now()+9000;canvas.focus({preventScroll:true})},{signal});
+  function loop(t){if(!activo)return;if(t-ultimoDibujo<32){raf=requestAnimationFrame(loop);return}ultimoDibujo=t;if(juegoIniciado&&t>=proximoCambio){if(museoEsMovil()){elegirNuevaMiradaMovil();hablante="ÁLEX";const avisos=["No aparto la vista de esas piezas.","Estoy controlando varias obras a la vez.","No te fíes de dónde estaba mirando antes.","Hoy tengo demasiados ojos en esta sala."];dialogo=avisos[Math.floor(Math.random()*avisos.length)]}else{let nueva=Math.floor(Math.random()*3);if(nueva===zonaGuardia)nueva=(nueva+1+Math.floor(Math.random()*2))%3;zonaGuardia=nueva;zonaGuardiaExtra=null;const direcciones=["izquierda","centro","derecha"];const vigiladasAhora=zonasVigiladasMuseo();hablante="ÁLEX";dialogo=vigiladasAhora.length===3?`Estoy vigilando toda la sala.`:vigiladasAhora.length>1?`Estoy vigilando ${direcciones[vigiladasAhora[0]]} y ${direcciones[vigiladasAhora[1]]}.`:`Estoy mirando las obras de ${direcciones[zonaGuardia]}.`}programarSiguienteMirada(t);actualizarHud()}if(juegoIniciado&&t>=proximoDialogo){const repertorio=dialogosSala[sala],entrada=repertorio[Math.floor(Math.random()*repertorio.length)];hablante=entrada.habla;dialogo=entrada.texto;proximoDialogo=t+7200+Math.random()*4200}dibujar(t);raf=requestAnimationFrame(loop)}
+  canvas.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();if(!juegoIniciado||performance.now()<transicionHasta||performance.now()<alarmaHasta)return;const r=canvas.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top,item=salas[sala].obras.find(o=>o.hit&&px>=o.hit.x&&px<=o.hit.x+o.hit.w&&py>=o.hit.y&&py<=o.hit.y+o.hit.h);if(!item)return;const indiceItem=salas[sala].obras.indexOf(item);const estaVigilada=museoEsMovil()?obrasVigiladasMovil.has(indiceItem):zonasVigiladasMuseo().includes(item.zona);if(estaVigilada){alarmaHasta=performance.now()+1300;hablante="ÁLEX";dialogo="Esa pieza pertenece al museo. La sala vuelve a su estado inicial.";salas[sala].obras.forEach(o=>o.robada=false);mensaje.textContent="Álex recuperó la sala";actualizarHud();return}item.robada=true;hablante="ÁLEX";dialogo="Un momento... ese marco ha cambiado.";mensaje.textContent="algo ha desaparecido";actualizarHud();if(salas[sala].obras.every(o=>o.robada)){if(sala<salas.length-1){const siguiente=sala+1,cap=capitulos[siguiente];transicionTitulo=cap.sala;transicionSubtitulo=cap.nombre;transicionTexto=cap.texto;transicionCuenta=`${salas[siguiente].obras.length} OBRAS EN ESTA SALA`;hablante="ÁLEX";dialogo="La sala ha quedado vacía.";transicionHasta=performance.now()+4200;setTimeout(()=>{if(!activo)return;sala=siguiente;zonaGuardiaExtra=null;obrasVigiladasMovil.clear();if(museoEsMovil())elegirNuevaMiradaMovil();const entrada=dialogosSala[sala][0];hablante=entrada.habla;dialogo=entrada.texto;mensaje.textContent="nueva sala · observa las miradas";proximoDialogo=performance.now()+7200;programarSiguienteMirada(performance.now());actualizarHud()},3600)}else{if(typeof recuperarTiempo==="function")recuperarTiempo(10);if(typeof mostrarVictoriaMundo==="function")mostrarVictoriaMundo(v,10,()=>mostrarPostalMuseo(v,salas))}}},{signal});
+  introduccion.querySelector("button").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();juegoIniciado=true;introduccion.hidden=true;zonaGuardiaExtra=null;obrasVigiladasMovil.clear();if(museoEsMovil())elegirNuevaMiradaMovil();programarSiguienteMirada(performance.now());proximoDialogo=performance.now()+9000;canvas.focus({preventScroll:true})},{signal});
   const sospechas=["Juraría que había una obra ahí. Justo cuando no miro... qué despiste.","Creo que falta algo en esta sala. Y creo que empiezo a sospechar de alguien.","Ese marco estaba ocupado hace un momento. Ya sé quién es el ladrón.","No he visto nada. Eso es lo peor: alguien está aprovechando cada giro."];
   const comentariosGuardia=["Mantengan cierta distancia de las obras, por favor.","En esta sala conviene mirar despacio: hay detalles que no parecen estar quietos.","La colección sigue completa. Eso creo.","Si buscan información, pueden empezar por la obra del centro.","No crucen la línea. La línea está ahí por una razón.","Hay visitantes que vienen por una pieza concreta y se van pensando en otra."];
   let robosRegistrados=0,dialogoGuardiaHasta=0,proximoComentarioGuardia=performance.now()+5600,rafSilencioGuardia=0;
