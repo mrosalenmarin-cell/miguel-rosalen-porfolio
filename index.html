@@ -5947,6 +5947,40 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   touch-action:pan-y;
 }
 
+/* Las ventanas informativas tienen una zona de lectura real, independiente de
+   la cabecera. Así el texto nunca queda atrapado detrás del borde de la ventana. */
+.ventana.ventana-lectura{
+  display:flex!important;
+  flex-direction:column!important;
+  height:clamp(270px,58vh,560px)!important;
+  max-height:calc(100dvh - 36px)!important;
+  overflow:hidden!important;
+}
+.ventana.ventana-lectura > .barra{
+  flex:0 0 50px!important;
+  min-height:50px!important;
+}
+.ventana.ventana-lectura > .doble.space{
+  flex:0 0 auto!important;
+}
+.ventana.ventana-lectura > .texto{
+  flex:1 1 0!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+}
+@media (max-width:768px), (pointer:coarse){
+  .ventana.ventana-lectura:not(.max):not(.min){
+    height:min(64dvh,540px)!important;
+    max-height:min(64dvh,540px)!important;
+  }
+}
+
 .ventana-micro-aviso{
   position:absolute;
   min-width:0!important;
@@ -14977,6 +15011,10 @@ inner=`
 }
 
 v.innerHTML=inner;
+
+if(!["CURRICULUM","IA","TIEMPO","RECONOCIMIENTO"].includes(info[0])){
+  v.classList.add("ventana-lectura");
+}
 
 v.addEventListener(
 "pointerdown",
