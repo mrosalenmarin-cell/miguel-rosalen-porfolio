@@ -7256,6 +7256,71 @@ body.modo-juego-global .mundo-menu-capa *{
   font-family:"Comic Sans MS","Comic Sans","Chalkboard SE",cursive !important;
 }
 
+/* Un único HUD para las cinco partidas: progreso discreto y menú siempre accesible. */
+body.modo-juego-global .ventana.max .mundo-menu-toggle,
+body.modo-juego-global .ventana.juego-pantalla .mundo-menu-toggle{
+  position:absolute!important;
+  z-index:1100!important;
+  left:auto!important;
+  top:auto!important;
+  right:12px!important;
+  bottom:18px!important;
+  width:28px!important;
+  min-width:28px!important;
+  height:28px!important;
+  min-height:28px!important;
+  padding:0!important;
+  border:1px solid rgba(30,35,47,.22)!important;
+  border-radius:50%!important;
+  color:rgba(24,30,42,.68)!important;
+  background:rgba(255,255,255,.3)!important;
+  box-shadow:0 3px 12px rgba(0,0,0,.06)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+  font-size:0!important;
+}
+body.modo-juego-global .ventana.max .mundo-menu-toggle::before,
+body.modo-juego-global .ventana.juego-pantalla .mundo-menu-toggle::before{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:9px;
+  width:10px;
+  height:1px;
+  background:currentColor;
+  box-shadow:0 4px currentColor,0 8px currentColor;
+}
+body.modo-juego-global .ventana.max .mundo-progreso,
+body.modo-juego-global .ventana.juego-pantalla .mundo-progreso{
+  z-index:1090!important;
+  left:10px!important;
+  right:auto!important;
+  top:10px!important;
+  bottom:auto!important;
+  width:min(116px,31vw)!important;
+  transform:none!important;
+  opacity:.52!important;
+  font-size:6px!important;
+  line-height:1!important;
+}
+body.modo-juego-global .ventana.max .mundo-progreso>span,
+body.modo-juego-global .ventana.juego-pantalla .mundo-progreso>span{margin-bottom:3px!important;}
+body.modo-juego-global .ventana.max .mundo-progreso>i,
+body.modo-juego-global .ventana.juego-pantalla .mundo-progreso>i{height:3px!important;border-width:1px!important;}
+body.modo-juego-global .ventana.max .mundo-progreso:hover,
+body.modo-juego-global .ventana.juego-pantalla .mundo-progreso:hover{opacity:.9!important;}
+
+/* Museo: sin HUD duplicado ni pixelado artificial; las salas quedan legibles en vertical. */
+body.modo-juego-global .ventana.portfolio-3d-activo .portfolio-3d-inventario{display:none!important;}
+body.modo-juego-global .ventana.portfolio-3d-activo .portfolio-3d-canvas{
+  image-rendering:auto!important;
+  filter:saturate(.96) contrast(1.03)!important;
+}
+@media(max-width:700px){
+  body.modo-juego-global .ventana.portfolio-3d-activo .museo-intro{padding:16px!important;}
+  body.modo-juego-global .ventana.portfolio-3d-activo .museo-intro-dialogo{font-size:11px!important;}
+}
+
 /* El botón puede vivir en un lateral; el teclado siempre se abre en el centro. */
 @media (max-width:768px), (pointer:coarse){
   #teclado .teclado-panel{
