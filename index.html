@@ -3172,6 +3172,10 @@ html.performance-mode body.ventanas-saturadas .ventana:not(.max).activa{
   top:50%;
   transform:translateY(-50%);
   z-index:10;
+  padding:8px;
+  border:0;
+  color:inherit;
+  background:transparent;
   font-size:60px;
   font-weight:200;
   line-height:1;
@@ -7742,6 +7746,7 @@ disenoGraficoPortfolio.subsecciones.push({
         obras: [
           {
             grupo: "carteles premiados",
+            titulo: "Sally riding high",
             span: 6,
             ancho: 1200,
             alto: 1200,
@@ -7750,6 +7755,7 @@ disenoGraficoPortfolio.subsecciones.push({
           },
           {
             grupo: "carteles premiados",
+            titulo: "Benn Barres",
             span: 6,
             ancho: 1196,
             alto: 1200,
@@ -17312,8 +17318,8 @@ function pintarObraActual(){
     <div class="obra ${obra.sinFicha ? "obra-sin-ficha" : ""} ${String(obra.img || "").includes("/tatuaje/") ? "obra-tatuaje" : ""}" tabindex="0">
       <div class="cerrarObra">×</div>
 
-      <div class="flechaObra flechaObraIzq">‹</div>
-      <div class="flechaObra flechaObraDer">›</div>
+      <button type="button" class="flechaObra flechaObraIzq" aria-label="Imagen anterior">‹</button>
+      <button type="button" class="flechaObra flechaObraDer" aria-label="Imagen siguiente">›</button>
 
       <img class="obraImagenGrande ${obra.noAmpliar ? "obraImagenNativa" : ""} ${obra.sensible && !obra.revelada ? "is-censurada" : ""}" src="${obra.img}" loading="lazy" decoding="async" alt="">
       ${censuraHTML}
@@ -17380,6 +17386,23 @@ function pintarObraActual(){
     visorObraActivo = true;
     overlay.focus();
   };
+
+  let gestoGaleria=null;
+  const visor=overlay.querySelector('.obra');
+  visor.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.flechaObra,.cerrarObra,.obraGaleria3d,.obraContenidoSensible button')) return;
+    gestoGaleria={id:e.pointerId,x:e.clientX,y:e.clientY};
+    visor.setPointerCapture?.(e.pointerId);
+  },{passive:true});
+  visor.addEventListener('pointerup',e=>{
+    if(!gestoGaleria || gestoGaleria.id!==e.pointerId) return;
+    const dx=e.clientX-gestoGaleria.x,dy=e.clientY-gestoGaleria.y;
+    gestoGaleria=null;
+    if(Math.abs(dx)<42 || Math.abs(dx)<Math.abs(dy)*1.25) return;
+    e.preventDefault();
+    pasarObra(dx<0?1:-1);
+  });
+  visor.addEventListener('pointercancel',()=>{gestoGaleria=null;},{passive:true});
 
   overlay.onclick = (e)=>{
     if(e.target === overlay){
