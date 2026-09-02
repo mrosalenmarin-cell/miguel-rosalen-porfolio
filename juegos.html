@@ -7275,6 +7275,9 @@ body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-stats span{min-
   .ventana.ia-captura .ia-perfil-avatar{padding-top:38px!important;}
   .ventana.ia-captura .ia-perfil-avatar canvas{top:52%!important;}
   .ventana.ia-captura .ia-perfil-identidad{bottom:13px!important;}
+  .ventana.ia-captura.ia-escribiendo .ia-perfil-avatar{display:none!important;}
+  .ventana.ia-captura.ia-escribiendo .ia-perfil-chat{top:0!important;}
+  .ventana.ia-captura.ia-escribiendo .ia-perfil-mensajes{padding-top:14px!important;}
 }
 
 /* Tipografía final de los minijuegos. */
@@ -17369,15 +17372,28 @@ function activarModoIACaptura(v){
     const viewport=window.visualViewport;
     if(!viewport) return;
     const oculto=Math.max(0,window.innerHeight-viewport.height-viewport.offsetTop);
-    mundo.style.setProperty("--ia-teclado",`${oculto}px`);
+    /* Las ventanas maximizadas ya se ajustan al viewport visual. Evitamos
+       reservar dos veces la altura que ocupa el teclado. */
+    const altoVentana=Math.round(v.getBoundingClientRect().height);
+    const ventanaAjustada=v.classList.contains("max") && Math.abs(altoVentana-viewport.height)<6;
+    mundo.style.setProperty("--ia-teclado",`${ventanaAjustada?0:oculto}px`);
   };
   window.visualViewport?.addEventListener("resize",ajustarTecladoIA,{signal});
   window.visualViewport?.addEventListener("scroll",ajustarTecladoIA,{signal});
   v.addEventListener("focusin",e=>{
     if(!e.target.matches(".ia-perfil-respuestas input")) return;
-    setTimeout(ajustarTecladoIA,80);
+    v.classList.add("ia-escribiendo");
+    setTimeout(()=>{
+      ajustarTecladoIA();
+      const mensajes=mundo.querySelector(".ia-perfil-mensajes");
+      if(mensajes) mensajes.scrollTop=mensajes.scrollHeight;
+    },80);
   },{signal});
-  v.addEventListener("focusout",()=>setTimeout(ajustarTecladoIA,120),{signal});
+  v.addEventListener("focusout",()=>setTimeout(()=>{
+    if(document.activeElement?.matches(".ia-perfil-respuestas input")) return;
+    v.classList.remove("ia-escribiendo");
+    ajustarTecladoIA();
+  },120),{signal});
   ajustarTecladoIA();
   let perfil={};try{perfil=JSON.parse(localStorage.getItem("miguel-avatar")||sessionStorage.getItem("miguel-avatar")||"{}")||{}}catch(_e){}
   const preguntas=[
@@ -17491,7 +17507,7 @@ function activarModoIACaptura(v){
   respuestas.addEventListener("submit",e=>{e.preventDefault();const i=e.target.querySelector("input");if(i.value.trim())responder(i.value.trim())},{signal});
   v.addEventListener("mundo:nueva",()=>{perfil={};paso=0;mensajes.replaceChildren();guardar();dibujarAvatar();render()},{signal});
   dibujarAvatar();burbuja(perfil.nombre?`Hola de nuevo, ${perfil.nombre}. Podemos continuar tu perfil.`:"Con unas preguntas construiré una versión pequeña de ti para esta interfaz.");render();
-  v._iaInmersivoCleanup=()=>{cancelAnimationFrame(avatarRaf);avatar3d?.dispose();avatar3d=null;controlador.abort();mundo.remove();v.classList.remove("ia-captura");v._iaInmersivoCleanup=null};
+  v._iaInmersivoCleanup=()=>{cancelAnimationFrame(avatarRaf);avatar3d?.dispose();avatar3d=null;controlador.abort();mundo.remove();v.classList.remove("ia-captura","ia-escribiendo");v._iaInmersivoCleanup=null};
 }
 
 function instalarMenuMundo(v){
