@@ -520,7 +520,7 @@ transform:translateY(5px);
   opacity:0;
   transform:translateY(-5px);
   pointer-events:none;
-  transition:opacity 2.4s ease,transform .32s ease;
+  transition:opacity .65s ease,transform .28s ease;
 }
 .aviso-tiempo.visible{opacity:1;transform:translateY(0)}
 .aviso-tiempo.desaparecer{opacity:0;transform:translateY(-4px)}
@@ -9271,6 +9271,9 @@ function renderPortfolioEditorial(v,sec,parent){
   editorial.className="portfolio-editorial";
   if(sec.nodosInfo?.length){
     editorial.classList.add("portfolio-editorial--con-nodos");
+  }
+  if(sec.id==="museografia-mediacion"){
+    editorial.classList.add("portfolio-editorial--museografia");
   }
   const introTexto=sec.editorialTexto || [];
   const facts=sec.editorialFacts || [];
@@ -18347,8 +18350,8 @@ function abrirPanelTiempo(evento){
   aviso.style.left=Math.max(12,Math.round((window.innerWidth-ancho)/2))+"px";
   aviso.style.top=Math.max(128,Math.round((window.innerHeight-aviso.offsetHeight)/2))+"px";
   requestAnimationFrame(()=>aviso.classList.add("visible"));
-  setTimeout(()=>aviso.classList.add("desaparecer"),12000);
-  setTimeout(()=>aviso.remove(),14600);
+  setTimeout(()=>aviso.classList.add("desaparecer"),5000);
+  setTimeout(()=>aviso.remove(),6000);
 }
 timer?.addEventListener("click",abrirPanelTiempo);
 timer?.addEventListener("keydown",evento=>{
@@ -19492,6 +19495,99 @@ document.addEventListener("pointerdown",e=>{
 
   .ventana.ventana-curriculum.min > .barra > div:first-child{
     padding-right:8px !important;
+  }
+}
+</style>
+
+
+
+<style>
+/* =========================================================
+   MUSEOGRAFÍA · ESCRITORIO
+   Galería uniforme + Sobre el proyecto más a la izquierda.
+   ========================================================= */
+@media (min-width:769px) and (pointer:fine){
+
+  /* El bloque de introducción deja de estar centrado.
+     El botón queda cerca del margen izquierdo del portfolio. */
+  .portfolio-editorial--museografia
+  > .portfolio-editorial-intro--orb{
+    width:calc(100% - 32px) !important;
+    max-width:1040px !important;
+    margin-left:16px !important;
+    margin-right:auto !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+  }
+
+  .portfolio-editorial--museografia
+  > .portfolio-editorial-intro--orb
+  > .portfolio-brand-orb{
+    margin-left:0 !important;
+    margin-right:0 !important;
+    flex:0 0 86px !important;
+  }
+
+  /* Cada grupo de imágenes pasa a una cuadrícula de 3 columnas
+     exactamente iguales. */
+  .portfolio-editorial--museografia
+  > .portfolio-editorial-group{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    align-items:start !important;
+
+    width:calc(100% - 32px) !important;
+    max-width:1040px !important;
+
+    margin:0 auto 18px !important;
+    gap:10px !important;
+  }
+
+  .portfolio-editorial--museografia
+  > .portfolio-editorial-group
+  > .portfolio-editorial-label{
+    grid-column:1 / -1 !important;
+    width:100% !important;
+  }
+
+  .portfolio-editorial--museografia
+  .portfolio-editorial-strip{
+    display:contents !important;
+  }
+
+  /* Las seis piezas comparten exactamente el mismo marco 4:3.
+     Los !important ganan a los tamaños inline calculados por JS. */
+  .portfolio-editorial--museografia
+  .portfolio-editorial-shot,
+  .portfolio-editorial--museografia
+  .portfolio-editorial-shot[data-span]{
+    width:100% !important;
+    height:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+
+    flex:none !important;
+    flex-basis:auto !important;
+
+    aspect-ratio:4 / 3 !important;
+
+    grid-column:auto !important;
+    grid-row:auto !important;
+
+    overflow:hidden !important;
+    background:rgba(255,255,255,.12) !important;
+  }
+
+  .portfolio-editorial--museografia
+  .portfolio-editorial-shot img{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+
+    object-fit:contain !important;
+    object-position:center !important;
+
+    background:rgba(255,255,255,.12) !important;
   }
 }
 </style>
