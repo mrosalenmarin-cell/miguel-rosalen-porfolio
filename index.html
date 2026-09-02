@@ -14538,7 +14538,7 @@ function prepararLecturaTactilVentana(v){
     const y=e.touches[0].clientY;
     const delta=ultimoY-y;
     ultimoY=y;
-    texto.scrollTop+=delta;
+    texto.scrollTop+=delta*2.15;
     window._ventanaScrollInternoHasta=Date.now()+1000;
     if(e.cancelable) e.preventDefault();
     e.stopPropagation();
@@ -17276,8 +17276,8 @@ function abrirPanelTiempo(evento){
   document.body.appendChild(aviso);
   const reloj=timer.getBoundingClientRect();
   const ancho=aviso.offsetWidth;
-  aviso.style.left=Math.max(12,reloj.left-ancho-12)+"px";
-  aviso.style.top=Math.max(118,reloj.bottom+14)+"px";
+  aviso.style.left=Math.max(12,Math.round((window.innerWidth-ancho)/2))+"px";
+  aviso.style.top=Math.max(128,Math.round((window.innerHeight-aviso.offsetHeight)/2))+"px";
   requestAnimationFrame(()=>aviso.classList.add("visible"));
   setTimeout(()=>aviso.classList.add("desaparecer"),17000);
   setTimeout(()=>aviso.remove(),19600);
