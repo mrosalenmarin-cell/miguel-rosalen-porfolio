@@ -1,4 +1,4 @@
-﻿
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -6146,6 +6146,71 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 .pantalla-fugas::before{background-image:radial-gradient(ellipse 5px 4px at 8% 14%,#fff 0 35%,rgba(255,255,255,.72) 48%,transparent 76%),radial-gradient(ellipse 4px 6px at 24% 38%,#fff 0 34%,rgba(255,255,255,.56) 51%,transparent 75%),radial-gradient(ellipse 7px 5px at 46% 17%,#fff 0 40%,rgba(255,255,255,.76) 54%,transparent 77%),radial-gradient(ellipse 5px 7px at 67% 57%,#fff 0 32%,rgba(255,255,255,.54) 50%,transparent 74%),radial-gradient(ellipse 6px 5px at 83% 28%,#fff 0 42%,rgba(255,255,255,.78) 55%,transparent 78%),radial-gradient(ellipse 4px 6px at 93% 76%,#fff 0 32%,rgba(255,255,255,.55) 51%,transparent 75%);filter:blur(.55px);opacity:.96}
 .pantalla-fugas::after{background-image:radial-gradient(ellipse 4px 6px at 14% 69%,#fff 0 31%,rgba(255,255,255,.54) 45%,transparent 75%),radial-gradient(ellipse 7px 5px at 34% 82%,#fff 0 39%,rgba(255,255,255,.7) 53%,transparent 77%),radial-gradient(ellipse 5px 6px at 57% 31%,#fff 0 30%,rgba(255,255,255,.5) 49%,transparent 73%),radial-gradient(ellipse 6px 4px at 75% 86%,#fff 0 41%,rgba(255,255,255,.74) 54%,transparent 76%),radial-gradient(ellipse 4px 6px at 88% 48%,#fff 0 30%,rgba(255,255,255,.5) 51%,transparent 75%);filter:blur(.9px);opacity:.68}
 .aviso-destino-web{position:fixed;z-index:2147483647;inset:0;display:grid;place-items:center;padding:20px;background:rgba(255,255,255,.34);backdrop-filter:blur(12px)}.aviso-destino-web>div{width:min(560px,calc(100vw - 34px));padding:clamp(22px,5vw,42px);border:1px solid rgba(33,44,40,.17);background:rgba(252,254,252,.72);box-shadow:0 20px 60px rgba(36,64,54,.08);color:#24302c}.aviso-destino-web strong{display:block;font:300 clamp(30px,6vw,62px)/.95 Arial,sans-serif}.aviso-destino-web p{max-width:470px;margin:18px 0 0;font:11px/1.65 "Courier New",monospace;opacity:.66}.aviso-destino-web button{display:block;margin:24px 0 0 auto;padding:8px 14px;border:1px solid currentColor;border-radius:999px;background:rgba(255,255,255,.32);color:inherit;font:9px/1 "Courier New",monospace}
+
+
+/* =========================================================
+   MINIMIZADO LIMPIO — PORTFOLIO + CONTACTO
+   Al minimizar queda únicamente la cabecera.
+   ========================================================= */
+
+/* Escritorio */
+.ventana[data-tipo="PORTFOLIO"].min,
+.ventana[data-tipo="CONTACTO"].min{
+  width:190px !important;
+  min-width:190px !important;
+  max-width:190px !important;
+  height:30px !important;
+  min-height:30px !important;
+  max-height:30px !important;
+  overflow:hidden !important;
+  resize:none !important;
+  contain:paint !important;
+}
+
+.ventana[data-tipo="PORTFOLIO"].min > :not(.barra),
+.ventana[data-tipo="CONTACTO"].min > :not(.barra),
+.ventana[data-tipo="PORTFOLIO"].min::before,
+.ventana[data-tipo="PORTFOLIO"].min::after,
+.ventana[data-tipo="CONTACTO"].min::before,
+.ventana[data-tipo="CONTACTO"].min::after{
+  display:none !important;
+}
+
+.ventana[data-tipo="PORTFOLIO"].min > .barra,
+.ventana[data-tipo="CONTACTO"].min > .barra{
+  display:flex !important;
+  position:relative !important;
+  width:100% !important;
+  height:30px !important;
+  min-height:30px !important;
+  max-height:30px !important;
+  visibility:visible !important;
+  opacity:.45 !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+}
+
+/* Móvil / táctil: misma lógica, con cabecera algo más alta para poder pulsarla. */
+@media (max-width:768px), (pointer:coarse){
+  .ventana[data-tipo="PORTFOLIO"].min,
+  .ventana[data-tipo="CONTACTO"].min{
+    width:min(82vw,340px) !important;
+    min-width:0 !important;
+    max-width:min(82vw,340px) !important;
+    height:54px !important;
+    min-height:54px !important;
+    max-height:54px !important;
+  }
+
+  .ventana[data-tipo="PORTFOLIO"].min > .barra,
+  .ventana[data-tipo="CONTACTO"].min > .barra{
+    height:54px !important;
+    min-height:54px !important;
+    max-height:54px !important;
+    padding:0 10px !important;
+  }
+}
+
 </style>
 </head>
 
@@ -18445,5 +18510,3 @@ document.addEventListener("pointerdown",e=>{
 </script>
 </body>
 </html>
-
-
