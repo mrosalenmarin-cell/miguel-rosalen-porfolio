@@ -39,7 +39,7 @@ href="logo-cuadrados.svg">
 <meta name="author" content="Miguel Rosalén">
 <meta name="creator" content="Miguel Rosalén">
 <title>MIGUEL ROSALÉN</title>
-<!-- JUEGOS-MOVIL-RUNTIME-V2 · FONT-MUSEO-MENU-OK · GUARDIA-PROGRESIVO-MOVIL -->
+<!-- JUEGOS-MOVIL-RUNTIME-V2 · FONT-MUSEO-MENU-OK · GUARDIA-DIFICIL-MOVIL · MENU-CERRAR-ESTILO -->
 
 <style>
 
@@ -7546,6 +7546,60 @@ body.juegos-movil-real.modo-juego-global .museo-postal-final,
 body.juegos-movil-real.modo-juego-global .museo-postal-final *{
   font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
   font-style:normal !important;
+}
+
+
+
+/* =========================================================
+   JUEGOS MÓVIL — X DEL MENÚ COMO BOTÓN DE ACCIÓN
+   Solo estética; no cambia comportamiento.
+   ========================================================= */
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar{
+  position:static !important;
+  float:none !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:38px !important;
+  margin:0 0 8px !important;
+  padding:9px 12px !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  border:1px solid currentColor !important;
+  border-radius:0 !important;
+
+  background:transparent !important;
+  color:inherit !important;
+
+  box-shadow:none !important;
+
+  font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  letter-spacing:.03em !important;
+
+  opacity:1 !important;
+  transform:none !important;
+}
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar::before{
+  content:"CERRAR" !important;
+}
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar{
+  font-size:0 !important;
+}
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar::before{
+  font-size:10px !important;
+}
+
+body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
+  transform:translateY(1px) !important;
 }
 
 </style>
@@ -18079,7 +18133,11 @@ function activarMuseoPortfolioSalas(v){
 
     /* A partir de la sala 3 puede aparecer una segunda zona vigilada.
        En la última sala ocurre con mucha más frecuencia. */
-    if(sala>=2 && zonaGuardiaExtra!==null && zonaGuardiaExtra!==zonaGuardia){
+    if(zonaGuardiaExtra===3){
+      return [0,1,2];
+    }
+
+    if(sala>=1 && zonaGuardiaExtra!==null && zonaGuardiaExtra!==zonaGuardia){
       zonas.push(zonaGuardiaExtra);
     }
 
@@ -18091,7 +18149,7 @@ function activarMuseoPortfolioSalas(v){
 
     /* Puede mantener la mirada ocasionalmente: evita un ritmo predecible
        de izquierda-centro-derecha. Cuanto más avanza, menos descansa. */
-    const probMantener=[.24,.18,.11,.07][Math.min(sala,3)];
+    const probMantener=[.12,.08,.04,.02][Math.min(sala,3)];
 
     if(Math.random()>=probMantener){
       const candidatas=[0,1,2].filter(z=>z!==anterior);
@@ -18101,9 +18159,14 @@ function activarMuseoPortfolioSalas(v){
     zonaGuardiaExtra=null;
 
     /* Probabilidad de doble vigilancia según la sala. */
-    const probDoble=[0,.10,.40,.70][Math.min(sala,3)];
+    const probDoble=[.10,.38,.72,.92][Math.min(sala,3)];
 
-    if(Math.random()<probDoble){
+    /* En salas 3 y 4 puede hacer un barrido completo muy breve. */
+    const probBarrido=[0,0,.12,.24][Math.min(sala,3)];
+
+    if(Math.random()<probBarrido){
+      zonaGuardiaExtra=3;
+    }else if(Math.random()<probDoble){
       const extras=[0,1,2].filter(z=>z!==zonaGuardia);
       zonaGuardiaExtra=extras[Math.floor(Math.random()*extras.length)];
     }
@@ -18118,10 +18181,10 @@ function activarMuseoPortfolioSalas(v){
     /* Ventana temporal aleatoria por sala:
        cada sala da menos tiempo para actuar. */
     const tiempos=[
-      [5200,7800],
-      [3900,6200],
-      [2700,4700],
-      [1700,3300]
+      [3400,5200],
+      [2400,4000],
+      [1500,2900],
+      [900,1900]
     ][Math.min(sala,3)];
 
     proximoCambio=t+tiempos[0]+Math.random()*(tiempos[1]-tiempos[0]);
@@ -18352,7 +18415,7 @@ function activarMuseoPortfolioSalas(v){
     else dibujarEscritorio(t);
   }
   let ultimoDibujo=0;
-  function loop(t){if(!activo)return;if(t-ultimoDibujo<32){raf=requestAnimationFrame(loop);return}ultimoDibujo=t;if(juegoIniciado&&t>=proximoCambio){if(museoEsMovil()){elegirNuevaMiradaMovil()}else{let nueva=Math.floor(Math.random()*3);if(nueva===zonaGuardia)nueva=(nueva+1+Math.floor(Math.random()*2))%3;zonaGuardia=nueva;zonaGuardiaExtra=null}const direcciones=["izquierda","centro","derecha"];const vigiladasAhora=zonasVigiladasMuseo();hablante="ÁLEX";dialogo=vigiladasAhora.length>1?`Estoy vigilando ${direcciones[vigiladasAhora[0]]} y ${direcciones[vigiladasAhora[1]]}.`:`Estoy mirando las obras de ${direcciones[zonaGuardia]}.`;programarSiguienteMirada(t);actualizarHud()}if(juegoIniciado&&t>=proximoDialogo){const repertorio=dialogosSala[sala],entrada=repertorio[Math.floor(Math.random()*repertorio.length)];hablante=entrada.habla;dialogo=entrada.texto;proximoDialogo=t+7200+Math.random()*4200}dibujar(t);raf=requestAnimationFrame(loop)}
+  function loop(t){if(!activo)return;if(t-ultimoDibujo<32){raf=requestAnimationFrame(loop);return}ultimoDibujo=t;if(juegoIniciado&&t>=proximoCambio){if(museoEsMovil()){elegirNuevaMiradaMovil()}else{let nueva=Math.floor(Math.random()*3);if(nueva===zonaGuardia)nueva=(nueva+1+Math.floor(Math.random()*2))%3;zonaGuardia=nueva;zonaGuardiaExtra=null}const direcciones=["izquierda","centro","derecha"];const vigiladasAhora=zonasVigiladasMuseo();hablante="ÁLEX";dialogo=vigiladasAhora.length===3?`Estoy vigilando toda la sala.`:vigiladasAhora.length>1?`Estoy vigilando ${direcciones[vigiladasAhora[0]]} y ${direcciones[vigiladasAhora[1]]}.`:`Estoy mirando las obras de ${direcciones[zonaGuardia]}.`;programarSiguienteMirada(t);actualizarHud()}if(juegoIniciado&&t>=proximoDialogo){const repertorio=dialogosSala[sala],entrada=repertorio[Math.floor(Math.random()*repertorio.length)];hablante=entrada.habla;dialogo=entrada.texto;proximoDialogo=t+7200+Math.random()*4200}dibujar(t);raf=requestAnimationFrame(loop)}
   canvas.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();if(!juegoIniciado||performance.now()<transicionHasta||performance.now()<alarmaHasta)return;const r=canvas.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top,item=salas[sala].obras.find(o=>o.hit&&px>=o.hit.x&&px<=o.hit.x+o.hit.w&&py>=o.hit.y&&py<=o.hit.y+o.hit.h);if(!item)return;const vigiladas=zonasVigiladasMuseo();if(vigiladas.includes(item.zona)){alarmaHasta=performance.now()+1300;hablante="ÁLEX";dialogo="Esa pieza pertenece al museo. La sala vuelve a su estado inicial.";salas[sala].obras.forEach(o=>o.robada=false);mensaje.textContent="Álex recuperó la sala";actualizarHud();return}item.robada=true;hablante="ÁLEX";dialogo="Un momento... ese marco ha cambiado.";mensaje.textContent="algo ha desaparecido";actualizarHud();if(salas[sala].obras.every(o=>o.robada)){if(sala<salas.length-1){const siguiente=sala+1,cap=capitulos[siguiente];transicionTitulo=cap.sala;transicionSubtitulo=cap.nombre;transicionTexto=cap.texto;transicionCuenta=`${salas[siguiente].obras.length} OBRAS EN ESTA SALA`;hablante="ÁLEX";dialogo="La sala ha quedado vacía.";transicionHasta=performance.now()+4200;setTimeout(()=>{if(!activo)return;sala=siguiente;zonaGuardiaExtra=null;const entrada=dialogosSala[sala][0];hablante=entrada.habla;dialogo=entrada.texto;mensaje.textContent="nueva sala · observa las miradas";proximoDialogo=performance.now()+7200;programarSiguienteMirada(performance.now());actualizarHud()},3600)}else{if(typeof recuperarTiempo==="function")recuperarTiempo(10);if(typeof mostrarVictoriaMundo==="function")mostrarVictoriaMundo(v,10,()=>mostrarPostalMuseo(v,salas))}}},{signal});
   introduccion.querySelector("button").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();juegoIniciado=true;introduccion.hidden=true;zonaGuardiaExtra=null;programarSiguienteMirada(performance.now());proximoDialogo=performance.now()+9000;canvas.focus({preventScroll:true})},{signal});
   const sospechas=["Juraría que había una obra ahí. Justo cuando no miro... qué despiste.","Creo que falta algo en esta sala. Y creo que empiezo a sospechar de alguien.","Ese marco estaba ocupado hace un momento. Ya sé quién es el ladrón.","No he visto nada. Eso es lo peor: alguien está aprovechando cada giro."];
