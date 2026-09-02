@@ -6990,11 +6990,33 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
     font-size:7.5px !important;
   }
 }
+
+/* =========================================================
+   MINIMIZAR DESDE MAXIMIZADO — CABECERA SIEMPRE VISIBLE
+   ========================================================= */
+.ventana.min > .barra{
+  display:flex !important;
+  visibility:visible !important;
+  pointer-events:auto !important;
+  position:relative !important;
+  width:100% !important;
+  opacity:.45 !important;
+  z-index:2147483646 !important;
+}
+
+.ventana.min > .barra > *,
+.ventana.min > .barra .btn{
+  visibility:visible !important;
+}
+
+.ventana.min > .barra .btn{
+  display:flex !important;
+}
 </style>
 
 <!-- MUSEOGRAFIA-NODOS-V4 -->
 <!-- MOBILE-LANDSCAPE-V1 -->
-<!-- MUSEOGRAFIA-NODOS-LIBRES-V4 · LINEAS-VIVAS · LINKS · ORDEN-OK -->
+<!-- INDEX-V5 · CABECERA-MINIMIZADA-TRAS-MAX-OK -->
 </head>
 
 <body>
@@ -17713,6 +17735,26 @@ function restaurarContenidoVentanaMinimizada(v){
   });
 }
 
+/* La cabecera nunca puede desaparecer al minimizar, incluso si la ventana
+   viene directamente de estado maximizado o de una transición anterior. */
+function asegurarCabeceraVentanaMinimizada(v){
+  if(!v) return;
+  const barra=v.querySelector(":scope > .barra");
+  if(!barra) return;
+
+  barra.style.setProperty("display","flex","important");
+  barra.style.setProperty("visibility","visible","important");
+  barra.style.setProperty("pointer-events","auto","important");
+  barra.style.setProperty("position","relative","important");
+  barra.style.setProperty("width","100%","important");
+
+  /* Ningún estado anterior debe dejar ocultos el título o los botones. */
+  barra.querySelectorAll("*").forEach(el=>{
+    if(el.style.getPropertyValue("display")==="none") el.style.removeProperty("display");
+    el.style.setProperty("visibility","visible","important");
+  });
+}
+
 function alternarMinimizarVentana(v){
   if(!v) return;
 
@@ -17723,6 +17765,10 @@ function alternarMinimizarVentana(v){
     document.body.classList.remove("ventana-max-activa");
     limpiarForzadoMaximo(v);
   }
+
+  /* Si alguna transición previa dejó contenido marcado como minimizado,
+     lo saneamos antes de volver a entrar en estado min. */
+  restaurarContenidoVentanaMinimizada(v);
 
   if(!v.dataset.w) v.dataset.w = v.offsetWidth || 300;
   if(!v.dataset.h) v.dataset.h = v.offsetHeight || 220;
@@ -17745,10 +17791,17 @@ function alternarMinimizarVentana(v){
   const minimizadaMovil=matchMedia("(max-width:768px), (pointer:coarse)").matches;
   v.classList.add("min");
   ocultarContenidoVentanaMinimizada(v);
+  asegurarCabeceraVentanaMinimizada(v);
   v.style.width = minimizadaMovil ? "min(82vw, 340px)" : "190px";
   v.style.height = minimizadaMovil ? "54px" : "30px";
   v.style.overflow = "hidden";
   traerVentanaAlFrente(v);
+
+  /* Reaplicamos al siguiente frame para ganar a cualquier estilo/transición
+     que termine justo después de salir de maximizado. */
+  requestAnimationFrame(()=>{
+    if(v.classList.contains("min")) asegurarCabeceraVentanaMinimizada(v);
+  });
 }
 
 function recalibrarPortfolioTrasCambioVentana(v){
@@ -17796,6 +17849,7 @@ function maximizarVentana(v){
   }
 
   if(v.classList.contains("min")){
+    restaurarContenidoVentanaMinimizada(v);
     v.classList.remove("min");
   }
 
