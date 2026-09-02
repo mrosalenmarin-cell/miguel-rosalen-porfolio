@@ -4780,6 +4780,63 @@ max-height:none !important;
     margin-bottom:2px;
   }
 
+  /* En pantallas táctiles el mosaico se convierte en un archivo navegable. */
+  .portfolio-editorial-group{
+    display:block;
+    margin:0 0 22px;
+    padding:0;
+  }
+
+  .portfolio-editorial-strip{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+    padding:0 14px 12px;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .portfolio-editorial-strip::-webkit-scrollbar{display:none;}
+
+  .portfolio-editorial-shot,
+  .portfolio-editorial-shot[data-span]{
+    display:flex;
+    flex:0 0 min(72vw,330px);
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+    overflow:visible;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    opacity:1;
+    transform:none;
+  }
+
+  .portfolio-editorial-shot img{
+    width:100%;
+    height:min(49vw,230px);
+    object-fit:contain;
+    background:rgba(255,255,255,.16);
+  }
+
+  .portfolio-editorial-caption{
+    display:flex;
+    min-height:26px;
+    align-items:baseline;
+    gap:7px;
+    color:rgba(0,0,0,.58);
+    font:10px/1.25 Arial,sans-serif;
+    text-align:left;
+  }
+
+  .portfolio-editorial-caption b{
+    flex:0 0 auto;
+    color:rgba(0,0,0,.76);
+    font-weight:500;
+  }
+
   .portfolio-editorial-intro p{
     font-size:12px;
     line-height:1.68;
@@ -5570,6 +5627,12 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
     transform:translateY(1px) !important;
     background:rgba(18,18,18,.8) !important;
   }
+}
+
+/* El marco conserva el mosaico original en ordenador. */
+@media (min-width:769px) and (pointer:fine){
+  .portfolio-editorial-strip{display:contents;}
+  .portfolio-editorial-caption{display:none;}
 }
 
 </style>
@@ -7824,13 +7887,14 @@ function renderPortfolioEditorial(v,sec,parent){
   const gruposHTML=grupos.map(grupo=>`
     <section class="portfolio-editorial-group${sec.mosaicoCompacto ? " portfolio-editorial-group--compact" : ""}${sec.mosaicoFocoHover ? " portfolio-editorial-group--focus-hover" : ""}">
       <div class="portfolio-editorial-label">${escaparHTMLPortfolio(grupo.nombre)}</div>
-      ${grupo.items.map(({obra,index})=>{
+      <div class="portfolio-editorial-strip">${grupo.items.map(({obra,index})=>{
         const ampliable=sec.mosaicoAmpliable!==false && (!sec.soloAmpliarMerch || obra.grupo==="merchandising");
         const etiqueta=ampliable ? "button" : "div";
         return `<${etiqueta} class="portfolio-editorial-shot${sec.mosaicoFocoHover && index===0 ? " is-featured" : ""}" ${ampliable ? `type="button" data-ampliable="1"` : ""} data-index="${index}" data-span="${escaparHTMLPortfolio(obra.span || 6)}" aria-label="${escaparHTMLPortfolio(obra.titulo || "imagen")}">
           <img data-src="${escaparHTMLPortfolio(obra.thumb || obra.full || "")}" width="${escaparHTMLPortfolio(obra.ancho || 4)}" height="${escaparHTMLPortfolio(obra.alto || 3)}" loading="lazy" decoding="async" fetchpriority="low" alt="">
+          <span class="portfolio-editorial-caption"><b>(${String(index+1).padStart(2,"0")})</b>${escaparHTMLPortfolio(obra.titulo || "imagen")}</span>
         </${etiqueta}>`;
-      }).join("")}
+      }).join("")}</div>
     </section>
   `).join("");
 
@@ -17386,6 +17450,47 @@ document.addEventListener("DOMContentLoaded",()=>{
     btn.addEventListener("pointerdown",activar,{passive:false});
   });
 });</script>
+
+<script>
+/* Arrastre táctil: las cabeceras siguen siendo el asidero de cada ventana. */
+document.addEventListener("pointerdown",e=>{
+  if(!(window.isMobileMode || e.pointerType==="touch" || e.pointerType==="pen")) return;
+  const cabecera=e.target.closest(".ventana .barra, .portfolio-nodo-cabecera");
+  if(!cabecera || e.target.closest(".btn, .portfolio-nodo-cerrar, button, a, input, textarea, select")) return;
+  const panel=cabecera.closest(".portfolio-nodo-ventana, .portfolio-inline-nodo-ventana") || cabecera.closest(".ventana");
+  if(!panel || panel.classList.contains("max")) return;
+
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  const limite=panel.closest(".portfolio-nodos-info") || document.documentElement;
+  const inicio={x:e.clientX,y:e.clientY,left:panel.offsetLeft,top:panel.offsetTop};
+  panel.classList.add("dragging");
+  panel.style.zIndex=String(Date.now());
+  cabecera.setPointerCapture?.(e.pointerId);
+
+  const mover=ev=>{
+    const maxX=Math.max(0,limite.clientWidth-panel.offsetWidth);
+    const maxY=limite===document.documentElement
+      ? Math.max(0,document.documentElement.scrollHeight-panel.offsetHeight)
+      : Math.max(0,limite.clientHeight-panel.offsetHeight);
+    const x=Math.max(0,Math.min(maxX,inicio.left+ev.clientX-inicio.x));
+    const y=Math.max(0,Math.min(maxY,inicio.top+ev.clientY-inicio.y));
+    panel.style.left=x+"px";
+    panel.style.top=y+"px";
+    if(panel.classList.contains("ventana") && typeof asegurarLienzoMovil==="function") asegurarLienzoMovil(x,y,panel.offsetWidth,panel.offsetHeight);
+  };
+  const terminar=ev=>{
+    panel.classList.remove("dragging");
+    cabecera.releasePointerCapture?.(ev.pointerId);
+    cabecera.removeEventListener("pointermove",mover);
+    cabecera.removeEventListener("pointerup",terminar);
+    cabecera.removeEventListener("pointercancel",terminar);
+  };
+  cabecera.addEventListener("pointermove",mover,{passive:false});
+  cabecera.addEventListener("pointerup",terminar,{passive:true});
+  cabecera.addEventListener("pointercancel",terminar,{passive:true});
+},{capture:true,passive:false});
+</script>
 
 <div id="teclado" aria-label="teclado móvil">
   <div class="teclado-toggle" role="button" aria-label="abrir teclado"></div>
