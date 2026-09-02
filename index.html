@@ -5520,6 +5520,32 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   }
 }
 
+/* Controles fijos: navegación bajo la cabecera, teclado a la derecha y juegos a la izquierda. */
+#menuSistema{
+  top:78px;
+  bottom:auto;
+  max-width:calc(100vw - 36px);
+}
+
+#modoJuegoGlobal{
+  left:20px;
+  right:auto;
+}
+
+@media (max-width:768px), (pointer:coarse){
+  #menuSistema{
+    top:calc(env(safe-area-inset-top, 0px) + 68px) !important;
+    bottom:auto !important;
+    width:max-content;
+    max-width:calc(100vw - 28px);
+  }
+
+  #modoJuegoGlobal{
+    left:max(16px, env(safe-area-inset-left, 0px) + 12px) !important;
+    right:auto !important;
+  }
+}
+
 </style>
 
 <style>
