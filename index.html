@@ -5684,6 +5684,18 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   .ventana.min > .barra > div:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .ventana.min > .barra > div:last-child{flex:0 0 auto;gap:4px!important;}
   .ventana.min .btn{width:32px!important;height:32px!important;flex:0 0 32px;}
+  .ventana.min[data-tipo="CONTACTO"]{
+    background:rgba(238,238,238,.98)!important;
+    color:rgba(35,35,35,.78)!important;
+  }
+  .ventana.min[data-tipo="CONTACTO"] > .barra{
+    display:flex!important;
+    position:relative!important;
+    visibility:visible!important;
+    opacity:1!important;
+    color:inherit!important;
+    background:transparent!important;
+  }
 
   #modoJuegoGlobal{
     right:max(16px, env(safe-area-inset-right, 0px) + 12px) !important;
@@ -15108,7 +15120,7 @@ if(info[0]==="IA"){
 
 inner=`
 <div class="barra ia-barra">
-<div>IA · sistema Miguel Rosalén</div>
+<div>I: A · sistema</div>
 <div style="display:flex;gap:10px;">
 <div class="btn mini">—</div>
 <div class="btn maxi">□</div>

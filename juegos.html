@@ -7275,11 +7275,18 @@ body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-stats span{min-
   .ventana.ia-captura .ia-perfil-avatar{padding-top:38px!important;}
   .ventana.ia-captura .ia-perfil-avatar canvas{top:52%!important;}
   .ventana.ia-captura .ia-perfil-identidad{bottom:13px!important;}
+  html.ia-teclado-abierto,
+  html.ia-teclado-abierto body{
+    height:100%!important;
+    overflow:hidden!important;
+    overscroll-behavior:none!important;
+  }
   .ventana.ia-captura.ia-escribiendo{position:fixed!important;left:0!important;top:0!important;right:auto!important;bottom:auto!important;width:100vw!important;height:var(--ia-viewport-visible,100dvh)!important;max-height:none!important;min-height:0!important;transform:none!important;overflow:hidden!important;z-index:2147483600!important;}
   .ventana.ia-captura.ia-escribiendo .ia-perfil-avatar{display:none!important;}
   .ventana.ia-captura.ia-escribiendo .ia-captura-mundo{position:fixed!important;inset:0!important;width:100vw!important;height:var(--ia-viewport-visible,100dvh)!important;min-height:0!important;background:#fff!important;z-index:2147483600!important;}
-  .ventana.ia-captura.ia-escribiendo .ia-perfil-chat{top:0!important;}
-  .ventana.ia-captura.ia-escribiendo .ia-perfil-mensajes{padding-top:14px!important;}
+  .ventana.ia-captura.ia-escribiendo .ia-perfil-chat{top:0!important;bottom:0!important;height:100%!important;grid-template-rows:minmax(0,1fr) auto!important;}
+  .ventana.ia-captura.ia-escribiendo .ia-perfil-mensajes{min-height:0!important;padding:14px!important;overflow-y:auto!important;}
+  .ventana.ia-captura.ia-escribiendo .ia-perfil-respuestas{padding:8px 10px calc(8px + env(safe-area-inset-bottom, 0px))!important;}
 }
 
 /* Tipografía final de los minijuegos. */
@@ -17403,16 +17410,22 @@ function activarModoIACaptura(v){
   window.visualViewport?.addEventListener("scroll",ajustarTecladoIA,{signal});
   v.addEventListener("focusin",e=>{
     if(!e.target.matches(".ia-perfil-respuestas input")) return;
+    if(matchMedia("(max-width:700px)").matches){
+      document.documentElement.classList.add("ia-teclado-abierto");
+      document.body.classList.add("ia-teclado-abierto");
+    }
     v.classList.add("ia-escribiendo");
-    setTimeout(()=>{
+    requestAnimationFrame(()=>{
       ajustarTecladoIA();
       const mensajes=mundo.querySelector(".ia-perfil-mensajes");
       if(mensajes) mensajes.scrollTop=mensajes.scrollHeight;
-    },80);
+    });
   },{signal});
   v.addEventListener("focusout",()=>setTimeout(()=>{
     if(document.activeElement?.matches(".ia-perfil-respuestas input")) return;
     v.classList.remove("ia-escribiendo");
+    document.documentElement.classList.remove("ia-teclado-abierto");
+    document.body.classList.remove("ia-teclado-abierto");
     ajustarTecladoIA();
   },120),{signal});
   ajustarTecladoIA();
@@ -17528,7 +17541,7 @@ function activarModoIACaptura(v){
   respuestas.addEventListener("submit",e=>{e.preventDefault();const i=e.target.querySelector("input");if(i.value.trim())responder(i.value.trim())},{signal});
   v.addEventListener("mundo:nueva",()=>{perfil={};paso=0;mensajes.replaceChildren();guardar();dibujarAvatar();render()},{signal});
   dibujarAvatar();burbuja(perfil.nombre?`Hola de nuevo, ${perfil.nombre}. Podemos continuar tu perfil.`:"Con unas preguntas construiré una versión pequeña de ti para esta interfaz.");render();
-  v._iaInmersivoCleanup=()=>{cancelAnimationFrame(avatarRaf);avatar3d?.dispose();avatar3d=null;controlador.abort();mundo.remove();v.classList.remove("ia-captura","ia-escribiendo");v._iaInmersivoCleanup=null};
+  v._iaInmersivoCleanup=()=>{cancelAnimationFrame(avatarRaf);avatar3d?.dispose();avatar3d=null;document.documentElement.classList.remove("ia-teclado-abierto");document.body.classList.remove("ia-teclado-abierto");controlador.abort();mundo.remove();v.classList.remove("ia-captura","ia-escribiendo");v._iaInmersivoCleanup=null};
 }
 
 function instalarMenuMundo(v){
@@ -18060,7 +18073,7 @@ function activarMuseoPortfolioMovil(v){
     obras:(sala.obras.length?sala.obras:[{titulo:"obra sin título"}]).slice(0,6).map((obra,i)=>({obra,robada:false,zona:i%3}))
   }));
   const total=salas.reduce((n,s)=>n+s.obras.length,0);
-  let sala=0,vigiladas=new Set([1]),activo=true,proximoCambio=0;
+  let sala=0,vigiladas=new Set([1]),activo=true,proximoCambio=0,nivelAlerta=0;
 
   const mundo=document.createElement("section");
   mundo.className="portfolio-3d-mundo museo-movil-mundo";
@@ -18116,12 +18129,14 @@ function activarMuseoPortfolioMovil(v){
   };
   const cambiarMirada=()=>{
     if(!activo || intro.hidden===false) return;
-    const cantidad=sala===0?1:2;
+    nivelAlerta++;
+    const cantidad=Math.min(salas[sala].obras.length-1,1+(sala>=1?1:0)+Math.floor(nivelAlerta/5));
     const candidatas=[...salas[sala].obras.keys()].sort(()=>Math.random()-.5);
     vigiladas=new Set(candidatas.slice(0,cantidad));
     dialogoEl.textContent=cantidad===1?`No pierdo de vista ${direcciones[salas[sala].obras[[...vigiladas][0]].zona]}.`:"Hoy estoy mirando más de un sitio.";
     renderSala();
-    proximoCambio=window.setTimeout(cambiarMirada,1700+Math.random()*1500);
+    const ritmo=Math.max(520,1180-sala*130-nivelAlerta*28);
+    proximoCambio=window.setTimeout(cambiarMirada,ritmo+Math.random()*180);
   };
   const siguienteSala=()=>{
     if(sala>=salas.length-1){
@@ -18158,7 +18173,7 @@ function activarMuseoPortfolioMovil(v){
     intro.hidden=true;
     dialogoEl.textContent="Miro el centro.";
     renderSala();
-    proximoCambio=window.setTimeout(cambiarMirada,1800);
+    proximoCambio=window.setTimeout(cambiarMirada,1050);
   },{signal});
 
   const comentarioCada=window.setInterval(()=>{
@@ -18954,7 +18969,7 @@ if(info[0]==="IA"){
 
 inner=`
 <div class="barra ia-barra">
-<div>IA · sistema Miguel Rosalén</div>
+<div>I: A · sistema</div>
 <div style="display:flex;gap:10px;">
 <div class="btn mini">—</div>
 <div class="btn maxi">□</div>
