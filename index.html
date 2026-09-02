@@ -6324,6 +6324,495 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 }
 
 </style>
+
+<style>
+/* =========================================================
+   MÓVIL HORIZONTAL — LAYOUT ESPECÍFICO
+   Solo teléfonos/táctiles con poca altura en landscape.
+   No modifica móvil vertical ni escritorio.
+   ========================================================= */
+@media (orientation:landscape) and (max-height:560px) and (pointer:coarse){
+
+  :root{
+    --land-safe-top:max(8px, env(safe-area-inset-top, 0px));
+    --land-safe-left:max(8px, env(safe-area-inset-left, 0px));
+    --land-safe-right:max(8px, env(safe-area-inset-right, 0px));
+    --land-safe-bottom:max(8px, env(safe-area-inset-bottom, 0px));
+  }
+
+  html,body{
+    -webkit-text-size-adjust:100% !important;
+    text-size-adjust:100% !important;
+    overflow-x:hidden !important;
+  }
+
+  /* ---------- controles fijos: una sola franja superior ---------- */
+
+  #iaControles{
+    top:var(--land-safe-top) !important;
+    left:var(--land-safe-left) !important;
+    padding:3px !important;
+    gap:3px !important;
+  }
+
+  #iaControles button,
+  #microIA{
+    width:32px !important;
+    height:32px !important;
+    min-width:32px !important;
+    min-height:32px !important;
+  }
+
+  #timer{
+    top:var(--land-safe-top) !important;
+    right:var(--land-safe-right) !important;
+    padding:6px 8px !important;
+    font-size:9px !important;
+    letter-spacing:2px !important;
+    white-space:nowrap !important;
+  }
+
+  #menuSistema{
+    top:var(--land-safe-top) !important;
+    bottom:auto !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+
+    width:max-content !important;
+    max-width:calc(100vw - 190px) !important;
+    min-height:34px !important;
+
+    padding:6px 7px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    white-space:nowrap !important;
+    scrollbar-width:none !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  #menuSistema::-webkit-scrollbar{display:none !important;}
+
+  #menuSistema button{
+    flex:0 0 auto !important;
+    padding:0 4px !important;
+    font-size:8.5px !important;
+    white-space:nowrap !important;
+  }
+
+  #menuSistema button:not(:last-child)::after{
+    padding-left:7px !important;
+  }
+
+  #sub{
+    bottom:var(--land-safe-bottom) !important;
+    max-width:55vw !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+    font-size:8px !important;
+    letter-spacing:1.2px !important;
+  }
+
+  /* ---------- teclado / juegos: esquinas inferiores ---------- */
+
+  #teclado{
+    left:var(--land-safe-left) !important;
+    right:auto !important;
+    bottom:var(--land-safe-bottom) !important;
+  }
+
+  #teclado .teclado-toggle{
+    width:36px !important;
+    height:36px !important;
+  }
+
+  #teclado .teclado-panel{
+    left:50% !important;
+    right:auto !important;
+    bottom:calc(var(--land-safe-bottom) + 44px) !important;
+    width:min(82vw,680px) !important;
+    max-height:58dvh !important;
+    overflow-y:auto !important;
+    transform:translate(-50%,14px) scale(.97) !important;
+  }
+
+  #teclado.abierto .teclado-panel{
+    transform:translate(-50%,0) scale(1) !important;
+  }
+
+  #teclado .teclado-row{
+    gap:3px !important;
+  }
+
+  #teclado .teclado-row button{
+    min-height:27px !important;
+    padding:4px 5px !important;
+    font-size:9px !important;
+  }
+
+  #modoJuegoGlobal{
+    left:auto !important;
+    right:var(--land-safe-right) !important;
+    bottom:var(--land-safe-bottom) !important;
+  }
+
+  /* ---------- nombre principal ---------- */
+
+  #nombre{
+    font-size:clamp(38px,9vw,74px) !important;
+    max-width:88vw !important;
+  }
+
+  /* ---------- ventanas normales ---------- */
+
+  .ventana:not(.max):not(.min){
+    width:min(58vw,520px) !important;
+    max-width:min(58vw,520px) !important;
+    min-width:230px !important;
+
+    height:min(72dvh,300px) !important;
+    max-height:min(72dvh,300px) !important;
+    min-height:145px !important;
+
+    overflow:hidden !important;
+  }
+
+  .ventana:not(.max):not(.min) > .barra{
+    height:34px !important;
+    min-height:34px !important;
+    max-height:34px !important;
+    padding:0 8px !important;
+    font-size:8.5px !important;
+    gap:6px !important;
+    overflow:hidden !important;
+  }
+
+  .ventana:not(.max):not(.min) > .barra > div:first-child{
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    white-space:nowrap !important;
+  }
+
+  .ventana:not(.max):not(.min) > .barra > div:last-child{
+    flex:0 0 auto !important;
+    gap:5px !important;
+  }
+
+  .ventana:not(.max):not(.min) .btn{
+    width:27px !important;
+    height:27px !important;
+    min-width:27px !important;
+    flex:0 0 27px !important;
+    display:grid !important;
+    place-items:center !important;
+  }
+
+  .ventana:not(.max):not(.min) > .texto{
+    max-height:calc(72dvh - 34px) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+  }
+
+  /* Las ventanas puramente informativas se leen mejor anchas y bajas. */
+  .ventana[data-tipo="CONTACTO"]:not(.max):not(.min),
+  .ventana[data-tipo="READ ME"]:not(.max):not(.min),
+  .ventana[data-tipo="CURRICULUM"]:not(.max):not(.min){
+    width:min(54vw,500px) !important;
+    max-width:min(54vw,500px) !important;
+    height:min(68dvh,285px) !important;
+    max-height:min(68dvh,285px) !important;
+  }
+
+  .ventana.ventana-lectura:not(.max):not(.min){
+    height:min(70dvh,290px) !important;
+    max-height:min(70dvh,290px) !important;
+  }
+
+  .ventana.ventana-lectura > .barra{
+    flex:0 0 34px !important;
+    min-height:34px !important;
+    max-height:34px !important;
+  }
+
+  /* Minimizado compacto para que varias barras no ocupen media pantalla. */
+  .ventana.min,
+  .ventana[data-tipo="PORTFOLIO"].min,
+  .ventana[data-tipo="CONTACTO"].min,
+  .ventana[data-tipo="READ ME"].min{
+    width:min(44vw,250px) !important;
+    min-width:170px !important;
+    max-width:min(44vw,250px) !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+  }
+
+  .ventana.min > .barra,
+  .ventana[data-tipo="PORTFOLIO"].min > .barra,
+  .ventana[data-tipo="CONTACTO"].min > .barra,
+  .ventana[data-tipo="READ ME"].min > .barra{
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+    padding:0 8px !important;
+  }
+
+  .ventana.min .btn{
+    width:27px !important;
+    height:27px !important;
+    flex:0 0 27px !important;
+  }
+
+  /* ---------- PORTFOLIO ---------- */
+
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min){
+    width:min(80vw,760px) !important;
+    max-width:min(80vw,760px) !important;
+    height:min(82dvh,335px) !important;
+    max-height:min(82dvh,335px) !important;
+  }
+
+  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap{
+    height:calc(100% - 34px) !important;
+    min-height:0 !important;
+    max-height:none !important;
+  }
+
+  .portfolio-wrap[data-mode="editorial"]{
+    height:100% !important;
+    min-height:0 !important;
+    max-height:none !important;
+  }
+
+  .portfolio-editorial{
+    inset:40px 0 8px !important;
+    padding-bottom:24px !important;
+  }
+
+  .portfolio-back{
+    top:7px !important;
+    left:8px !important;
+    width:28px !important;
+    height:24px !important;
+    min-width:28px !important;
+  }
+
+  .portfolio-meta{
+    left:10px !important;
+    right:10px !important;
+    bottom:7px !important;
+    font-size:8px !important;
+    line-height:1.25 !important;
+  }
+
+  /* Sobre el proyecto vuelve a formato lateral en horizontal. */
+  .portfolio-editorial-intro,
+  .portfolio-editorial-intro--orb{
+    min-height:0 !important;
+    margin-bottom:12px !important;
+    padding:10px 8px 14px !important;
+  }
+
+  .portfolio-editorial-intro--orb{
+    flex-direction:row !important;
+    align-items:flex-start !important;
+    gap:10px !important;
+  }
+
+  .portfolio-brand-orb{
+    width:58px !important;
+    height:58px !important;
+    flex:0 0 58px !important;
+    padding:7px !important;
+    font-size:7px !important;
+  }
+
+  .portfolio-brand-panel{
+    width:min(70vw,620px) !important;
+    max-width:none !important;
+    max-height:48dvh !important;
+    padding:11px 12px !important;
+    overflow-y:auto !important;
+  }
+
+  .portfolio-editorial-intro p{
+    font-size:10px !important;
+    line-height:1.48 !important;
+  }
+
+  .portfolio-editorial-kicker,
+  .portfolio-editorial-facts{
+    font-size:7.5px !important;
+  }
+
+  /* Títulos Museografía / Mediación / Asistencia. */
+  .portfolio-nodos-info{
+    flex-wrap:wrap !important;
+    gap:6px 14px !important;
+    margin-bottom:10px !important;
+    padding:0 8px 7px !important;
+  }
+
+  .portfolio-nodo-link{
+    font-size:8px !important;
+  }
+
+  /* Ventanas de nodos más anchas y bajas en landscape. */
+  .portfolio-nodos-overlay .portfolio-nodo-ventana{
+    width:min(34vw,290px) !important;
+    height:min(54dvh,215px) !important;
+    min-width:180px !important;
+    min-height:130px !important;
+    max-width:46vw !important;
+    max-height:60dvh !important;
+  }
+
+  .portfolio-inline-nodo-ventana{
+    width:min(56vw,470px) !important;
+    height:min(58dvh,235px) !important;
+    min-height:150px !important;
+    max-height:64dvh !important;
+  }
+
+  .portfolio-nodo-cabecera{
+    height:27px !important;
+    min-height:27px !important;
+    flex-basis:27px !important;
+  }
+
+  .portfolio-nodo-contenido{
+    padding:10px 12px 14px !important;
+  }
+
+  .portfolio-nodo-texto{
+    font-size:9.5px !important;
+    line-height:1.48 !important;
+  }
+
+  /* Carruseles editoriales: más piezas a la vista gracias al ancho. */
+  .portfolio-editorial-group{
+    margin-bottom:10px !important;
+  }
+
+  .portfolio-editorial-label{
+    padding:12px 8px 6px !important;
+    font-size:8px !important;
+  }
+
+  .portfolio-editorial-strip{
+    gap:8px !important;
+    padding:0 8px 8px !important;
+  }
+
+  .portfolio-editorial-shot,
+  .portfolio-editorial-shot[data-span]{
+    flex-basis:min(31vw,230px) !important;
+    gap:5px !important;
+  }
+
+  .portfolio-editorial-shot img{
+    height:min(30dvh,120px) !important;
+  }
+
+  .portfolio-editorial-caption{
+    min-height:18px !important;
+    font-size:8px !important;
+    line-height:1.15 !important;
+  }
+
+  /* Carpetas del portfolio: una fila usable sin textos aplastados. */
+  .portfolio-folders{
+    inset:42px 8px 40px !important;
+    gap:8px !important;
+  }
+
+  .portfolio-wrap[data-mode="home"] .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder,
+  .portfolio-wrap[data-mode="folders"] .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder{
+    flex-basis:min(25vw,170px) !important;
+    height:100% !important;
+    min-height:110px !important;
+    padding:9px !important;
+    gap:10px !important;
+  }
+
+  .portfolio-folder-title{
+    font-size:9px !important;
+  }
+
+  .portfolio-folder-note{
+    font-size:7px !important;
+    line-height:1.18 !important;
+  }
+
+  /* Mapas/archivo disperso: eliminamos min-heights pensados para vertical. */
+  .ventana.portfolio-carteleria-map-activa .portfolio-wrap{
+    height:100% !important;
+    min-height:0 !important;
+  }
+
+  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap[data-mode="performance-archivo"] .portfolio-performance-archivo{
+    inset:40px 0 40px !important;
+    min-height:0 !important;
+    height:auto !important;
+  }
+
+  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap[data-mode="performance-archivo"] .portfolio-performance-escena{
+    min-height:250px !important;
+    height:250px !important;
+  }
+
+  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap[data-mode="performance-archivo"] .portfolio-performance-item{
+    width:62px !important;
+  }
+
+  .portfolio-wrap[data-mode="mosaic"] .track{
+    inset:40px 8px 38px !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    grid-auto-rows:72px !important;
+    gap:5px !important;
+  }
+
+  /* ---------- visor de obra ---------- */
+
+  #obra{
+    padding:
+      max(10px,env(safe-area-inset-top,0px))
+      max(46px,env(safe-area-inset-right,0px))
+      max(10px,env(safe-area-inset-bottom,0px))
+      max(46px,env(safe-area-inset-left,0px)) !important;
+  }
+
+  #obra img{
+    max-height:68dvh !important;
+    width:auto !important;
+    max-width:76vw !important;
+  }
+
+  .cerrarObra{
+    top:8px !important;
+    right:max(10px,env(safe-area-inset-right,0px)) !important;
+    font-size:30px !important;
+  }
+
+  .ficha{
+    margin-top:16px !important;
+    font-size:12px !important;
+    line-height:1.5 !important;
+  }
+
+  .titulo{
+    font-size:22px !important;
+    margin-bottom:10px !important;
+  }
+}
+</style>
+
+<!-- MOBILE-LANDSCAPE-V1 -->
 <!-- MUSEOGRAFIA-NODOS-LIBRES-V3 · COMPACTOS · DINAMIZADORES-OK -->
 </head>
 
@@ -18627,5 +19116,90 @@ document.addEventListener("pointerdown",e=>{
 <script>
 (()=>{try{window.miguelPerfilUsuario=JSON.parse(localStorage.getItem("miguel-avatar")||"{}")||{}}catch(_e){window.miguelPerfilUsuario={}}window.addEventListener("storage",e=>{if(e.key==="miguel-avatar")try{window.miguelPerfilUsuario=JSON.parse(e.newValue||"{}")||{}}catch(_e){}})})();
 </script>
+
+
+<script>
+/* =========================================================
+   MÓVIL HORIZONTAL — REAJUSTE AL GIRAR
+   Impide que ventanas ya abiertas queden fuera del área visible.
+   ========================================================= */
+(function(){
+  const mqLandscape=window.matchMedia(
+    "(orientation: landscape) and (max-height: 560px) and (pointer: coarse)"
+  );
+
+  function numero(v){
+    const n=parseFloat(v);
+    return Number.isFinite(n)?n:0;
+  }
+
+  function limitarPanelEnPadre(panel,padre,margen=6){
+    if(!panel || !padre) return;
+    const maxX=Math.max(margen,padre.clientWidth-panel.offsetWidth-margen);
+    const maxY=Math.max(margen,padre.clientHeight-panel.offsetHeight-margen);
+    panel.style.left=Math.max(margen,Math.min(numero(panel.style.left)||panel.offsetLeft,maxX))+"px";
+    panel.style.top=Math.max(margen,Math.min(numero(panel.style.top)||panel.offsetTop,maxY))+"px";
+  }
+
+  function ajustarHorizontal(){
+    if(!mqLandscape.matches) return;
+
+    /* Ventanas generales: mantenerlas dentro del viewport que el usuario ve. */
+    const yBase=window.scrollY || document.documentElement.scrollTop || 0;
+    const margenX=8;
+    const margenArriba=48;
+    const margenAbajo=8;
+
+    document.querySelectorAll(".ventana:not(.max):not(.min)").forEach(v=>{
+      if(v.offsetParent===null) return;
+
+      const maxLeft=Math.max(margenX,window.innerWidth-v.offsetWidth-margenX);
+      let left=numero(v.style.left);
+      left=Math.max(margenX,Math.min(left,maxLeft));
+
+      const minTop=yBase+margenArriba;
+      const maxTop=Math.max(
+        minTop,
+        yBase+window.innerHeight-v.offsetHeight-margenAbajo
+      );
+      let top=numero(v.style.top);
+      if(!top) top=minTop;
+      top=Math.max(minTop,Math.min(top,maxTop));
+
+      v.style.left=left+"px";
+      v.style.top=top+"px";
+    });
+
+    /* Nodos principales e internos: recalcular dentro de su overlay. */
+    document
+      .querySelectorAll(
+        ".portfolio-nodos-overlay .portfolio-nodo-ventana.is-open, "+
+        ".portfolio-inline-nodos .portfolio-inline-nodo-ventana.is-open"
+      )
+      .forEach(panel=>{
+        const padre=panel.parentElement;
+        limitarPanelEnPadre(panel,padre,6);
+      });
+  }
+
+  let raf=0;
+  function programar(){
+    cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(()=>{
+      requestAnimationFrame(ajustarHorizontal);
+    });
+  }
+
+  window.addEventListener("orientationchange",()=>{
+    setTimeout(programar,90);
+    setTimeout(programar,260);
+  },{passive:true});
+
+  window.addEventListener("resize",programar,{passive:true});
+
+  document.addEventListener("DOMContentLoaded",programar);
+})();
+</script>
+
 </body>
 </html>
