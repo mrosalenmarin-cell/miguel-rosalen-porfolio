@@ -13995,6 +13995,31 @@ function asegurarLienzoMovil(x, y, extraW = 900, extraH = 900){
   }
 }
 
+/* El escritorio de ordenador puede crecer hacia la derecha: las ventanas no
+   vuelven al ancho inicial cuando se crean o se arrastran fuera de él. */
+function asegurarLienzoEscritorio(x, extraW = 760){
+  if(window.isMobileMode) return;
+
+  const doc=document.documentElement;
+  const body=document.body;
+  const actual=Math.max(
+    body.scrollWidth,
+    doc.scrollWidth,
+    body.offsetWidth,
+    doc.offsetWidth,
+    window.innerWidth
+  );
+  const objetivo=Math.max(actual,Math.ceil(x+extraW),window.innerWidth);
+  if(objetivo<=actual+1) return;
+
+  [body,doc].forEach(nodo=>{
+    nodo.style.setProperty("min-width",objetivo+"px","important");
+    nodo.style.setProperty("width",objetivo+"px","important");
+  });
+  const espacio=document.getElementById("espacio");
+  if(espacio) espacio.style.setProperty("width",objetivo+"px","important");
+}
+
 /* Un pequeño margen lateral permanente para conservar el escritorio en móvil. */
 if(window.isMobileMode){
   requestAnimationFrame(()=>{
@@ -14020,6 +14045,7 @@ function colocarVentanaEnClick(v,x,y){
   v.style.top = Math.max(margen, pos.y - (window.isMobileMode ? 8 : 0)) + "px";
 
   asegurarLienzoMovil(pos.x, pos.y, 900, 900);
+  asegurarLienzoEscritorio(pos.x, Math.max(760,parseFloat(v.style.width)||0));
 }
 
 function actualizarModoSaturacionVentanas(){
@@ -16518,6 +16544,8 @@ function pintarArrastreVentanaGlobal(){
 
   if(d.coarse && typeof asegurarLienzoMovil==="function"){
     asegurarLienzoMovil(d.nx, d.ny, d.v.offsetWidth, d.v.offsetHeight);
+  }else if(typeof asegurarLienzoEscritorio==="function"){
+    asegurarLienzoEscritorio(d.nx, d.v.offsetWidth+80);
   }
 }
 
