@@ -7149,6 +7149,56 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
 .museo-postal-copy{font:11px/1.5 "Courier New",monospace}.museo-postal-copy strong{display:block;margin-bottom:10px;font:900 clamp(28px,6vw,58px)/.9 'MiguelRosalen',Arial,sans-serif}.museo-postal-copy div{display:flex;gap:8px;margin-top:18px}.museo-postal-copy button{padding:9px 13px;border:1px solid #222;border-radius:999px;background:#fff;cursor:pointer;font:700 9px/1 "Courier New",monospace}
 @media(max-width:700px){.mundo-progreso{top:39px;width:calc(100% - 112px)}.museo-intro{grid-template-columns:34% 1fr;padding:12px}.museo-intro-dialogo{padding:12px;font-size:10px}.museo-postal-panel{grid-template-columns:1fr}.museo-postal-panel canvas,.museo-postal-panel img{max-height:55vh}.museo-postal-copy{text-align:center}.museo-postal-copy div{justify-content:center}}
 
+/* HUD discreto: los controles acompañan, no tapan la partida. */
+body.modo-juego-global .ventana.juego-pantalla .mundo-menu-toggle{
+  position:absolute!important;
+  z-index:1100!important;
+  left:9px!important;
+  top:9px!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:28px!important;
+  min-width:28px!important;
+  height:28px!important;
+  min-height:28px!important;
+  padding:0!important;
+  border:1px solid rgba(30,35,47,.22)!important;
+  border-radius:50%!important;
+  color:rgba(24,30,42,.68)!important;
+  background:rgba(255,255,255,.3)!important;
+  box-shadow:0 3px 12px rgba(0,0,0,.06)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+  font-size:0!important;
+}
+
+body.modo-juego-global .ventana.juego-pantalla .mundo-menu-toggle::before{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:9px;
+  width:10px;
+  height:1px;
+  background:currentColor;
+  box-shadow:0 4px currentColor,0 8px currentColor;
+}
+
+body.modo-juego-global .ventana.juego-pantalla .mundo-progreso{
+  z-index:1090!important;
+  left:auto!important;
+  right:10px!important;
+  top:10px!important;
+  width:min(116px,31vw)!important;
+  transform:none!important;
+  opacity:.52;
+  font-size:6px!important;
+  line-height:1!important;
+}
+
+body.modo-juego-global .ventana.juego-pantalla .mundo-progreso>span{margin-bottom:3px!important;}
+body.modo-juego-global .ventana.juego-pantalla .mundo-progreso>i{height:3px!important;border-width:1px!important;}
+body.modo-juego-global .ventana.juego-pantalla .mundo-progreso:hover{opacity:.9;}
+
 /* Tipografía final de los minijuegos. */
 .juegos-hub,.juegos-hub button,.ventana.juego-pantalla,.ventana.juego-pantalla *{
   font-family:"Comic Sans MS","Comic Sans",cursive!important;
