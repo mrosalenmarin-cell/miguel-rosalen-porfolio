@@ -6990,6 +6990,11 @@ const porronObras=[
 ];
 
 const porronOrdenMerch=[1,2,3,6,7,8,4,5];
+const porronTitulosMerch={
+  1:"1 camisa porrón",2:"2 camisa porrón",3:"3 camisa porrón",
+  6:"4 tank top porrón",7:"5 tank top porrón",8:"6 tank top porrón",
+  4:"7 calzado porrón",5:"8 calzado porrón"
+};
 const porronSpansMerch={1:4,2:4,3:4,6:4,7:4,8:4,4:6,5:6};
 const porronOrdenVisual=[
   9,10,11,12,13,14,16,15,17,19,18,20,23,24,21,22,25,
@@ -7017,10 +7022,11 @@ const porronObrasOrdenadas=[...porronOrdenMerch,...porronOrdenVisual]
     if(!obra) return null;
     const [ancho,alto]=porronDimensiones[numero] || [4,3];
     if(index<porronOrdenMerch.length){
-      return {...obra,grupo:"merchandising",ancho,alto,span:porronSpansMerch[numero] || obra.span};
+      return {...obra,titulo:porronTitulosMerch[numero] || obra.titulo,grupo:"merchandising",ancho,alto,span:porronSpansMerch[numero] || obra.span};
     }
     return {
       ...obra,
+      titulo:`Imagen de marca ${index-porronOrdenMerch.length+1}`,
       ancho,
       alto,
       grupo:"campaña · producto",
@@ -7700,6 +7706,7 @@ disenoGraficoPortfolio.subsecciones.push({
         obras: [
           {
             grupo: "archivo gráfico",
+            titulo: "cartel",
             span: 7,
             ancho: 849,
             alto: 1200,
@@ -7708,6 +7715,7 @@ disenoGraficoPortfolio.subsecciones.push({
           },
           {
             grupo: "archivo gráfico",
+            titulo: "postal 1",
             span: 5,
             ancho: 849,
             alto: 1200,
@@ -7716,6 +7724,7 @@ disenoGraficoPortfolio.subsecciones.push({
           },
           {
             grupo: "archivo gráfico",
+            titulo: "postal 2",
             span: 7,
             ancho: 960,
             alto: 1200,
@@ -7788,6 +7797,7 @@ disenoGraficoPortfolio.subsecciones.push({
         obras: [
           {
             grupo: "archivo gráfico",
+            titulo: "cartel",
             span: 7,
             ancho: 900,
             alto: 1200,
@@ -7796,6 +7806,7 @@ disenoGraficoPortfolio.subsecciones.push({
           },
           {
             grupo: "archivo gráfico",
+            titulo: "prueba 1",
             span: 5,
             ancho: 857,
             alto: 1200,
@@ -7804,6 +7815,7 @@ disenoGraficoPortfolio.subsecciones.push({
           },
           {
             grupo: "archivo gráfico",
+            titulo: "prueba 2",
             span: 5,
             ancho: 857,
             alto: 1200,
@@ -7812,6 +7824,7 @@ disenoGraficoPortfolio.subsecciones.push({
           },
           {
             grupo: "archivo gráfico",
+            titulo: "prueba 3",
             span: 7,
             ancho: 857,
             alto: 1200,
@@ -7820,6 +7833,7 @@ disenoGraficoPortfolio.subsecciones.push({
           },
           {
             grupo: "archivo gráfico",
+            titulo: "prueba 4",
             span: 5,
             ancho: 857,
             alto: 1200,
