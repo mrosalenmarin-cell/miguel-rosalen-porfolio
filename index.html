@@ -5138,6 +5138,37 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   color:#0067ff;
 }
 
+.portfolio-nodo-arrow{
+  position:relative;
+  display:inline-block;
+  width:8px;
+  height:12px;
+  margin-left:7px;
+  vertical-align:-2px;
+}
+
+.portfolio-nodo-arrow::before{
+  content:"";
+  position:absolute;
+  left:3px;
+  bottom:0;
+  width:1px;
+  height:10px;
+  background:currentColor;
+}
+
+.portfolio-nodo-arrow::after{
+  content:"";
+  position:absolute;
+  left:1px;
+  top:1px;
+  width:5px;
+  height:5px;
+  border-top:1px solid currentColor;
+  border-left:1px solid currentColor;
+  transform:rotate(45deg);
+}
+
 
 /* capa de líneas */
 
@@ -7922,7 +7953,7 @@ const nodosHTML = sec.nodosInfo?.length
           type="button"
           data-nodo="${escaparHTMLPortfolio(nodo.id)}"
         >
-          ${escaparHTMLPortfolio(nodo.titulo)} ↗
+          ${escaparHTMLPortfolio(nodo.titulo)}<span class="portfolio-nodo-arrow" aria-hidden="true"></span>
         </button>
 
 
