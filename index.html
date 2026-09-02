@@ -7425,9 +7425,9 @@ const porronObras=[
 
 const porronOrdenMerch=[1,2,3,6,7,8,4,5];
 const porronTitulosMerch={
-  1:"1 camisa porrón",2:"2 camisa porrón",3:"3 camisa porrón",
-  6:"4 tank top porrón",7:"5 tank top porrón",8:"6 tank top porrón",
-  4:"7 calzado porrón",5:"8 calzado porrón"
+  1:"camisa porrón",2:"camisa porrón",3:"camisa porrón",
+  6:"tank top porrón",7:"tank top porrón",8:"tank top porrón",
+  4:"calzado porrón",5:"calzado porrón"
 };
 const porronSpansMerch={1:4,2:4,3:4,6:4,7:4,8:4,4:6,5:6};
 const porronOrdenVisual=[
@@ -7912,13 +7912,13 @@ const performancePortfolio={
       titulo:"adivina que hay en mi espalda",
       tipo:"video",
       thumb:"portfolio/thumbs/artes-visuales/performance/performance-07-thumb.webp",
-      video:"file:///C:/Users/otaku/OneDrive/Escritorio/mis%20cosas/UPV/Performance%2021-22/adivina%20que%20hay%20en%20mi%20espalda.mp4",
+      video:"assets/multiverse/performance-adivina-espalda-preview.mp4",
+      videoPreload:"metadata",
       ano:"Valencia · 2021 · 21' 53\"",
       descripcion:"<em>He encontrado un sitio en casa donde guardar mis pendientes<br>El rincón está detrás de tres paredes pero si te cansas buscando nos podemos tumbar y así me cuentas como estás<br>No hablamos todo el rato y ya empiezo a pensar q no t gusta mi pelo y q debería cortármelo<br>Hemos encontrado uno debajo del cojín del sofá<br>El otro se ha perdido y yo solo puedo pensar en q no te gusta mi pelo<br>pero me has hecho un pendiente nuevo con alambre de espino brillantísimo y ya vuelvo a pensar q si t gusta jugar conmigo &#129419;</em>",
       galeria:[
-        {img:"assets/multiverse/performance-adivina-espalda-02.webp",titulo:"adivina que hay en mi espalda · registro 01",ano:"Valencia · 2021 · 21' 53\"",sensible:true},
-        {img:"assets/multiverse/performance-adivina-espalda-01.webp",titulo:"adivina que hay en mi espalda · registro 02",sensible:true},
-        {img:"assets/multiverse/performance-adivina-espalda-03.webp",titulo:"adivina que hay en mi espalda · registro 03",sensible:true}
+        {img:"assets/multiverse/performance-adivina-espalda-01.webp",titulo:"adivina que hay en mi espalda · registro 01",ano:"Valencia · 2021 · 21' 53\"",sensible:true},
+        {img:"assets/multiverse/performance-adivina-espalda-03.webp",titulo:"adivina que hay en mi espalda · registro 02",sensible:true}
       ],
       sensible:true,
       x:72,
@@ -7935,7 +7935,8 @@ const performancePortfolio={
       ano:"València · 2025 · 17' 23\"",
       descripcion:"Esta performance se sitúa en el punto liminar en el que el amor y el dolor dejan de presentarse como experiencias opuestas. Parte de una relación atravesada por el cuidado, el deseo, la dependencia y la herida, atendiendo a los gestos que pueden sostener y desgastar a la vez.<br><br>La acción no busca resolver esa tensión, sino permanecer en ella: observar cómo una caricia puede convertirse en marca, cómo el afecto puede contener incomodidad y cómo el cuerpo guarda aquello que no siempre encuentra una forma clara de decirse. <em>dolor.dulce.dolor</em> propone así un espacio inestable entre la entrega y el límite, entre lo que acompaña y lo que duele.",
       galeria:[
-        {img:"assets/multiverse/performance-dolor-dulce-dolor-02.webp",titulo:"dolor.dulce.dolor · registro",ano:"València · 2025 · 17' 23\"",sensible:true}
+        {img:"assets/multiverse/performance-dolor-dulce-dolor-01.webp",titulo:"dolor.dulce.dolor · registro 01",ano:"València · 2025 · 17' 23\"",sensible:true},
+        {img:"assets/multiverse/performance-dolor-dulce-dolor-02.webp",titulo:"dolor.dulce.dolor · registro 02",sensible:true}
       ],
       sensible:true,
       x:36,
@@ -9416,7 +9417,7 @@ function renderPortfolioPerformance(v,sec,parent){
     const w=obra.w || posicion[2];
     return `
     <button class="portfolio-performance-item ${obra.sensible ? "is-sensitive" : ""}" type="button" data-index="${index}" style="left:${x}%;top:${y}%;width:${w}px">
-      <span class="portfolio-performance-thumb">${obra.video ? `<video muted loop playsinline autoplay preload="${escaparHTMLPortfolio(obra.videoPreload || "none")}" poster="${escaparHTMLPortfolio(obra.thumb || "")}" aria-label="${escaparHTMLPortfolio(obra.titulo || "Vídeo de performance")}"><source src="${escaparHTMLPortfolio(obra.video)}" type="${escaparHTMLPortfolio(obra.videoType || "video/mp4")}"></video>` : `<img src="${escaparHTMLPortfolio(obra.thumb || obra.full || "")}" decoding="async" alt="${escaparHTMLPortfolio(obra.titulo || "Archivo de performance")}">`}${obra.sensible ? `<span class="portfolio-performance-censura"><span class="portfolio-performance-revelar" role="button" tabindex="0">VER PREVIA</span></span>` : ""}</span>
+      <span class="portfolio-performance-thumb">${obra.video ? `<video muted loop playsinline ${obra.sensible ? "" : "autoplay"} preload="${escaparHTMLPortfolio(obra.sensible ? "none" : obra.videoPreload || "metadata")}" poster="${escaparHTMLPortfolio(obra.thumb || "")}" aria-label="${escaparHTMLPortfolio(obra.titulo || "Vídeo de performance")}"><source src="${escaparHTMLPortfolio(obra.video)}" type="${escaparHTMLPortfolio(obra.videoType || "video/mp4")}"></video>` : `<img src="${escaparHTMLPortfolio(obra.thumb || obra.full || "")}" decoding="async" alt="${escaparHTMLPortfolio(obra.titulo || "Archivo de performance")}">`}${obra.sensible ? `<span class="portfolio-performance-censura"><span class="portfolio-performance-revelar" role="button" tabindex="0">VER PREVIA</span></span>` : ""}</span>
       <span class="portfolio-performance-numero">(${index+1})</span>
       <span class="portfolio-performance-file">${escaparHTMLPortfolio(obra.titulo || `performance_${String(index+1).padStart(2,"0")}`)}</span>
     </button>`;
@@ -9441,7 +9442,15 @@ function renderPortfolioPerformance(v,sec,parent){
       if(e.target.closest(".portfolio-performance-revelar")){
         item.classList.add("is-preview-revealed");
         const video=item.querySelector("video");
-        if(video) video.play().catch(()=>{});
+        if(video){
+          video.preload="auto";
+          video.muted=true;
+          video.playsInline=true;
+          const reproducir=()=>video.play().catch(()=>{});
+          if(video.readyState>=2) reproducir();
+          else video.addEventListener("canplay",reproducir,{once:true});
+          video.load();
+        }
         return;
       }
       const obra=sec.obras[Number(item.dataset.index)] || {};
