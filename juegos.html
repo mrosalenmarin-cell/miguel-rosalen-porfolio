@@ -6615,7 +6615,7 @@ body.cv-inmersivo-activo > .cursor{
 .mundo-menu-cuadro{
   position:relative;width:min(390px,calc(100% - 22px));padding:16px;color:#071725;background:rgba(231,239,235,.96);border:3px solid #fff;outline:2px solid #173b59;box-shadow:9px 9px 0 rgba(7,30,48,.46),inset 0 0 0 2px #91aab2;
 }
-.mundo-menu-cerrar{position:absolute;z-index:2;right:9px;top:8px;width:26px;height:26px;padding:0;border:0;border-radius:50%;color:inherit;background:rgba(255,255,255,.22);font:22px/1 Arial,sans-serif;cursor:pointer}.mundo-menu-cerrar:hover,.mundo-menu-cerrar:focus-visible{background:rgba(255,255,255,.6);outline:1px solid currentColor}
+.mundo-menu-cerrar{position:absolute;z-index:2;right:9px;top:8px;width:28px;height:28px;padding:0;border:2px solid currentColor;border-radius:4px;color:inherit;background:rgba(255,255,255,.18);box-shadow:2px 2px 0 rgba(0,0,0,.24),inset 1px 1px rgba(255,255,255,.58);font:700 18px/22px "Comic Sans MS","Comic Sans",cursive;cursor:pointer;transform:rotate(-3deg)}.mundo-menu-cerrar:hover,.mundo-menu-cerrar:focus-visible{color:#fff;background:#175887;outline:1px dotted #fff;outline-offset:-5px;transform:rotate(3deg) scale(1.06)}
 .mundo-menu-titulo{margin:-16px -16px 15px;padding:12px 14px 11px;color:#fff;background:#174f7d;border-bottom:2px solid #08243e;line-height:1;text-transform:none;}
 .mundo-menu-titulo small{display:block;margin-bottom:5px;font:700 7px/1 "Courier New",monospace;letter-spacing:.12em;opacity:.66}.mundo-menu-titulo strong{display:block;font:400 clamp(23px,4.3vw,34px)/1 'MiguelRosalen',Arial,sans-serif;letter-spacing:0;text-transform:none}
 .mundo-menu-acciones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}
@@ -6838,7 +6838,7 @@ body.modo-juego-global #modoJuegoGlobal .consola{color:#fff}
 .contacto-tension{position:absolute;z-index:12;left:50%;bottom:42px;width:1px;height:1px;background:rgba(255,255,255,.82);transform-origin:0 0;pointer-events:none;opacity:0}.contacto-tension.visible{opacity:1}
 .contacto-mira{position:absolute;z-index:11;width:28px;height:28px;border:1px solid rgba(255,255,255,.9);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 0 1px rgba(100,22,25,.6),0 0 12px #fff;opacity:0}.contacto-mira::before,.contacto-mira::after{content:"";position:absolute;background:#fff}.contacto-mira::before{left:50%;top:-7px;width:1px;height:40px}.contacto-mira::after{left:-7px;top:50%;width:40px;height:1px}.contacto-mira.visible{opacity:1}
 .contacto-patos-hud{position:absolute;z-index:9;left:50%;top:13px;display:flex;align-items:center;gap:10px;padding:7px 12px;border:1px solid rgba(91,27,28,.45);border-radius:999px;color:#6e2025;background:rgba(255,244,213,.88);box-shadow:0 5px 0 rgba(90,28,29,.22);font:700 9px/1 "Courier New",monospace;transform:translateX(-50%)}
-.contacto-patos-datos{position:absolute;z-index:10;right:12px;top:54px;width:min(210px,28vw);display:grid;gap:7px;pointer-events:none}
+.contacto-patos-datos{position:absolute;z-index:10;left:12px;right:auto;top:auto;bottom:14px;width:min(210px,28vw);display:grid;gap:7px;pointer-events:none}
 .contacto-patos-dato{max-width:100%;padding:8px 11px;border:1px solid rgba(90,28,29,.42);border-radius:10px;color:#70242b;background:rgba(255,246,220,.93);box-shadow:0 5px 0 rgba(90,28,29,.2);opacity:0;transform:translateX(18px);transition:.35s ease;font:9px/1.25 "Courier New",monospace}
 .contacto-patos-dato.visible{opacity:1;transform:none}.contacto-patos-dato strong{display:block;margin-bottom:2px}.contacto-patos-dato a{color:inherit}
 .mundo-game-intro{position:absolute;z-index:260;inset:30px 0 0;display:grid;place-content:center;justify-items:center;gap:16px;padding:30px;text-align:center;color:#25383b;background:rgba(240,246,246,.95);font:10px/1.55 "Courier New",monospace}
@@ -6851,7 +6851,7 @@ body.modo-juego-global #modoJuegoGlobal .consola{color:#fff}
 .read-natural-sonido{display:none!important}
 .contacto-patos-premio{position:absolute;z-index:280;left:50%;top:50%;color:#fff5a3;text-shadow:0 0 8px #fff,0 0 20px #f1363f,5px 6px 0 #80212a;font:900 clamp(54px,12vw,150px)/1 "Comic Sans MS",cursive;transform:translate(-50%,-50%);animation:cvFeedback 1.25s ease both;pointer-events:none}
 .mundo-win{position:absolute;z-index:700;inset:30px 0 0;display:grid;place-content:center;text-align:center;color:#fff;background:rgba(14,19,25,.78);text-shadow:0 0 9px #fff,0 0 24px #ffcc25,5px 6px 0 #d72f48;pointer-events:none;animation:winEntrada 2.2s ease both}.mundo-win strong{font:900 clamp(72px,18vw,210px)/.8 "Comic Sans MS",cursive}.mundo-win span{margin-top:28px;font:700 clamp(12px,2vw,22px)/1.3 "Courier New",monospace}@keyframes winEntrada{0%{opacity:0;transform:scale(.55)}18%,75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.08)}}
-@media(max-width:700px){.contacto-pato{width:clamp(58px,19vw,94px)}.contacto-patos-datos{right:7px;top:42px;width:min(145px,39vw)}.contacto-patos-dato{padding:6px 8px;font-size:7px}.contacto-patos-hud{top:8px}}
+@media(max-width:700px){.contacto-pato{width:clamp(58px,19vw,94px)}.contacto-patos-datos{left:8px;right:auto;top:auto;bottom:12px;width:min(156px,44vw)}.contacto-patos-dato{padding:6px 8px;font-size:7px}.contacto-patos-hud{top:8px}}
 
 /* Estado comun de los mundos: una lectura clara sin cargar cada juego con mas UI. */
 @keyframes juegoFondoEspectral{
@@ -7198,6 +7198,48 @@ body.modo-juego-global .ventana.juego-pantalla .mundo-progreso{
 body.modo-juego-global .ventana.juego-pantalla .mundo-progreso>span{margin-bottom:3px!important;}
 body.modo-juego-global .ventana.juego-pantalla .mundo-progreso>i{height:3px!important;border-width:1px!important;}
 body.modo-juego-global .ventana.juego-pantalla .mundo-progreso:hover{opacity:.9;}
+
+/* La copistería comparte el mismo margen del HUD: datos pequeños bajo la barra. */
+body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-hud{
+  left:10px!important;
+  right:auto!important;
+  top:39px!important;
+  width:min(150px,43vw)!important;
+  gap:4px!important;
+  font-size:7px!important;
+}
+body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-client{
+  height:min(132px,22vh)!important;
+  min-height:72px!important;
+  padding:6px 7px!important;
+  border-radius:7px!important;
+  line-height:1.2!important;
+}
+body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-client::before{
+  margin:-6px -7px 5px!important;
+  padding:5px 7px!important;
+  font-size:6px!important;
+}
+body.modo-juego-global .ventana-curriculum.cv-comandas .cv-chat-message{
+  margin-bottom:4px!important;
+  padding:5px 6px!important;
+  border-radius:6px 6px 6px 2px!important;
+  font-size:7px!important;
+}
+body.modo-juego-global .ventana-curriculum.cv-comandas .cv-chat-message strong{margin-bottom:1px!important;font-size:6px!important;}
+body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-stats{justify-content:flex-start!important;gap:4px!important;}
+body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-stats span{min-width:0!important;padding:4px 6px!important;font-size:7px!important;}
+
+/* El perfil deja respirar el dibujo y mantiene la respuesta visible sobre el teclado móvil. */
+.ventana.ia-captura .ia-perfil-avatar{padding-top:52px!important;}
+.ventana.ia-captura .ia-perfil-avatar canvas{top:54%!important;}
+.ventana.ia-captura .ia-perfil-identidad{top:auto!important;bottom:20px!important;}
+.ventana.ia-captura .ia-perfil-chat{bottom:var(--ia-teclado,0px)!important;transition:bottom .16s ease;}
+@media(max-width:700px){
+  .ventana.ia-captura .ia-perfil-avatar{padding-top:38px!important;}
+  .ventana.ia-captura .ia-perfil-avatar canvas{top:52%!important;}
+  .ventana.ia-captura .ia-perfil-identidad{bottom:13px!important;}
+}
 
 /* Tipografía final de los minijuegos. */
 .juegos-hub,.juegos-hub button,.ventana.juego-pantalla,.ventana.juego-pantalla *{
@@ -15356,7 +15398,7 @@ function activarModoContactoGlobosAntiguo(v){
     <div class="contacto-globos-resultados">
       <div class="contacto-globo-dato" data-globo-dato="correo"><small>MAIL BALLOON</small><a href="mailto:mrosalenmarin@gmail.com">mrosalenmarin@gmail.com</a></div>
       <div class="contacto-globo-dato" data-globo-dato="telefono"><small>CALL BALLOON</small><a href="tel:+34603474236">603 474 236</a></div>
-      <div class="contacto-globo-dato" data-globo-dato="lugar"><small>LOCATION BALLOON</small><span>Oviedo ↔ Valencia</span></div>
+      <div class="contacto-globo-dato" data-globo-dato="lugar"><small>LOCATION BALLOON</small><span>Oviedo &harr; Valencia</span></div>
     </div>
     <button type="button" class="contacto-globos-reset">RELOAD BALLOONS</button>`;
   v.appendChild(panel);
@@ -16408,7 +16450,7 @@ function activarModoContactoGlobos(v){
     </div>
     <div class="contacto-patos-hud">PATOS <b data-patos-cuenta>0 / 6</b></div>
     <div class="contacto-patos-datos" aria-live="polite">
-      <div class="contacto-patos-dato" data-pato-dato="1"><strong>UBICACIÓN</strong>Oviedo ↔ Valencia</div>
+      <div class="contacto-patos-dato" data-pato-dato="1"><strong>UBICACIÓN</strong>Oviedo &harr; Valencia</div>
       <div class="contacto-patos-dato" data-pato-dato="3"><strong>TELÉFONO</strong><a href="tel:+34603474236">603 474 236</a></div>
       <div class="contacto-patos-dato" data-pato-dato="5"><strong>CORREO</strong><a href="mailto:mrosalenmarin@gmail.com">mrosalenmarin@gmail.com</a></div>
     </div>
@@ -17094,6 +17136,20 @@ function activarModoIACaptura(v){
     <section class="ia-perfil-chat"><div class="ia-perfil-mensajes" aria-live="polite"></div><div class="ia-perfil-respuestas"></div></section>`;
   v.appendChild(mundo);
   const controlador=new AbortController(),{signal}=controlador;
+  const ajustarTecladoIA=()=>{
+    const viewport=window.visualViewport;
+    if(!viewport) return;
+    const oculto=Math.max(0,window.innerHeight-viewport.height-viewport.offsetTop);
+    mundo.style.setProperty("--ia-teclado",`${oculto}px`);
+  };
+  window.visualViewport?.addEventListener("resize",ajustarTecladoIA,{signal});
+  window.visualViewport?.addEventListener("scroll",ajustarTecladoIA,{signal});
+  v.addEventListener("focusin",e=>{
+    if(!e.target.matches(".ia-perfil-respuestas input")) return;
+    setTimeout(ajustarTecladoIA,80);
+  },{signal});
+  v.addEventListener("focusout",()=>setTimeout(ajustarTecladoIA,120),{signal});
+  ajustarTecladoIA();
   let perfil={};try{perfil=JSON.parse(localStorage.getItem("miguel-avatar")||sessionStorage.getItem("miguel-avatar")||"{}")||{}}catch(_e){}
   const preguntas=[
     {k:"nombre",q:"Hola. Antes de construirte, ¿cómo te llamas?",tipo:"texto"},
@@ -17676,7 +17732,7 @@ function activarMuseoPortfolioSalas(v){
   function dibujarMirada(){/* La vigilancia se comunica directamente sobre las obras. */}
   function actualizarHud(){const robadas=salas.reduce((n,s)=>n+s.obras.filter(o=>o.robada).length,0),direcciones=["IZQUIERDA","CENTRO","DERECHA"];cuenta.textContent=`${robadas}/${total}`;salaEl.textContent=`SALA ${String(sala+1).padStart(2,"0")} · ${salas[sala].nombre}`;zonaEl.textContent=direcciones[zonaGuardia];actualizarProgresoMundo(v,total?robadas/total*100:0,"COLECCIÓN")}
   function dibujar(t){
-    const w=canvas.clientWidth,h=canvas.clientHeight,fondo=fondos[sala];ctx.fillStyle="#20252a";ctx.fillRect(0,0,w,h);if(fondo.complete&&fondo.naturalWidth)ctx.drawImage(fondo,0,0,w,h);
+    const w=canvas.clientWidth,h=canvas.clientHeight,fondo=fondos[sala];ctx.fillStyle="#20252a";ctx.fillRect(0,0,w,h);if(fondo.complete&&fondo.naturalWidth)dibujarImagenCover(fondo,0,0,w,h);
     const mapas=[
       [{x:.325,y:.313,w:.063,h:.099},{x:.422,y:.289,w:.151,h:.143},{x:.608,y:.312,w:.061,h:.13},{x:.324,y:.477,w:.137,h:.14},{x:.484,y:.484,w:.072,h:.141,oval:true},{x:.583,y:.514,w:.086,h:.102}],
       [{x:.295,y:.206,w:.076,h:.249},{x:.407,y:.189,w:.178,h:.164},{x:.622,y:.221,w:.07,h:.127},{x:.392,y:.432,w:.106,h:.138},{x:.522,y:.41,w:.066,h:.163,oval:true},{x:.621,y:.412,w:.075,h:.16}],
@@ -17687,9 +17743,9 @@ function activarMuseoPortfolioSalas(v){
     primerosPlanos[sala].forEach(r=>restaurarPrimerPlano(fondo,r,w,h));
     const zonasVigiladas=sala>=1?[zonaGuardia,(zonaGuardia+1)%3]:[zonaGuardia];
     salas[sala].obras.forEach((item,i)=>{item.hit=null;if(item.robada)return;const p=mapas[sala][i%mapas[sala].length],ox=w*p.x,oy=h*p.y,ow=w*p.w,oh=h*p.h;insertarObra(item,ox,oy,ow,oh,p.oval);if(zonasVigiladas.includes(item.zona)){ctx.save();ctx.shadowColor="rgba(255,18,28,.98)";ctx.shadowBlur=Math.max(12,Math.min(ow,oh)*.28);ctx.fillStyle="rgba(255,20,30,.24)";ctx.strokeStyle="rgba(255,38,45,.98)";ctx.lineWidth=Math.max(3,Math.min(ow,oh)*.055);ctx.beginPath();if(p.oval)ctx.ellipse(ox+ow/2,oy+oh/2,ow/2,oh/2,0,0,Math.PI*2);else ctx.rect(ox,oy,ow,oh);ctx.fill();ctx.stroke();ctx.restore()}});
-    const gh=Math.min(h*.86,720),gw=guardia.complete&&guardia.naturalWidth?gh*(guardia.naturalWidth/guardia.naturalHeight):gh*.54,gx=Math.max(gw*.48,w*.105),gy=h*1.17;ctx.fillStyle="rgba(20,20,20,.15)";ctx.beginPath();ctx.ellipse(gx,gy-2,gw*.34,gh*.025,0,0,Math.PI*2);ctx.fill();if(guardia.complete&&guardia.naturalWidth)ctx.drawImage(guardia,gx-gw/2,gy-gh,gw,gh);
+    const gh=Math.min(h*.44,360),gw=guardia.complete&&guardia.naturalWidth?gh*(guardia.naturalWidth/guardia.naturalHeight):gh*.54,gx=Math.max(gw*.62,w*.09),gy=h*.98;ctx.fillStyle="rgba(20,20,20,.15)";ctx.beginPath();ctx.ellipse(gx,gy-2,gw*.34,gh*.025,0,0,Math.PI*2);ctx.fill();if(guardia.complete&&guardia.naturalWidth)ctx.drawImage(guardia,gx-gw/2,gy-gh,gw,gh);
     const ojoX=gx+gw*.2,ojoY=Math.max(22,gy-gh*.81);dibujarMirada(ojoX,ojoY,zonaGuardia,"ÁLEX",w,h);if(sala>=1){const origenSecundario=sala<3?{x:w*.65,y:h*.5,n:"VISITANTE 1"}:{x:w*.8,y:h*.52,n:"GUARDIA 2"};dibujarMirada(origenSecundario.x,origenSecundario.y,(zonaGuardia+1)%3,origenSecundario.n,w,h)}
-    const bw=Math.min(w*.43,520),bh=Math.min(h*.1,76),bx=Math.max(gw*.72,w*.18),by=h-bh-h*.022;ctx.save();ctx.fillStyle="rgba(249,248,243,.92)";ctx.strokeStyle="rgba(52,54,56,.55)";ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(bx,by,bw,bh,6);ctx.fill();ctx.stroke();ctx.fillStyle="#242526";ctx.textAlign="left";ctx.textBaseline="top";ctx.font=`700 ${Math.max(10,Math.min(12,w*.012))}px Arial`;ctx.fillText(hablante,bx+12,by+9);ctx.font=`${Math.max(11,Math.min(14,w*.014))}px Arial`;const palabras=dialogo.split(" "),lineas=[];let linea="";palabras.forEach(p=>{const prueba=(linea+" "+p).trim();if(ctx.measureText(prueba).width>bw-24&&linea){lineas.push(linea);linea=p}else linea=prueba});if(linea)lineas.push(linea);lineas.slice(0,2).forEach((l,i)=>ctx.fillText(l,bx+12,by+29+i*17));ctx.restore();
+    const bw=Math.min(w*.48,520),bh=Math.min(h*.14,88),bx=Math.min(w-bw-12,Math.max(gw*.92,w*.2)),by=Math.max(16,gy-gh*.72);ctx.save();ctx.fillStyle="rgba(249,248,243,.92)";ctx.strokeStyle="rgba(52,54,56,.55)";ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(bx,by,bw,bh,6);ctx.fill();ctx.stroke();ctx.fillStyle="#242526";ctx.textAlign="left";ctx.textBaseline="top";ctx.font=`700 ${Math.max(10,Math.min(12,w*.012))}px Arial`;ctx.fillText(hablante,bx+12,by+9);ctx.font=`${Math.max(11,Math.min(14,w*.014))}px Arial`;const palabras=dialogo.split(" "),lineas=[];let linea="";palabras.forEach(p=>{const prueba=(linea+" "+p).trim();if(ctx.measureText(prueba).width>bw-24&&linea){lineas.push(linea);linea=p}else linea=prueba});if(linea)lineas.push(linea);lineas.slice(0,2).forEach((l,i)=>ctx.fillText(l,bx+12,by+29+i*17));ctx.restore();
     if(t<alarmaHasta){ctx.fillStyle="rgba(205,18,18,.3)";ctx.fillRect(0,0,w,h);ctx.fillStyle="#fff";ctx.font=`900 ${Math.min(54,w*.08)}px Arial`;ctx.textAlign="center";ctx.fillText("TE HA VISTO",w/2,h/2)}
     if(t<transicionHasta){ctx.fillStyle="rgba(245,245,242,.97)";ctx.fillRect(0,0,w,h);ctx.fillStyle="#151515";ctx.textAlign="center";ctx.textBaseline="middle";ctx.font=`900 ${Math.min(56,w*.08)}px Arial`;ctx.fillText(transicionTitulo,w/2,h*.34);ctx.font=`700 ${Math.min(30,w*.043)}px Arial`;ctx.fillStyle="#343434";ctx.fillText(transicionSubtitulo,w/2,h*.45);ctx.font=`${Math.max(13,Math.min(18,w*.021))}px Arial`;ctx.fillStyle="#595959";const palabras=transicionTexto.split(" "),lineas=[];let linea="";palabras.forEach(p=>{const prueba=(linea+" "+p).trim();if(ctx.measureText(prueba).width>w*.72&&linea){lineas.push(linea);linea=p}else linea=prueba});if(linea)lineas.push(linea);lineas.slice(0,3).forEach((l,i)=>ctx.fillText(l,w/2,h*.56+i*23));ctx.font=`700 ${Math.max(11,Math.min(14,w*.016))}px Arial`;ctx.fillStyle="#777";ctx.fillText(transicionCuenta,w/2,h*.73)}
   }
