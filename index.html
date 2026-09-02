@@ -6812,8 +6812,189 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 }
 </style>
 
+
+<style>
+/* =========================================================
+   MUSEOGRAFÍA — NODOS V4
+   Orden estable + links subrayados + líneas vivas.
+   ========================================================= */
+
+/* Esta sección tiene un orden explícito:
+   1 Sobre el proyecto
+   2 Museología / Mediación / Asistencia
+   3 grupos de imágenes */
+.portfolio-editorial.portfolio-editorial--con-nodos{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+}
+
+.portfolio-editorial.portfolio-editorial--con-nodos
+> .portfolio-editorial-intro{
+  order:1 !important;
+  position:relative !important;
+  z-index:2 !important;
+}
+
+.portfolio-editorial.portfolio-editorial--con-nodos
+> .portfolio-nodos-info{
+  order:2 !important;
+
+  position:relative !important;
+  inset:auto !important;
+  left:auto !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:auto !important;
+
+  width:100% !important;
+  max-width:1160px !important;
+  height:auto !important;
+  min-height:0 !important;
+
+  margin:0 auto 18px !important;
+  padding:0 10px 10px !important;
+
+  display:flex !important;
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:26px !important;
+
+  overflow:visible !important;
+  transform:none !important;
+  z-index:3 !important;
+}
+
+.portfolio-editorial.portfolio-editorial--con-nodos
+> .portfolio-editorial-group{
+  order:3 !important;
+}
+
+/* Los conceptos pasan a comportarse visualmente como links.
+   Siempre subrayados; azul al hover/focus y cuando están abiertos. */
+.portfolio-editorial--con-nodos .portfolio-nodo-link{
+  display:inline-block !important;
+  flex:0 0 auto !important;
+
+  margin:0 !important;
+  padding:2px 0 3px !important;
+
+  border:0 !important;
+  background:transparent !important;
+
+  color:rgba(0,0,0,.58) !important;
+
+  font:inherit !important;
+  font-size:10px !important;
+  line-height:1.25 !important;
+  letter-spacing:.045em !important;
+  text-transform:uppercase !important;
+
+  white-space:nowrap !important;
+
+  text-decoration-line:underline !important;
+  text-decoration-thickness:1px !important;
+  text-underline-offset:3px !important;
+  text-decoration-color:currentColor !important;
+
+  cursor:pointer !important;
+  pointer-events:auto !important;
+
+  transition:color .16s ease, opacity .16s ease !important;
+}
+
+/* El subrayado ya es real: anulamos el pseudo-elemento antiguo. */
+.portfolio-editorial--con-nodos .portfolio-nodo-link::after{
+  display:none !important;
+  content:none !important;
+}
+
+/* Y eliminamos por completo cualquier flecha heredada. */
+.portfolio-editorial--con-nodos .portfolio-nodo-arrow,
+.portfolio-editorial--con-nodos .portfolio-nodo-arrow::before,
+.portfolio-editorial--con-nodos .portfolio-nodo-arrow::after{
+  display:none !important;
+  content:none !important;
+}
+
+.portfolio-editorial--con-nodos .portfolio-nodo-link:hover,
+.portfolio-editorial--con-nodos .portfolio-nodo-link:focus-visible,
+.portfolio-editorial--con-nodos .portfolio-nodo-link.is-active{
+  color:#0067ff !important;
+  opacity:1 !important;
+  outline:0 !important;
+}
+
+/* Las líneas deben poder dibujarse por todo el overlay. */
+.portfolio-nodos-overlay,
+.portfolio-nodos-overlay .portfolio-nodos-svg{
+  overflow:visible !important;
+}
+
+.portfolio-nodos-overlay .portfolio-nodos-svg{
+  z-index:1 !important;
+}
+
+.portfolio-nodos-overlay .portfolio-nodo-linea{
+  fill:none !important;
+  stroke:rgba(0,0,0,.42) !important;
+  stroke-width:1px !important;
+  vector-effect:non-scaling-stroke !important;
+  pointer-events:none !important;
+}
+
+/* MÓVIL: los tres conceptos obligatoriamente en UNA SOLA LÍNEA. */
+@media (max-width:768px), (pointer:coarse){
+  .portfolio-editorial.portfolio-editorial--con-nodos
+  > .portfolio-nodos-info{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    align-items:center !important;
+
+    width:100% !important;
+    gap:5px !important;
+
+    margin:0 0 14px !important;
+    padding:0 7px 8px !important;
+
+    overflow:visible !important;
+  }
+
+  .portfolio-editorial--con-nodos .portfolio-nodo-link{
+    width:100% !important;
+    min-width:0 !important;
+
+    padding:2px 1px 3px !important;
+
+    font-size:clamp(6.7px,2.05vw,8px) !important;
+    line-height:1.15 !important;
+    letter-spacing:.005em !important;
+
+    text-align:center !important;
+    white-space:nowrap !important;
+  }
+}
+
+/* Móvil horizontal: conservar también los 3 conceptos en una fila. */
+@media (orientation:landscape) and (max-height:560px) and (pointer:coarse){
+  .portfolio-editorial.portfolio-editorial--con-nodos
+  > .portfolio-nodos-info{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:9px !important;
+    padding-inline:8px !important;
+  }
+
+  .portfolio-editorial--con-nodos .portfolio-nodo-link{
+    font-size:7.5px !important;
+  }
+}
+</style>
+
+<!-- MUSEOGRAFIA-NODOS-V4 -->
 <!-- MOBILE-LANDSCAPE-V1 -->
-<!-- MUSEOGRAFIA-NODOS-LIBRES-V3 · COMPACTOS · DINAMIZADORES-OK -->
+<!-- MUSEOGRAFIA-NODOS-LIBRES-V4 · LINEAS-VIVAS · LINKS · ORDEN-OK -->
 </head>
 
 <body>
@@ -9066,6 +9247,9 @@ function renderPortfolioEditorial(v,sec,parent){
 
   const editorial=document.createElement("div");
   editorial.className="portfolio-editorial";
+  if(sec.nodosInfo?.length){
+    editorial.classList.add("portfolio-editorial--con-nodos");
+  }
   const introTexto=sec.editorialTexto || [];
   const facts=sec.editorialFacts || [];
   const obras=sec.obras || [];
@@ -9118,7 +9302,7 @@ const nodosHTML = sec.nodosInfo?.length
           type="button"
           data-nodo="${escaparHTMLPortfolio(nodo.id)}"
         >
-          ${escaparHTMLPortfolio(nodo.titulo)}<span class="portfolio-nodo-arrow" aria-hidden="true"></span>
+          ${escaparHTMLPortfolio(nodo.titulo)}
         </button>
 
 
@@ -9447,6 +9631,30 @@ if(sec.nodosInfo?.length){
 
   };
 
+  /*
+    LÍNEAS VIVAS:
+    mientras haya alguna ventana de nodo abierta, se recalculan
+    en cada frame. Así siguen a la ventana al arrastrar,
+    redimensionar, hacer scroll o cambiar el tamaño del portfolio.
+  */
+  let rafLineasNodos=0;
+
+  const bucleLineasNodos=()=>{
+    actualizarTodasLasLineas();
+
+    if(capaNodos.querySelector(".portfolio-nodo-ventana.is-open")){
+      rafLineasNodos=requestAnimationFrame(bucleLineasNodos);
+    }else{
+      rafLineasNodos=0;
+    }
+  };
+
+  const activarLineasVivas=()=>{
+    if(!rafLineasNodos){
+      rafLineasNodos=requestAnimationFrame(bucleLineasNodos);
+    }
+  };
+
 
   const colocarVentanaInicial = (boton,ventana,index)=>{
 
@@ -9574,6 +9782,7 @@ if(sec.nodosInfo?.length){
         ventana.classList.add("is-open");
         boton.classList.add("is-active");
 
+        activarLineasVivas();
 
         requestAnimationFrame(()=>{
           actualizarLineaNodo(id);
@@ -9840,6 +10049,19 @@ if(sec.nodosInfo?.length){
     actualizarTodasLasLineas,
     {passive:true}
   );
+
+  if("ResizeObserver" in window){
+    const roNodos=new ResizeObserver(()=>{
+      actualizarTodasLasLineas();
+      if(capaNodos.querySelector(".portfolio-nodo-ventana.is-open")){
+        activarLineasVivas();
+      }
+    });
+    roNodos.observe(capaNodos);
+    capaNodos
+      .querySelectorAll(".portfolio-nodo-ventana")
+      .forEach(panel=>roNodos.observe(panel));
+  }
 
 }
 
