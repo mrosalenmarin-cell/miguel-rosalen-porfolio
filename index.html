@@ -13476,7 +13476,7 @@ Ah, y una última cosa: cuidado con la IA. Lleva demasiado tiempo aquí dentro.
 [
 "CONTACTO",
 
-`<a href="https://mail.google.com/mail/?view=cm&fs=1&to=mrosalenmarin@gmail.com" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">mrosalenmarin@gmail.com</a>
+`<a href="mailto:mrosalenmarin@gmail.com" style="color:inherit;text-decoration:none;">mrosalenmarin@gmail.com</a>
 
 <br><br>
 
@@ -16026,7 +16026,7 @@ function buildGmailUrl(){
   const to = "mrosalenmarin@gmail.com";
   const subject = "Después del contador";
   const body = "Hola Miguel Rosalén,\n\nHe llegado al final de tu web y no sé si esto cuenta como cierre o como inicio de una conversación.\n\nMe gustaría hablar contigo sobre tu trabajo, sobre esta interfaz y sobre posibles formas de colaboración, entrevista o encargo.\n\nSi te parece, podemos buscar un momento para conversar.\n\nUn saludo,";
-  return "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(to) + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  return "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
 }
 
 const gmailRedirectUrl = buildGmailUrl();
@@ -16831,7 +16831,7 @@ pointer-events:auto;
 
 
 
-`escríbeme: <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mrosalenmarin@gmail.com" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;pointer-events:auto;">mrosalenmarin@gmail.com</a>`,
+`escríbeme: <a href="mailto:mrosalenmarin@gmail.com" style="color:inherit;text-decoration:none;pointer-events:auto;">mrosalenmarin@gmail.com</a>`,
 
 ];
 
