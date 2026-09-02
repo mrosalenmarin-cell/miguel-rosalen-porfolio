@@ -10,9 +10,36 @@ href="logo-cuadrados.svg">
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=overlays-content">
+
+<script>
+(function(){
+  function esMovilJuegos(){
+    return !!(
+      (window.innerWidth && window.innerWidth <= 820) ||
+      ('ontouchstart' in window) ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+      (window.matchMedia && window.matchMedia('(pointer:coarse)').matches)
+    );
+  }
+
+  function aplicarClaseMovilJuegos(){
+    var movil = esMovilJuegos();
+    document.documentElement.classList.toggle('juegos-movil-real', movil);
+    if(document.body) document.body.classList.toggle('juegos-movil-real', movil);
+    window.__juegosMovilReal = movil;
+  }
+
+  aplicarClaseMovilJuegos();
+  document.addEventListener('DOMContentLoaded', aplicarClaseMovilJuegos);
+  window.addEventListener('resize', aplicarClaseMovilJuegos, {passive:true});
+  window.addEventListener('orientationchange', aplicarClaseMovilJuegos, {passive:true});
+})();
+</script>
+
 <meta name="author" content="Miguel Rosalén">
 <meta name="creator" content="Miguel Rosalén">
 <title>MIGUEL ROSALÉN</title>
+<!-- JUEGOS-MOVIL-RUNTIME-V2 -->
 
 <style>
 
@@ -7324,6 +7351,165 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
     backdrop-filter:blur(7px);
     -webkit-backdrop-filter:blur(7px);
   }
+}
+
+
+
+/* =========================================================
+   JUEGOS MÓVIL — FORZADO POR DETECCIÓN JS
+   No depende de @media. No se activa en escritorio normal.
+   ========================================================= */
+
+body.juegos-movil-real.modo-juego-global,
+body.juegos-movil-real.modo-juego-global .juegos-hub,
+body.juegos-movil-real.modo-juego-global .juegos-hub *,
+body.juegos-movil-real.modo-juego-global .ventana.juego-pantalla,
+body.juegos-movil-real.modo-juego-global .ventana.juego-pantalla *,
+body.juegos-movil-real.modo-juego-global .ventana.ia-captura,
+body.juegos-movil-real.modo-juego-global .ventana.ia-captura *,
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo,
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo *{
+  font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
+  font-style:normal !important;
+}
+
+/* HUB horizontal */
+body.juegos-movil-real.modo-juego-global .juegos-hub{
+  overflow:hidden !important;
+  grid-template-rows:auto minmax(0,1fr) !important;
+  padding:10px !important;
+}
+
+body.juegos-movil-real.modo-juego-global .juegos-hub-cabecera{
+  flex:0 0 auto !important;
+  margin-bottom:8px !important;
+}
+
+body.juegos-movil-real.modo-juego-global .juegos-red{
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:stretch !important;
+  justify-content:flex-start !important;
+  width:100% !important;
+  height:100% !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  padding:4px 7vw 15px !important;
+  gap:12px !important;
+  scroll-snap-type:x mandatory !important;
+  scroll-behavior:smooth !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior-x:contain !important;
+}
+
+body.juegos-movil-real.modo-juego-global .juego-tarjeta,
+body.juegos-movil-real.modo-juego-global .juego-tarjeta:nth-child(n){
+  flex:0 0 82vw !important;
+  width:82vw !important;
+  min-width:82vw !important;
+  min-height:0 !important;
+  height:100% !important;
+  max-height:none !important;
+  grid-column:auto !important;
+  justify-self:auto !important;
+  scroll-snap-align:center !important;
+  scroll-snap-stop:always !important;
+}
+
+/* sin aviso de girar */
+body.juegos-movil-real.modo-juego-global .juego-giro-dispositivo{
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
+body.juegos-movil-real.modo-juego-global .ventana.juego-pantalla{
+  isolation:auto !important;
+}
+
+body.juegos-movil-real.modo-juego-global .ventana.juego-pantalla > :not(.juego-giro-dispositivo){
+  visibility:visible !important;
+  pointer-events:auto !important;
+}
+
+/* botón menú */
+body.juegos-movil-real.modo-juego-global .ventana .mundo-menu-toggle{
+  position:absolute !important;
+  z-index:1200 !important;
+  top:12px !important;
+  right:12px !important;
+  bottom:auto !important;
+  left:auto !important;
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  min-height:38px !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  border:1px solid rgba(20,20,20,.18) !important;
+  border-radius:50% !important;
+  color:rgba(20,20,20,.62) !important;
+  background:rgba(255,255,255,.46) !important;
+  box-shadow:0 5px 15px rgba(0,0,0,.07) !important;
+  backdrop-filter:blur(9px) !important;
+  -webkit-backdrop-filter:blur(9px) !important;
+  font-size:0 !important;
+  line-height:0 !important;
+  opacity:.78 !important;
+  transform:none !important;
+}
+
+body.juegos-movil-real.modo-juego-global .ventana .mundo-menu-toggle::before{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  width:16px !important;
+  height:2px !important;
+  border-radius:99px !important;
+  background:currentColor !important;
+  box-shadow:0 -5px 0 currentColor,0 5px 0 currentColor !important;
+  transform:translate(-50%,-50%) !important;
+}
+
+/* progreso */
+body.juegos-movil-real.modo-juego-global .ventana .mundo-progreso{
+  left:10px !important;
+  right:auto !important;
+  top:14px !important;
+  width:84px !important;
+  transform:none !important;
+  z-index:1190 !important;
+  opacity:.68 !important;
+  color:rgba(25,25,25,.72) !important;
+  font:700 6px/1 "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive !important;
+  letter-spacing:0 !important;
+}
+
+body.juegos-movil-real.modo-juego-global .ventana .mundo-progreso>span{
+  margin-bottom:3px !important;
+  gap:4px !important;
+}
+
+body.juegos-movil-real.modo-juego-global .ventana .mundo-progreso>i{
+  height:3px !important;
+  border-width:1px !important;
+  background:rgba(255,255,255,.42) !important;
+}
+
+/* museo blanco */
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio-3d-mundo.portfolio-museo-salas{
+  background:#f7f7f5 !important;
+}
+
+body.juegos-movil-real.modo-juego-global .ventana.portfolio-inmersivo .portfolio-3d-inventario{
+  background:rgba(255,255,255,.58) !important;
+  color:rgba(25,25,25,.72) !important;
+  border-color:rgba(25,25,25,.14) !important;
+  backdrop-filter:blur(7px) !important;
+  -webkit-backdrop-filter:blur(7px) !important;
 }
 
 </style>
@@ -18054,7 +18240,11 @@ function activarMuseoPortfolioSalas(v){
     }
   }
   function dibujar(t){
-    const esMovil=!!(window.isMobileMode || (window.matchMedia && window.matchMedia("(max-width:768px), (pointer:coarse)").matches));
+    const esMovil=!!(
+      window.__juegosMovilReal ||
+      document.documentElement.classList.contains("juegos-movil-real") ||
+      document.body.classList.contains("juegos-movil-real")
+    );
     if(esMovil) dibujarMovil(t);
     else dibujarEscritorio(t);
   }
