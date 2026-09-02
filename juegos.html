@@ -21104,8 +21104,8 @@ function abrirPanelTiempo(evento){
   aviso.style.left=Math.max(12,Math.round((window.innerWidth-ancho)/2))+"px";
   aviso.style.top=Math.max(128,Math.round((window.innerHeight-aviso.offsetHeight)/2))+"px";
   requestAnimationFrame(()=>aviso.classList.add("visible"));
-  setTimeout(()=>aviso.classList.add("desaparecer"),17000);
-  setTimeout(()=>aviso.remove(),19600);
+  setTimeout(()=>aviso.classList.add("desaparecer"),12000);
+  setTimeout(()=>aviso.remove(),14600);
 }
 timer?.addEventListener("click",abrirPanelTiempo);
 timer?.addEventListener("keydown",evento=>{
