@@ -16067,7 +16067,7 @@ inner=`
 <div class="barra">
 
 <div>
-CURRICULUM &gt; <button type="button" class="cv-descarga-link" style="appearance:none;border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit;">descargar</button>
+CURRICULUM <span class="cv-descarga-wrap">&gt; <button type="button" class="cv-descarga-link" style="appearance:none;border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit;">descargar</button></span>
 </div>
 
 <div style="display:flex;gap:10px">
@@ -19476,6 +19476,25 @@ document.addEventListener("pointerdown",e=>{
   document.addEventListener("DOMContentLoaded",programar);
 })();
 </script>
+
+
+
+<style>
+/* CURRICULUM · móvil:
+   al minimizar dejamos solo el título, sin el enlace de descarga
+   pegado a los controles de la ventana. */
+@media (max-width:768px), (pointer:coarse){
+  .ventana.ventana-curriculum.min .cv-descarga-wrap{
+    display:none !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+  }
+
+  .ventana.ventana-curriculum.min > .barra > div:first-child{
+    padding-right:8px !important;
+  }
+}
+</style>
 
 </body>
 </html>
