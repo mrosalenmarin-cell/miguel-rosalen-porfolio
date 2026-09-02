@@ -6155,7 +6155,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 
 /* Escritorio */
 .ventana[data-tipo="PORTFOLIO"].min,
-.ventana[data-tipo="CONTACTO"].min{
+.ventana[data-tipo="CONTACTO"].min,
+.ventana[data-tipo="READ ME"].min{
   width:190px !important;
   min-width:190px !important;
   max-width:190px !important;
@@ -6169,15 +6170,19 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 
 .ventana[data-tipo="PORTFOLIO"].min > :not(.barra),
 .ventana[data-tipo="CONTACTO"].min > :not(.barra),
+.ventana[data-tipo="READ ME"].min > :not(.barra),
 .ventana[data-tipo="PORTFOLIO"].min::before,
 .ventana[data-tipo="PORTFOLIO"].min::after,
 .ventana[data-tipo="CONTACTO"].min::before,
-.ventana[data-tipo="CONTACTO"].min::after{
+.ventana[data-tipo="CONTACTO"].min::after,
+.ventana[data-tipo="READ ME"].min::before,
+.ventana[data-tipo="READ ME"].min::after{
   display:none !important;
 }
 
 .ventana[data-tipo="PORTFOLIO"].min > .barra,
-.ventana[data-tipo="CONTACTO"].min > .barra{
+.ventana[data-tipo="CONTACTO"].min > .barra,
+.ventana[data-tipo="READ ME"].min > .barra{
   display:flex !important;
   position:relative !important;
   width:100% !important;
@@ -6193,7 +6198,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 /* Móvil / táctil: misma lógica, con cabecera algo más alta para poder pulsarla. */
 @media (max-width:768px), (pointer:coarse){
   .ventana[data-tipo="PORTFOLIO"].min,
-  .ventana[data-tipo="CONTACTO"].min{
+  .ventana[data-tipo="CONTACTO"].min,
+  .ventana[data-tipo="READ ME"].min{
     width:min(82vw,340px) !important;
     min-width:0 !important;
     max-width:min(82vw,340px) !important;
@@ -6203,7 +6209,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   }
 
   .ventana[data-tipo="PORTFOLIO"].min > .barra,
-  .ventana[data-tipo="CONTACTO"].min > .barra{
+  .ventana[data-tipo="CONTACTO"].min > .barra,
+  .ventana[data-tipo="READ ME"].min > .barra{
     height:54px !important;
     min-height:54px !important;
     max-height:54px !important;
@@ -14916,67 +14923,9 @@ v.remove();
 /* minimizar */
 
 mini.onclick=(e)=>{
-
-e.stopPropagation();
-
-/* si está maximizada → salir */
-
-if(
-v.classList.contains("max")
-){
-
-v.classList.remove("max");
-
-return;
-
-}
-
-/* guardar tamaño solo una vez */
-
-if(
-!v.dataset.w
-){
-
-v.dataset.w=
-v.offsetWidth;
-
-v.dataset.h=
-v.offsetHeight;
-
-}
-
-/* minimizar */
-
-if(
-!v.classList.contains("min")
-){
-
-v.classList.add("min");
-
-v.style.width=
-"180px";
-
-v.style.height=
-"30px";
-
-}
-
-/* restaurar */
-
-else{
-
-v.classList.remove("min");
-
-v.style.width=
-v.dataset.w+
-"px";
-
-v.style.height=
-v.dataset.h+
-"px";
-
-}
-
+  e.preventDefault();
+  e.stopPropagation();
+  alternarMinimizarVentana(v);
 };
 
 /* maximizar */
@@ -15553,61 +15502,9 @@ v.remove();
 if(mini){
 
 mini.onclick=(e)=>{
-
-e.stopPropagation();
-
-/* guardar tamaño */
-
-if(
-!v.dataset.w
-){
-
-v.dataset.w=
-v.offsetWidth;
-
-v.dataset.h=
-v.offsetHeight;
-
-}
-
-/* salir de max */
-
-if(
-v.classList.contains("max")
-){
-
-v.classList.remove("max");
-
-}
-
-/* minimizar */
-
-if(
-!v.classList.contains("min")
-){
-
-v.classList.add("min");
-
-v.style.width="180px";
-
-v.style.height="30px";
-
-}
-
-/* restaurar */
-
-else{
-
-v.classList.remove("min");
-
-v.style.width=
-v.dataset.w+"px";
-
-v.style.height=
-v.dataset.h+"px";
-
-}
-
+  e.preventDefault();
+  e.stopPropagation();
+  alternarMinimizarVentana(v);
 };
 
 }
