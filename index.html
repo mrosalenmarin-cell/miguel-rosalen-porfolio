@@ -5713,15 +5713,24 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 #teclado .teclado-toggle::before{
   content:"" !important;
   position:absolute !important;
-  width:21px !important;
-  height:13px !important;
+  width:22px !important;
+  height:18px !important;
   border:0 !important;
   border-radius:0 !important;
   background:
-    linear-gradient(currentColor,currentColor) 50% 100% / 13px 3px no-repeat,
-    repeating-linear-gradient(90deg,currentColor 0 3px,transparent 3px 5px) 50% 0 / 21px 3px no-repeat,
-    repeating-linear-gradient(90deg,currentColor 0 3px,transparent 3px 5px) 50% 5px / 21px 3px no-repeat,
-    repeating-linear-gradient(90deg,currentColor 0 3px,transparent 3px 5px) 50% 10px / 21px 3px no-repeat !important;
+    linear-gradient(currentColor,currentColor) 50% 15px / 12px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 0 10px / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 6px 10px / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 12px 10px / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 18px 10px / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 0 5px / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 6px 5px / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 12px 5px / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 18px 5px / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 0 0 / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 6px 0 / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 12px 0 / 4px 3px no-repeat,
+    linear-gradient(currentColor,currentColor) 18px 0 / 4px 3px no-repeat !important;
   opacity:.72 !important;
   box-shadow:none !important;
 }
@@ -16229,10 +16238,34 @@ function buildGmailUrl(){
   const to = "mrosalenmarin@gmail.com";
   const subject = "Después del contador";
   const body = "Hola Miguel Rosalén,\n\nHe llegado al final de tu web y no sé si esto cuenta como cierre o como inicio de una conversación.\n\nMe gustaría hablar contigo sobre tu trabajo, sobre esta interfaz y sobre posibles formas de colaboración, entrevista o encargo.\n\nSi te parece, podemos buscar un momento para conversar.\n\nUn saludo,";
-  return "mailto:" + encodeURIComponent(to) + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  return "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(to) + "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
 }
 
 const gmailRedirectUrl = buildGmailUrl();
+
+function abrirGmailContacto(evento){
+  if(evento){
+    evento.preventDefault();
+    evento.stopPropagation();
+  }
+  const gmailWeb=buildGmailUrl();
+  const to="mrosalenmarin@gmail.com";
+  const subject="Después del contador";
+  const body="Hola Miguel Rosalén,\n\nHe llegado al final de tu web y no sé si esto cuenta como cierre o como inicio de una conversación.\n\nMe gustaría hablar contigo sobre tu trabajo, sobre esta interfaz y sobre posibles formas de colaboración, entrevista o encargo.\n\nSi te parece, podemos buscar un momento para conversar.\n\nUn saludo,";
+  const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
+  if(!esMovil){window.location.href=gmailWeb;return;}
+  const volverAlWeb=setTimeout(()=>{window.location.href=gmailWeb;},720);
+  const cancelarRespaldo=()=>clearTimeout(volverAlWeb);
+  document.addEventListener("visibilitychange",cancelarRespaldo,{once:true});
+  window.location.href="googlegmail://co?to="+encodeURIComponent(to)+"&subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+}
+
+document.addEventListener("click",evento=>{
+  const enlace=evento.target.closest?.('a[href^="mailto:"],a[href*="mail.google.com/mail/"]');
+  if(!enlace || !/mrosalenmarin@gmail\.com/i.test(enlace.getAttribute("href") || "")) return;
+  abrirGmailContacto(evento);
+},true);
+
 let redirectScheduled = false;
 
 function redirectToGmail(){

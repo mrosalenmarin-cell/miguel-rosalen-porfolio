@@ -19992,6 +19992,30 @@ function buildGmailUrl(){
 }
 
 const gmailRedirectUrl = buildGmailUrl();
+
+function abrirGmailContacto(evento){
+  if(evento){
+    evento.preventDefault();
+    evento.stopPropagation();
+  }
+  const gmailWeb=buildGmailUrl();
+  const to="mrosalenmarin@gmail.com";
+  const subject="Después del contador";
+  const body="Hola Miguel Rosalén,\n\nHe llegado al final de tu web y no sé si esto cuenta como cierre o como inicio de una conversación.\n\nMe gustaría hablar contigo sobre tu trabajo, sobre esta interfaz y sobre posibles formas de colaboración, entrevista o encargo.\n\nSi te parece, podemos buscar un momento para conversar.\n\nUn saludo,";
+  const esMovil=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
+  if(!esMovil){window.location.href=gmailWeb;return;}
+  const volverAlWeb=setTimeout(()=>{window.location.href=gmailWeb;},720);
+  const cancelarRespaldo=()=>clearTimeout(volverAlWeb);
+  document.addEventListener("visibilitychange",cancelarRespaldo,{once:true});
+  window.location.href="googlegmail://co?to="+encodeURIComponent(to)+"&subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+}
+
+document.addEventListener("click",evento=>{
+  const enlace=evento.target.closest?.('a[href^="mailto:"],a[href*="mail.google.com/mail/"]');
+  if(!enlace || !/mrosalenmarin@gmail\.com/i.test(enlace.getAttribute("href") || "")) return;
+  abrirGmailContacto(evento);
+},true);
+
 let redirectScheduled = false;
 
 function redirectToGmail(){
