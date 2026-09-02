@@ -505,6 +505,29 @@ transform:translateY(5px);
 #timer.timer-reward::after{color:#178f78;opacity:.82;transform:translateY(5px)}
 #timer{pointer-events:auto;cursor:pointer;}
 
+.aviso-tiempo{
+  position:fixed;
+  z-index:2147483646;
+  width:min(310px,calc(100vw - 28px));
+  padding:14px 16px 16px;
+  color:rgba(24,31,28,.78);
+  border:1px solid rgba(28,36,32,.18);
+  background:rgba(251,252,249,.88);
+  box-shadow:0 10px 28px rgba(20,35,29,.08);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  font:11px/1.5 Arial,Helvetica,sans-serif;
+  opacity:0;
+  transform:translateY(-5px);
+  pointer-events:none;
+  transition:opacity 2.4s ease,transform .32s ease;
+}
+.aviso-tiempo.visible{opacity:1;transform:translateY(0)}
+.aviso-tiempo.desaparecer{opacity:0;transform:translateY(-4px)}
+.aviso-tiempo strong{display:block;margin-bottom:10px;font:500 12px/1.1 Arial,Helvetica,sans-serif;letter-spacing:.05em;}
+.aviso-tiempo p{margin:0 0 10px;}.aviso-tiempo p:last-child{margin-bottom:0;}
+@media(max-width:620px){.aviso-tiempo{padding:12px 14px 14px;font-size:10px;}.aviso-tiempo strong{font-size:11px;}}
+
 .ventana-tiempo{min-width:min(420px,calc(100vw - 32px));background:rgba(250,251,247,.72);}
 .ventana-tiempo .texto{height:calc(100% - 30px);padding:0;overflow:auto;opacity:.72;}
 .tiempo-panel{padding:18px 20px 22px;color:rgba(20,25,24,.82);font:11px/1.55 Arial,Helvetica,sans-serif;}
@@ -17102,15 +17125,20 @@ timer.innerHTML = formatTimer(tiempo);
 function abrirPanelTiempo(evento){
   evento?.preventDefault?.();
   evento?.stopPropagation?.();
-  const existente=[...document.querySelectorAll('.ventana[data-tipo="TIEMPO"]')].find(v=>v.style.display!=="none");
-  if(existente){
-    existente.classList.remove("min");
-    traerVentanaAlFrente(existente);
-    return;
-  }
-  const x=evento?.clientX ?? Math.max(24,window.innerWidth-320);
-  const y=evento?.clientY ?? 70;
-  crearVentana(x,y,["TIEMPO",""]);
+  const existente=document.querySelector(".aviso-tiempo");
+  if(existente) existente.remove();
+  const aviso=document.createElement("aside");
+  aviso.className="aviso-tiempo";
+  aviso.setAttribute("role","status");
+  aviso.innerHTML=`<strong>¿QUÉ LE PASA AL TIEMPO?</strong><p>Aquí el tiempo no pasa igual.<br>Tienes 10 minutos, pero navegar también los consume.</p><p>Cuanto más intentas recorrer la página, menos tiempo tienes para hacerlo.<br><br>No necesitas verlo todo.<br>Probablemente no puedas.</p>`;
+  document.body.appendChild(aviso);
+  const reloj=timer.getBoundingClientRect();
+  const ancho=aviso.offsetWidth;
+  aviso.style.left=Math.max(12,reloj.left-ancho-12)+"px";
+  aviso.style.top=Math.max(12,reloj.top)+"px";
+  requestAnimationFrame(()=>aviso.classList.add("visible"));
+  setTimeout(()=>aviso.classList.add("desaparecer"),11000);
+  setTimeout(()=>aviso.remove(),13600);
 }
 timer?.addEventListener("click",abrirPanelTiempo);
 timer?.addEventListener("keydown",evento=>{
