@@ -6899,7 +6899,7 @@ body.modo-juego-global{animation:juegoFondoEspectral 20s ease-in-out infinite;ba
 body.modo-juego-global #nombre{pointer-events:auto!important;transition:opacity .42s ease,filter .42s ease!important}
 body.modo-juego-global #nombre:hover{opacity:0!important;filter:blur(18px)!important}
 body.modo-juego-global #nombre,body.modo-juego-global #iaControles,body.modo-juego-global #menuSistema,body.modo-juego-global #sub,body.modo-juego-global #obra,body.modo-juego-global #escape,body.modo-juego-global #teclado{visibility:hidden!important;pointer-events:none!important}
-body.modo-juego-global.ia-teclado-propio-activo #teclado{visibility:visible!important;pointer-events:auto!important}
+body.modo-juego-global.ia-teclado-propio-activo #teclado{display:block!important;visibility:visible!important;pointer-events:auto!important}
 body.modo-juego-global .ventana:not(.max){border:2px solid rgba(48,37,108,.8)!important;border-radius:4px!important;background:#fff9c9!important;box-shadow:7px 8px 0 rgba(46,31,103,.32)!important}
 body.modo-juego-global .ventana:not(.max)>.barra{color:#fff!important;background:linear-gradient(90deg,#6045c4,#307ec7 55%,#dc5b96)!important;border-bottom-color:rgba(42,31,92,.8)!important;font-family:"Comic Sans MS",cursive!important}
 
@@ -6915,12 +6915,14 @@ body.modo-juego-global .ventana:not(.max)>.barra{color:#fff!important;background
 
 /* Una ventana minimizada no conserva nunca el lienzo del juego ni su cuerpo. */
 @media (max-width:768px), (pointer:coarse){
-  .ventana.min{width:min(82vw,340px)!important;height:54px!important;min-height:54px!important;max-height:54px!important;overflow:hidden!important;contain:paint!important;isolation:isolate;}
+  .ventana.min{width:min(82vw,340px)!important;height:54px!important;min-height:54px!important;max-height:54px!important;overflow:hidden!important;contain:paint!important;isolation:isolate;background:rgba(244,244,242,.98)!important;color:rgba(25,25,25,.78)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
   .ventana.min > :not(.barra),.ventana.min::before,.ventana.min::after{display:none!important;}
   .ventana.min > .barra{display:flex!important;height:54px!important;min-height:54px!important;max-height:54px!important;padding:0 10px!important;gap:8px;overflow:hidden;box-sizing:border-box;}
   .ventana.min > .barra > div:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .ventana.min > .barra > div:last-child{flex:0 0 auto;gap:4px!important;}
   .ventana.min .btn{width:32px!important;height:32px!important;flex:0 0 32px;}
+  body.modo-juego-global .ventana.min{border:1px solid rgba(0,0,0,.16)!important;box-shadow:0 7px 18px rgba(0,0,0,.12)!important;}
+  body.modo-juego-global .ventana.min > .barra{background:transparent!important;color:rgba(25,25,25,.72)!important;border-bottom:0!important;font-family:Arial,Helvetica,sans-serif!important;}
 }
 
 .mundo-menu-sonido{font-size:0!important}.mundo-menu-sonido::before{content:"\1F50A";font-size:17px;line-height:1}.mundo-menu-sonido[aria-pressed="false"]::before{content:"\1F507"}
