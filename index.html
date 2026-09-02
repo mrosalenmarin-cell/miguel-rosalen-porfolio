@@ -5675,12 +5675,18 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   /* Minimizar deja solo una barra completa y evita que paneles absolutos
      sigan asomando bajo ella. */
   .ventana.min{
+    width:min(82vw,340px)!important;
     height:54px!important;
+    min-height:54px!important;
+    max-height:54px!important;
     overflow:hidden!important;
     contain:paint!important;
+    isolation:isolate;
   }
-  .ventana.min > :not(.barra){display:none!important;}
-  .ventana.min > .barra{height:54px!important;min-height:54px!important;padding:0 10px!important;gap:8px;overflow:hidden;}
+  .ventana.min > :not(.barra),
+  .ventana.min::before,
+  .ventana.min::after{display:none!important;}
+  .ventana.min > .barra{display:flex!important;height:54px!important;min-height:54px!important;max-height:54px!important;padding:0 10px!important;gap:8px;overflow:hidden;box-sizing:border-box;}
   .ventana.min > .barra > div:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .ventana.min > .barra > div:last-child{flex:0 0 auto;gap:4px!important;}
   .ventana.min .btn{width:32px!important;height:32px!important;flex:0 0 32px;}
@@ -15129,7 +15135,7 @@ if(info[0]==="IA"){
 
 inner=`
 <div class="barra ia-barra">
-<div>I: A · sistema</div>
+<div>IA · sistemas</div>
 <div style="display:flex;gap:10px;">
 <div class="btn mini">—</div>
 <div class="btn maxi">□</div>
