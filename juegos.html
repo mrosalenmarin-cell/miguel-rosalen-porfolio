@@ -6928,7 +6928,7 @@ body.modo-juego-global>#juegosHub:not([hidden])~*:not(#modoJuegoGlobal):not(.avi
 .juegos-hub>*{position:relative;z-index:1}
 .juegos-hub-cabecera{align-items:center!important;margin-bottom:clamp(10px,1.5vw,18px)!important;padding-bottom:9px!important;border-bottom:2px solid rgba(255,255,255,.72)!important}
 .juegos-hub-cabecera h1{font:900 clamp(25px,3.6vw,48px)/1 "Arial Black",Arial,sans-serif!important;letter-spacing:0!important;text-shadow:0 2px 0 rgba(20,35,70,.38)}
-.juegos-hub-cabecera p{font:700 11px/1 "Comic Sans MS",Arial,sans-serif!important;text-transform:uppercase;opacity:.92!important}
+.juegos-hub-cabecera p{max-width:560px!important;margin:14px 0 0!important;text-align:left!important;font:700 11px/1.35 "Comic Sans MS",Arial,sans-serif!important;text-transform:none;opacity:.92!important}
 .juegos-hub-cartela{max-width:430px;padding:9px 12px;border:2px solid rgba(255,255,255,.78);border-radius:5px;background:rgba(26,38,86,.16);box-shadow:3px 3px 0 rgba(32,26,71,.16)}
 .juegos-hub-cartela strong{display:block;margin-bottom:5px;font:900 10px/1 "Arial Black",Arial,sans-serif;letter-spacing:.05em}.juegos-hub-cartela p{margin:0!important;max-width:none!important;color:#fff!important;text-align:left!important;font:700 9px/1.3 Arial,sans-serif!important;text-transform:none!important;opacity:.96!important}
 .juegos-red{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-template-rows:minmax(0,1fr)!important;grid-auto-rows:unset!important;align-content:stretch!important;align-items:stretch!important;gap:clamp(8px,1.15vw,16px)!important;min-height:0!important}
@@ -7137,6 +7137,24 @@ html.hub-juegos-activo .ventana{content-visibility:hidden!important;contain:stri
 html.hub-juegos-activo *:not(.juegos-hub):not(.juegos-hub *){animation-play-state:paused!important}
 html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min-width:0!important;min-height:0!important}
 .ventana.ia-captura .mundo-menu-toggle{left:10px!important;right:auto!important;top:56px!important;bottom:auto!important;min-width:70px!important;width:auto!important;height:32px!important;padding:5px 10px!important;writing-mode:horizontal-tb;transform:none;border-radius:999px!important}
+
+/* Las partidas se leen y juegan en horizontal; el móvil avisa con una pausa
+   visual mientras sigue en vertical, sin forzar una orientación del sistema. */
+.juego-giro-dispositivo{display:none;}
+@media (pointer:coarse) and (orientation:portrait){
+  body.modo-juego-global .ventana.juego-pantalla{isolation:isolate;background:#dfe9ef!important;}
+  body.modo-juego-global .ventana.juego-pantalla>.juego-giro-dispositivo{
+    position:absolute!important;z-index:2147483647!important;inset:0!important;display:grid!important;place-content:center!important;gap:14px!important;padding:30px!important;color:#18243a!important;background:linear-gradient(135deg,#e7f4fa,#d9e2ec)!important;text-align:center!important;pointer-events:auto!important;
+  }
+  body.modo-juego-global .ventana.juego-pantalla>:not(.juego-giro-dispositivo){visibility:hidden!important;pointer-events:none!important;}
+  .juego-giro-icono{position:relative;width:76px;height:76px;margin:0 auto;border:2px solid currentColor;border-radius:50%;}
+  .juego-giro-icono::before,.juego-giro-icono::after{content:"";position:absolute;width:20px;height:20px;border:solid currentColor;border-width:2px 2px 0 0;}
+  .juego-giro-icono::before{right:-4px;top:5px;transform:rotate(42deg);}
+  .juego-giro-icono::after{left:-4px;bottom:5px;transform:rotate(-138deg);}
+  .juego-giro-icono i{position:absolute;left:26px;top:18px;width:24px;height:39px;border:2px solid currentColor;border-radius:4px;transform:rotate(-90deg);}
+  .juego-giro-dispositivo strong{font:900 18px/1 "Arial Black",Arial,sans-serif!important;letter-spacing:.03em;}
+  .juego-giro-dispositivo p{max-width:260px;margin:0 auto;font:700 12px/1.4 "Comic Sans MS",cursive!important;}
+}
 
 .museo-intro{position:absolute;z-index:620;inset:30px 0 0;display:grid;grid-template-columns:minmax(110px,32%) minmax(0,1fr);align-items:end;gap:clamp(8px,3vw,30px);padding:clamp(18px,5vw,54px);color:#242424;background:linear-gradient(180deg,rgba(238,238,232,.97),rgba(210,213,208,.97));font:12px/1.55 Arial,sans-serif}
 .museo-intro[hidden]{display:none}.museo-intro img{align-self:end;width:100%;max-height:72vh;object-fit:contain;object-position:center bottom;filter:drop-shadow(9px 11px 4px rgba(0,0,0,.2))}
@@ -17784,7 +17802,7 @@ function asegurarHubJuegos(){
     ["PORTFOLIO","Roba las obras cuando nadie esté mirando.","assets/multiverse/hub-portfolio.webp"],
     ["IA","Responde al chat para construir y guardar tu avatar.","assets/multiverse/hub-ia-custom.webp"]
   ];
-  hub.innerHTML=`<header class="juegos-hub-cabecera"><div><h1>JUEGOS</h1><p>elige una partida</p></div><aside class="juegos-hub-cartela"><strong>EL RECREO DE LA WEB</strong><p>Cinco partidas pequeñas para perder el tiempo con toda la intención.</p></aside></header><nav class="juegos-hub-nav" aria-label="Cambiar de juego"><button type="button" data-hub-nav="-1" aria-label="Juego anterior"><i aria-hidden="true"></i></button><button type="button" data-hub-nav="1" aria-label="Juego siguiente"><i aria-hidden="true"></i></button></nav><section class="juegos-red">${juegos.map(([tipo,bajada,imagen])=>`<button class="juego-tarjeta" type="button" data-juego-tipo="${tipo}"><img src="${imagen}" alt="" loading="eager" decoding="async"><span class="juego-tarjeta-texto"><strong>${tipo}</strong><small>${bajada}</small></span></button>`).join("")}</section>`;
+  hub.innerHTML=`<header class="juegos-hub-cabecera"><div><h1>JUEGOS</h1><p>elige entre estas cinco partidas pequeñas para perder el tiempo con toda la intención.</p></div></header><nav class="juegos-hub-nav" aria-label="Cambiar de juego"><button type="button" data-hub-nav="-1" aria-label="Juego anterior"><i aria-hidden="true"></i></button><button type="button" data-hub-nav="1" aria-label="Juego siguiente"><i aria-hidden="true"></i></button></nav><section class="juegos-red">${juegos.map(([tipo,bajada,imagen])=>`<button class="juego-tarjeta" type="button" data-juego-tipo="${tipo}"><img src="${imagen}" alt="" loading="eager" decoding="async"><span class="juego-tarjeta-texto"><strong>${tipo}</strong><small>${bajada}</small></span></button>`).join("")}</section>`;
   const red=hub.querySelector(".juegos-red");
   const tarjetas=[...hub.querySelectorAll(".juego-tarjeta")];
   const actualizarTarjetaActiva=()=>{
@@ -17817,6 +17835,14 @@ function mostrarHubJuegos(){
   asegurarHubJuegos().hidden=false;
 }
 function volverAlInicioJuegos(){if(document.body.classList.contains("modo-juego-global"))mostrarHubJuegos()}
+function instalarAvisoGiroJuego(v){
+  if(!v || v.querySelector(".juego-giro-dispositivo")) return;
+  const aviso=document.createElement("section");
+  aviso.className="juego-giro-dispositivo";
+  aviso.setAttribute("aria-live","polite");
+  aviso.innerHTML='<div class="juego-giro-icono" aria-hidden="true"><i></i></div><strong>GIRA EL TELÉFONO</strong><p>Estas partidas están diseñadas para jugarse en horizontal.</p>';
+  v.appendChild(aviso);
+}
 function abrirJuegoDesdeHub(tipo){
   const hub=asegurarHubJuegos();hub.hidden=true;
   document.documentElement.classList.remove("hub-juegos-activo");
@@ -17843,6 +17869,7 @@ function abrirJuegoDesdeHub(tipo){
     document.body.appendChild(v);
   }
   v.style.display="";
+  instalarAvisoGiroJuego(v);
   maximizarVentana(v);
 }
 
