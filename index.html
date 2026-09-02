@@ -5672,31 +5672,6 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   .portfolio-editorial-caption{display:none;}
 }
 
-/* En móvil la nube del título crece en profundidad, no a lo ancho. */
-@keyframes tituloNubeVerticalMovil{
-  0%,100%{transform:translate3d(-2%,-5%,0) scaleX(.92) scaleY(.98);background-position:50% 4%,42% 24%,58% 47%,44% 70%,56% 94%;opacity:.72;}
-  48%{transform:translate3d(3%,6%,0) scaleX(1.04) scaleY(1.1);background-position:47% 0%,58% 28%,42% 50%,60% 74%,43% 100%;opacity:.9;}
-}
-
-@media (max-width:768px){
-  #nombre::after{
-    left:18% !important;
-    right:18% !important;
-    top:-1.52em !important;
-    bottom:-1.52em !important;
-    background:
-      radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.64) 0 9%, rgba(72,255,228,.74) 25%, transparent 68%),
-      radial-gradient(ellipse at 50% 50%, rgba(255,248,104,.76) 0 12%, rgba(165,255,62,.5) 33%, transparent 71%),
-      radial-gradient(ellipse at 50% 50%, rgba(80,255,232,.54) 0 13%, rgba(255,249,96,.46) 39%, transparent 74%),
-      radial-gradient(ellipse at 50% 50%, rgba(178,255,128,.58) 0 15%, rgba(255,253,130,.32) 38%, transparent 72%),
-      radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.42) 0 13%, rgba(56,255,233,.34) 37%, transparent 72%) !important;
-    background-repeat:no-repeat !important;
-    background-size:74% 24%,62% 22%,76% 25%,64% 23%,72% 26% !important;
-    animation:tituloNubeVerticalMovil 9.8s cubic-bezier(.42,0,.18,1) infinite alternate !important;
-    filter:blur(.48em) saturate(2.9) brightness(1.38) !important;
-  }
-}
-
 /* El botón puede vivir en un lateral; el teclado siempre se abre en el centro. */
 @media (max-width:768px), (pointer:coarse){
   #teclado .teclado-panel{
