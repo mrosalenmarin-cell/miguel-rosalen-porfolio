@@ -5605,8 +5605,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 }
 
 #modoJuegoGlobal{
-  left:20px;
-  right:auto;
+  left:auto;
+  right:20px;
 }
 
 @media (max-width:768px), (pointer:coarse){
@@ -5618,8 +5618,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   }
 
   #modoJuegoGlobal{
-    left:max(16px, env(safe-area-inset-left, 0px) + 12px) !important;
-    right:auto !important;
+    left:auto !important;
+    right:max(16px, env(safe-area-inset-right, 0px) + 12px) !important;
   }
 
   /* Un teclado ligero, construido con el mismo material que los controles. */
@@ -5648,6 +5648,11 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   #teclado .teclado-toggle:active{
     transform:translateY(1px) scale(.96) !important;
     background:rgba(255,255,255,.48) !important;
+  }
+
+  #teclado{
+    left:max(16px, env(safe-area-inset-left, 0px) + 12px) !important;
+    right:auto !important;
   }
 }
 
