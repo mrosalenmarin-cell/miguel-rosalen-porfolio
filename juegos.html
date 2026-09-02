@@ -18447,29 +18447,8 @@ function prepararLecturaTactilVentana(v){
   const texto=v?.querySelector(":scope > .texto");
   if(!texto || texto.dataset.lecturaTactil || texto.classList.contains("ia-panel")) return;
   texto.dataset.lecturaTactil="1";
-  let ultimoY=0;
-  let gestoActivo=false;
-
-  texto.addEventListener("touchstart",e=>{
-    if(e.touches?.length!==1) return;
-    ultimoY=e.touches[0].clientY;
-    gestoActivo=texto.scrollHeight>texto.clientHeight+1;
-  },{passive:true});
-
-  texto.addEventListener("touchmove",e=>{
-    if(!gestoActivo || e.touches?.length!==1) return;
-    const y=e.touches[0].clientY;
-    const delta=ultimoY-y;
-    ultimoY=y;
-    texto.scrollTop+=delta*2.15;
-    window._ventanaScrollInternoHasta=Date.now()+1000;
-    if(e.cancelable) e.preventDefault();
-    e.stopPropagation();
-  },{passive:false});
-
-  const terminar=()=>{gestoActivo=false;};
-  texto.addEventListener("touchend",terminar,{passive:true});
-  texto.addEventListener("touchcancel",terminar,{passive:true});
+  texto.style.touchAction="pan-y";
+  texto.style.webkitOverflowScrolling="touch";
 }
 
 function crearVentana(x,y,info){
