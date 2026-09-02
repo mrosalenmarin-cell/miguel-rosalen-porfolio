@@ -5572,13 +5572,13 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   :root{--safe-bottom:max(16px, env(safe-area-inset-bottom, 0px));}
 
   .ventana:not(.max){
-    width:min(94vw, 680px) !important;
-    max-width:94vw !important;
-    max-height:calc(100dvh - 104px) !important;
+    width:min(84vw, 520px) !important;
+    max-width:84vw !important;
+    max-height:min(72dvh, 650px) !important;
   }
 
   .ventana:not(.max) .texto{
-    max-height:calc(100dvh - 150px) !important;
+    max-height:calc(72dvh - 54px) !important;
   }
 
   #modoJuegoGlobal{
@@ -13917,6 +13917,18 @@ function asegurarLienzoMovil(x, y, extraW = 900, extraH = 900){
     espacio.style.width = targetW + "px";
     espacio.style.height = targetH + "px";
   }
+}
+
+/* Un pequeño margen lateral permanente para conservar el escritorio en móvil. */
+if(window.isMobileMode){
+  requestAnimationFrame(()=>{
+    asegurarLienzoMovil(
+      window.innerWidth * .18,
+      0,
+      window.innerWidth * 1.18,
+      window.innerHeight
+    );
+  });
 }
 
 function colocarVentanaEnClick(v,x,y){
