@@ -5118,22 +5118,46 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 ========================= */
 
 .portfolio-nodos-info{
-  position:absolute;
-  inset:0;
+  position:relative;
+  inset:auto;
   width:100%;
-  max-width:none;
-  min-height:100%;
-  height:100%;
-  margin:0;
-  padding:12px 16px;
+  max-width:1160px;
+  min-height:28px;
+  height:auto;
+  margin:0 auto 20px;
+  padding:0 10px 10px;
 
   display:flex;
-  flex-wrap:nowrap;
+  flex-wrap:wrap;
   align-items:flex-start;
   gap:10px 26px;
 
   box-sizing:border-box;
+  overflow:visible;
   pointer-events:none;
+}
+
+/* Las ventanitas de Museografía / Mediación / Asistencia
+   viven aquí y pueden recorrer TODA la ventana del portfolio. */
+.portfolio-nodos-overlay{
+  position:absolute;
+  inset:0;
+  z-index:13;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.portfolio-nodos-overlay .portfolio-nodos-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none;
+}
+
+.portfolio-nodos-overlay .portfolio-nodo-ventana.is-open{
+  pointer-events:auto;
 }
 
 
@@ -5398,7 +5422,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 
   .portfolio-nodos-info{
     gap:8px 12px;
-    padding-inline:8px;
+    padding:0 8px 10px;
+    margin-bottom:16px;
   }
 
   .portfolio-nodo-link{font-size:8.5px;}
@@ -6219,6 +6244,7 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 }
 
 </style>
+<!-- MUSEOGRAFIA-NODOS-LIBRES-V2 -->
 </head>
 
 <body>
@@ -8599,6 +8625,27 @@ editorial.innerHTML=`
 
 wrap.appendChild(editorial);
 
+/* NODOS MUSEOGRAFÍA:
+   los títulos permanecen dentro del documento, justo después de
+   "Sobre el proyecto"; las ventanas flotantes pasan a una capa
+   que ocupa todo .portfolio-wrap. */
+let capaNodosGlobal=null;
+if(sec.nodosInfo?.length){
+  const filaNodos=editorial.querySelector(".portfolio-nodos-info");
+  if(filaNodos){
+    capaNodosGlobal=document.createElement("div");
+    capaNodosGlobal.className="portfolio-nodos-overlay";
+
+    const svgNodos=filaNodos.querySelector(":scope > .portfolio-nodos-svg");
+    if(svgNodos) capaNodosGlobal.appendChild(svgNodos);
+
+    [...filaNodos.querySelectorAll(":scope > .portfolio-nodo-ventana")]
+      .forEach(panel=>capaNodosGlobal.appendChild(panel));
+
+    wrap.appendChild(capaNodosGlobal);
+  }
+}
+
 const nodosInline=(sec.inlineNodos || sec.nodosInfo?.flatMap(nodo=>nodo.inlineNodos || []) || []);
 if(nodosInline.length){
   const capaInline=document.createElement("div");
@@ -8694,6 +8741,11 @@ if(sec.nodosInfo?.length){
   const contenedorNodos =
     editorial.querySelector(".portfolio-nodos-info");
 
+  const capaNodos =
+    capaNodosGlobal || wrap.querySelector(".portfolio-nodos-overlay");
+
+  if(!contenedorNodos || !capaNodos) return;
+
 
   const actualizarLineaNodo = id => {
 
@@ -8703,12 +8755,12 @@ if(sec.nodosInfo?.length){
       );
 
     const ventana =
-      contenedorNodos.querySelector(
+      capaNodos.querySelector(
         `.portfolio-nodo-ventana[data-ventana-nodo="${id}"]`
       );
 
     const linea =
-      contenedorNodos.querySelector(
+      capaNodos.querySelector(
         `.portfolio-nodo-linea[data-linea="${id}"]`
       );
 
@@ -8725,7 +8777,7 @@ if(sec.nodosInfo?.length){
 
 
     const contRect =
-      contenedorNodos.getBoundingClientRect();
+      capaNodos.getBoundingClientRect();
 
     const botonRect =
       boton.getBoundingClientRect();
@@ -8791,7 +8843,7 @@ if(sec.nodosInfo?.length){
   const colocarVentanaInicial = (boton,ventana,index)=>{
 
     const contRect =
-      contenedorNodos.getBoundingClientRect();
+      capaNodos.getBoundingClientRect();
 
     const botonRect =
       boton.getBoundingClientRect();
@@ -8827,7 +8879,7 @@ if(sec.nodosInfo?.length){
       margen,
       Math.min(
         left,
-        contenedorNodos.clientWidth -
+        capaNodos.clientWidth -
         anchoVentana -
         margen
       )
@@ -8859,7 +8911,7 @@ if(sec.nodosInfo?.length){
 
 
         const ventana =
-          contenedorNodos.querySelector(
+          capaNodos.querySelector(
             `.portfolio-nodo-ventana[data-ventana-nodo="${id}"]`
           );
 
@@ -8922,7 +8974,7 @@ if(sec.nodosInfo?.length){
   ============================
   */
 
-  contenedorNodos
+  capaNodos
     .querySelectorAll(".portfolio-nodo-cerrar")
     .forEach(cerrar=>{
 
@@ -8970,7 +9022,7 @@ if(sec.nodosInfo?.length){
   ============================
   */
 
-  contenedorNodos
+  capaNodos
     .querySelectorAll(".portfolio-nodo-ventana")
     .forEach(ventana=>{
 
@@ -8993,8 +9045,8 @@ if(sec.nodosInfo?.length){
           };
           redimensionar.setPointerCapture?.(e.pointerId);
           const mover=ev=>{
-            const maxW=Math.max(150,contenedorNodos.clientWidth-inicio.left-5);
-            const maxH=Math.max(130,contenedorNodos.clientHeight-inicio.top-5);
+            const maxW=Math.max(150,capaNodos.clientWidth-inicio.left-5);
+            const maxH=Math.max(130,capaNodos.clientHeight-inicio.top-5);
             ventana.style.width=Math.max(150,Math.min(inicio.w+ev.clientX-inicio.x,maxW))+"px";
             ventana.style.height=Math.max(130,Math.min(inicio.h+ev.clientY-inicio.y,maxH))+"px";
             actualizarLineaNodo(ventana.dataset.ventanaNodo);
@@ -9079,22 +9131,20 @@ if(sec.nodosInfo?.length){
             margen,
             Math.min(
               nuevoLeft,
-              contenedorNodos.clientWidth -
+              capaNodos.clientWidth -
               ventana.offsetWidth -
               margen
             )
           );
 
-
-          /*
-            Dejamos libertad vertical.
-            Sólo impedimos que desaparezca
-            totalmente por arriba.
-          */
-
           nuevoTop=Math.max(
-            30,
-            Math.min(nuevoTop,contenedorNodos.clientHeight-ventana.offsetHeight-margen)
+            margen,
+            Math.min(
+              nuevoTop,
+              capaNodos.clientHeight -
+              ventana.offsetHeight -
+              margen
+            )
           );
 
 
@@ -9162,6 +9212,12 @@ if(sec.nodosInfo?.length){
   window.addEventListener(
     "resize",
     actualizarTodasLasLineas
+  );
+
+  editorial.addEventListener(
+    "scroll",
+    actualizarTodasLasLineas,
+    {passive:true}
   );
 
 }
@@ -18310,11 +18366,44 @@ document.addEventListener("pointerdown",e=>{
 
   e.preventDefault();
   e.stopImmediatePropagation();
-  const limite=panel.closest(".portfolio-nodos-info") || document.documentElement;
+  const limite=
+    panel.closest(".portfolio-nodos-overlay") ||
+    panel.closest(".portfolio-inline-nodos") ||
+    document.documentElement;
+
   const inicio={x:e.clientX,y:e.clientY,left:panel.offsetLeft,top:panel.offsetTop};
   panel.classList.add("dragging");
   panel.style.zIndex=String(Date.now());
   cabecera.setPointerCapture?.(e.pointerId);
+
+  const actualizarLineaNodoTactil=()=>{
+    if(!panel.matches(".portfolio-nodos-overlay .portfolio-nodo-ventana")) return;
+    const overlay=panel.closest(".portfolio-nodos-overlay");
+    const wrapNodo=overlay?.closest(".portfolio-wrap");
+    const editorialNodo=wrapNodo?.querySelector(".portfolio-editorial");
+    const fila=editorialNodo?.querySelector(".portfolio-nodos-info");
+    const id=panel.dataset.ventanaNodo;
+    if(!overlay || !fila || !id) return;
+
+    const boton=fila.querySelector(`.portfolio-nodo-link[data-nodo="${id}"]`);
+    const linea=overlay.querySelector(`.portfolio-nodo-linea[data-linea="${id}"]`);
+    if(!boton || !linea || !panel.classList.contains("is-open")) return;
+
+    const base=overlay.getBoundingClientRect();
+    const br=boton.getBoundingClientRect();
+    const pr=panel.getBoundingClientRect();
+
+    const x1=br.left-base.left+br.width/2;
+    const y1=br.bottom-base.top;
+    const x2=pr.left-base.left+pr.width/2;
+    const y2=pr.top-base.top;
+    const mitadY=y1+(y2-y1)*.52;
+
+    linea.setAttribute(
+      "d",
+      `M ${x1} ${y1} L ${x1} ${mitadY} L ${x2} ${mitadY} L ${x2} ${y2}`
+    );
+  };
 
   const mover=ev=>{
     const maxX=Math.max(0,limite.clientWidth-panel.offsetWidth);
@@ -18325,6 +18414,7 @@ document.addEventListener("pointerdown",e=>{
     const y=Math.max(0,Math.min(maxY,inicio.top+ev.clientY-inicio.y));
     panel.style.left=x+"px";
     panel.style.top=y+"px";
+    actualizarLineaNodoTactil();
     if(panel.classList.contains("ventana") && typeof asegurarLienzoMovil==="function") asegurarLienzoMovil(x,y,panel.offsetWidth,panel.offsetHeight);
   };
   const terminar=ev=>{
