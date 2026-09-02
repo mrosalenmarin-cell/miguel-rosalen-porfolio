@@ -4766,6 +4766,18 @@ max-height:none !important;
     min-height:540px;
   }
 
+  /* El editor tipográfico ocupa una ventana manejable dentro del móvil. */
+  .ventana.portfolio-tipografico{
+    width:min(88vw,440px)!important;
+    height:min(68svh,540px)!important;
+    min-height:410px!important;
+  }
+
+  .ventana.portfolio-tipografico .portfolio-wrap[data-mode="editorial"]{
+    height:100%!important;
+    min-height:0!important;
+  }
+
   .portfolio-editorial-intro,
   .portfolio-editorial-label,
   .portfolio-editorial-group,
@@ -5079,6 +5091,8 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 @media (max-width: 700px) {
 
   .type-tester {
+    width:calc(100% - 20px);
+    margin:18px auto 28px;
     box-shadow: 4px 4px 0 #111;
   }
 
@@ -5093,9 +5107,9 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   }
 
   .type-pizarra {
-    min-height: 300px;
-    padding: 25px;
-    font-size: 54px;
+    min-height:150px;
+    padding:16px;
+    font-size:clamp(30px,10vw,48px);
   }
 }
 
@@ -8288,6 +8302,7 @@ function renderPortfolioEditorial(v,sec,parent){
 
   limpiarPortfolioEditorial(v);
   wrap.dataset.mode="editorial";
+  v.classList.toggle("portfolio-tipografico",Boolean(sec.playgroundTipografico));
   v._portfolioActual=parent ? parent.id + "/" + sec.id : sec.id;
   if(parent) v._portfolioParent=parent.id;
   else delete v._portfolioParent;
