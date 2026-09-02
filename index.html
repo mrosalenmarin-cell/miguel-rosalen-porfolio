@@ -700,6 +700,7 @@ z-index:3;
 
 .ventana .texto{
 transition:transform .28s ease, text-shadow .28s ease, opacity .28s ease;
+touch-action:pan-y;
 }
 
 body.backroom-activa .ventana:not(.max):not(.dragging) .texto{
@@ -16803,6 +16804,8 @@ document.addEventListener("pointerdown",(e)=>{
   const v=e.target.closest && e.target.closest(".ventana");
   if(!v) return;
   if(v.classList.contains("max") || v.classList.contains("min")) return;
+  /* El contenido se reserva para leer y hacer scroll; solo la barra mueve la ventana. */
+  if(!e.target.closest(".barra")) return;
   if(esZonaInteractivaVentana(e.target)) return;
   if(debeRespetarScrollVentana(e.target)) return;
 
