@@ -7276,6 +7276,7 @@ body.modo-juego-global .ventana-curriculum.cv-comandas .cv-order-stats span{min-
   .ventana.ia-captura .ia-perfil-avatar canvas{top:52%!important;}
   .ventana.ia-captura .ia-perfil-identidad{bottom:13px!important;}
   .ventana.ia-captura.ia-escribiendo .ia-perfil-avatar{display:none!important;}
+  .ventana.ia-captura.ia-escribiendo .ia-captura-mundo{position:fixed!important;inset:0!important;width:100vw!important;height:var(--ia-viewport-visible,100dvh)!important;min-height:0!important;background:#fff!important;z-index:2147483600!important;}
   .ventana.ia-captura.ia-escribiendo .ia-perfil-chat{top:0!important;}
   .ventana.ia-captura.ia-escribiendo .ia-perfil-mensajes{padding-top:14px!important;}
 }
@@ -17393,7 +17394,8 @@ function activarModoIACaptura(v){
        reservar dos veces la altura que ocupa el teclado. */
     const altoVentana=Math.round(v.getBoundingClientRect().height);
     const ventanaAjustada=v.classList.contains("max") && Math.abs(altoVentana-viewport.height)<6;
-    mundo.style.setProperty("--ia-teclado",`${ventanaAjustada?0:oculto}px`);
+    mundo.style.setProperty("--ia-viewport-visible",`${Math.round(viewport.height)}px`);
+    mundo.style.setProperty("--ia-teclado",`${ventanaAjustada || v.classList.contains("ia-escribiendo")?0:oculto}px`);
   };
   window.visualViewport?.addEventListener("resize",ajustarTecladoIA,{signal});
   window.visualViewport?.addEventListener("scroll",ajustarTecladoIA,{signal});
@@ -20641,9 +20643,10 @@ function alternarMinimizarVentana(v){
     return;
   }
 
+  const minimizadaMovil=matchMedia("(max-width:768px), (pointer:coarse)").matches;
   v.classList.add("min");
-  v.style.width = "190px";
-  v.style.height = "30px";
+  v.style.width = minimizadaMovil ? "min(82vw, 340px)" : "190px";
+  v.style.height = minimizadaMovil ? "54px" : "30px";
   v.style.overflow = "hidden";
   traerVentanaAlFrente(v);
 }

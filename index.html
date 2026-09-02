@@ -5962,6 +5962,9 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   .portfolio-wrap[data-mode="home"] .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder,
   .portfolio-wrap[data-mode="folders"] .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder{
     flex-basis:min(54vw,190px);
+    height:min(54vw,230px)!important;
+    min-height:168px!important;
+    align-self:center;
   }
 
   .portfolio-wrap[data-mode="mosaic"] .track{
@@ -16745,9 +16748,10 @@ function alternarMinimizarVentana(v){
     return;
   }
 
+  const minimizadaMovil=matchMedia("(max-width:768px), (pointer:coarse)").matches;
   v.classList.add("min");
-  v.style.width = "190px";
-  v.style.height = "30px";
+  v.style.width = minimizadaMovil ? "min(82vw, 340px)" : "190px";
+  v.style.height = minimizadaMovil ? "54px" : "30px";
   v.style.overflow = "hidden";
   traerVentanaAlFrente(v);
 }
