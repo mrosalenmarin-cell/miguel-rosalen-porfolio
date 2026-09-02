@@ -979,7 +979,7 @@ align-items:stretch;
 align-content:start;
 overflow:auto;
 overscroll-behavior:contain;
-padding:1px 2px 8px;
+padding:5px 6px 12px;
 box-sizing:border-box;
 }
 
@@ -1001,12 +1001,13 @@ overflow:hidden;
 box-sizing:border-box;
 outline:1px solid transparent;
 outline-offset:-2px;
+color:rgba(18,22,15,.72);
 transform:translateZ(0);
 transition:transform .18s ease, background .18s ease, opacity .18s ease, border-color .18s ease, outline-color .18s ease, box-shadow .18s ease;
 }
 
 .portfolio-folder:hover{
-transform:translateY(-1px) scale(1.012);
+transform:scale(1.006);
 background:rgba(255,255,255,.26);
 border-color:rgba(0,0,0,.28);
 outline-color:rgba(255,255,255,.42);
@@ -1043,6 +1044,7 @@ overflow:hidden;
 
 .portfolio-folder-title{
 display:block;
+color:rgba(18,22,15,.72);
 font-size:11px;
 line-height:1.25;
 letter-spacing:.035em;
@@ -1075,7 +1077,7 @@ max-height:3.9em;
 .portfolio-map-node.portfolio-folder{padding:7px;gap:7px;min-height:62px;background:rgba(255,255,255,.48);box-shadow:0 5px 18px rgba(0,0,0,.035);}
 .portfolio-map-node .portfolio-folder-icon{width:27px;height:19px;border-width:1px;}
 .portfolio-map-node .portfolio-folder-icon::before{border-width:1px;left:-1px;top:-6px;}
-.portfolio-map-core{width:clamp(90px,18%,126px);aspect-ratio:1;min-height:0;border:1px solid rgba(0,0,0,.42);border-radius:50%;background:rgba(255,255,255,.56);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:grid;place-items:center;padding:11px;text-align:center;cursor:grab;box-sizing:border-box;}
+.portfolio-map-core{width:clamp(90px,18%,126px);aspect-ratio:1;min-height:0;border:1px solid rgba(0,0,0,.42);border-radius:50%;background:rgba(255,255,255,.56);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:grid;place-items:center;padding:11px;text-align:center;cursor:grab;box-sizing:border-box;resize:none!important;overflow:hidden!important;touch-action:none!important;}
 .portfolio-map-core:active,.portfolio-map-node.is-dragging{cursor:grabbing;}
 .portfolio-map-core strong{display:block;font-size:12px;line-height:1.15;letter-spacing:.055em;text-transform:uppercase;font-weight:500;}
 .portfolio-map-core small{display:block;margin-top:5px;font-size:8px;line-height:1.3;opacity:.48;text-transform:uppercase;}
@@ -5836,6 +5838,7 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   align-items:stretch;
   align-content:stretch;
   gap:10px;
+  padding:5px 7px 12px;
   overflow-x:auto !important;
   overflow-y:hidden !important;
   scroll-snap-type:x proximity;
@@ -7219,6 +7222,11 @@ const porronDimensiones={
   41:[620,518],42:[620,388],43:[620,310],44:[620,446],45:[436,620],46:[509,620],47:[620,482],48:[620,453],
   49:[448,620],50:[438,620],51:[620,447],52:[478,620],53:[620,476]
 };
+/* Las imágenes de Porrón quedan como archivo visual: solo conserva la composición de las prendas. */
+porronObras.forEach(obra=>{
+  obra.descripcion="";
+  if(!/composici[oó]n propuesta/i.test(obra.material||"")) obra.material="";
+});
 const porronPorNumero=new Map(
   porronObras.map(obra=>{
     const coincidencia=String(obra.full || obra.thumb || "").match(/folk-(\d+)\.webp$/);
@@ -8994,22 +9002,43 @@ function cargarAccesosEscritorio(){
 }
 
 function prepararArrastreEscritorio(contenedor,items){
-  if(!contenedor || !items.length || matchMedia("(max-width:768px)").matches) return;
+  if(!contenedor || !items.length) return;
+  const gestoTactil=matchMedia("(max-width:768px), (pointer:coarse)").matches;
   items.forEach(item=>{
-    let inicio=null;
+    let inicio=null,esperaLarga=0;
+    const cancelarEspera=()=>{if(esperaLarga){clearTimeout(esperaLarga);esperaLarga=0;}};
     item.addEventListener("pointerdown",e=>{
       if(e.button!==undefined && e.button!==0) return;
-      e.stopPropagation();
-      inicio={x:e.clientX,y:e.clientY,movido:false};
-      item.setPointerCapture?.(e.pointerId);
+      inicio={x:e.clientX,y:e.clientY,movido:false,activo:!gestoTactil,pointerId:e.pointerId};
+      if(!gestoTactil){
+        e.stopPropagation();
+        item.setPointerCapture?.(e.pointerId);
+        return;
+      }
+      /* En móvil, mantener pulsado evita confundir el gesto con el carrusel. */
+      esperaLarga=setTimeout(()=>{
+        if(!inicio || inicio.pointerId!==e.pointerId) return;
+        inicio.activo=true;
+        item.classList.add("is-desktop-dragging");
+        item.setPointerCapture?.(e.pointerId);
+        navigator.vibrate?.(10);
+      },360);
     });
     item.addEventListener("pointermove",e=>{
       if(!inicio) return;
+      if(!inicio.activo){
+        if(Math.hypot(e.clientX-inicio.x,e.clientY-inicio.y)>10){cancelarEspera();inicio=null;}
+        return;
+      }
+      e.stopPropagation();
       if(Math.hypot(e.clientX-inicio.x,e.clientY-inicio.y)>5) inicio.movido=true;
     });
     item.addEventListener("pointerup",e=>{
       if(!inicio) return;
+      cancelarEspera();
+      if(!inicio.activo){inicio=null;return;}
       item.releasePointerCapture?.(e.pointerId);
+      item.classList.remove("is-desktop-dragging");
       if(inicio.movido){
         item.dataset.desktopDragged="1";
         setTimeout(()=>{item.dataset.desktopDragged="";},0);
@@ -9033,7 +9062,13 @@ function prepararArrastreEscritorio(contenedor,items){
       }
       inicio=null;
     });
-    item.addEventListener("pointercancel",()=>{inicio=null;});
+    item.addEventListener("pointercancel",()=>{cancelarEspera();item.classList.remove("is-desktop-dragging");inicio=null;});
+    item.addEventListener("contextmenu",e=>{if(gestoTactil)e.preventDefault();});
+    item.addEventListener("click",e=>{
+      if(item.dataset.desktopDragged!=="1") return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    },true);
   });
 }
 
@@ -9312,7 +9347,7 @@ function renderMapaCarteleria(folders,sec,parentId,subId,v){
   };
   nodes.forEach(node=>{
     let origin=null,moved=false;
-    node.addEventListener("pointerdown",e=>{if(e.button!==undefined&&e.button!==0)return;e.stopPropagation();origin={x:e.clientX,y:e.clientY,left:node.offsetLeft,top:node.offsetTop};moved=false;node.classList.add("is-dragging");node.setPointerCapture(e.pointerId);});
+    node.addEventListener("pointerdown",e=>{if(e.button!==undefined&&e.button!==0)return;if(e.cancelable)e.preventDefault();e.stopPropagation();origin={x:e.clientX,y:e.clientY,left:node.offsetLeft,top:node.offsetTop};moved=false;node.classList.add("is-dragging");node.setPointerCapture?.(e.pointerId);});
     node.addEventListener("pointermove",e=>{if(!origin)return;const dx=e.clientX-origin.x,dy=e.clientY-origin.y;if(Math.hypot(dx,dy)>4)moved=true;node.style.left=Math.min(folders.clientWidth-node.offsetWidth-8,Math.max(8,origin.left+dx))+"px";node.style.top=Math.min(folders.clientHeight-node.offsetHeight-8,Math.max(8,origin.top+dy))+"px";updateLines();});
     node.addEventListener("pointerup",e=>{if(!origin)return;node.releasePointerCapture(e.pointerId);node.classList.remove("is-dragging");origin=null;node.dataset.dragged=moved?"1":"";if(moved)setTimeout(()=>{node.dataset.dragged="";},0);});
     node.addEventListener("click",e=>{e.stopPropagation();if(node.dataset.dragged==="1")return;if(node===core){const open=folders.classList.toggle("is-copy-open");core.setAttribute("aria-expanded",open?"true":"false");copy.setAttribute("aria-hidden",open?"false":"true");}else renderPortfolioNestedSubsection(v,node.dataset.root,node.dataset.parentSub,node.dataset.child);});

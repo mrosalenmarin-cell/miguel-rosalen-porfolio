@@ -984,7 +984,7 @@ align-items:stretch;
 align-content:start;
 overflow:auto;
 overscroll-behavior:contain;
-padding:1px 2px 8px;
+padding:5px 6px 12px;
 box-sizing:border-box;
 }
 
@@ -1006,12 +1006,13 @@ overflow:hidden;
 box-sizing:border-box;
 outline:1px solid transparent;
 outline-offset:-2px;
+color:rgba(18,22,15,.72);
 transform:translateZ(0);
 transition:transform .18s ease, background .18s ease, opacity .18s ease, border-color .18s ease, outline-color .18s ease, box-shadow .18s ease;
 }
 
 .portfolio-folder:hover{
-transform:translateY(-1px) scale(1.012);
+transform:scale(1.006);
 background:rgba(255,255,255,.26);
 border-color:rgba(0,0,0,.28);
 outline-color:rgba(255,255,255,.42);
@@ -1048,6 +1049,7 @@ overflow:hidden;
 
 .portfolio-folder-title{
 display:block;
+color:rgba(18,22,15,.72);
 font-size:11px;
 line-height:1.25;
 letter-spacing:.035em;
@@ -8627,6 +8629,11 @@ const porronDimensiones={
   41:[620,518],42:[620,388],43:[620,310],44:[620,446],45:[436,620],46:[509,620],47:[620,482],48:[620,453],
   49:[448,620],50:[438,620],51:[620,447],52:[478,620],53:[620,476]
 };
+/* Las imágenes de Porrón quedan como archivo visual: solo conserva la composición de las prendas. */
+porronObras.forEach(obra=>{
+  obra.descripcion="";
+  if(!/composici[oó]n propuesta/i.test(obra.material||"")) obra.material="";
+});
 const porronPorNumero=new Map(
   porronObras.map(obra=>{
     const coincidencia=String(obra.full || obra.thumb || "").match(/folk-(\d+)\.webp$/);
