@@ -7138,24 +7138,6 @@ html.hub-juegos-activo *:not(.juegos-hub):not(.juegos-hub *){animation-play-stat
 html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min-width:0!important;min-height:0!important}
 .ventana.ia-captura .mundo-menu-toggle{left:10px!important;right:auto!important;top:56px!important;bottom:auto!important;min-width:70px!important;width:auto!important;height:32px!important;padding:5px 10px!important;writing-mode:horizontal-tb;transform:none;border-radius:999px!important}
 
-/* Las partidas se leen y juegan en horizontal; el móvil avisa con una pausa
-   visual mientras sigue en vertical, sin forzar una orientación del sistema. */
-.juego-giro-dispositivo{display:none;}
-@media (pointer:coarse) and (orientation:portrait){
-  body.modo-juego-global .ventana.juego-pantalla{isolation:isolate;background:#dfe9ef!important;}
-  body.modo-juego-global .ventana.juego-pantalla>.juego-giro-dispositivo{
-    position:absolute!important;z-index:2147483647!important;inset:0!important;display:grid!important;place-content:center!important;gap:14px!important;padding:30px!important;color:#18243a!important;background:linear-gradient(135deg,#e7f4fa,#d9e2ec)!important;text-align:center!important;pointer-events:auto!important;
-  }
-  body.modo-juego-global .ventana.juego-pantalla>:not(.juego-giro-dispositivo){visibility:hidden!important;pointer-events:none!important;}
-  .juego-giro-icono{position:relative;width:76px;height:76px;margin:0 auto;border:2px solid currentColor;border-radius:50%;}
-  .juego-giro-icono::before,.juego-giro-icono::after{content:"";position:absolute;width:20px;height:20px;border:solid currentColor;border-width:2px 2px 0 0;}
-  .juego-giro-icono::before{right:-4px;top:5px;transform:rotate(42deg);}
-  .juego-giro-icono::after{left:-4px;bottom:5px;transform:rotate(-138deg);}
-  .juego-giro-icono i{position:absolute;left:26px;top:18px;width:24px;height:39px;border:2px solid currentColor;border-radius:4px;transform:rotate(-90deg);}
-  .juego-giro-dispositivo strong{font:900 18px/1 "Arial Black",Arial,sans-serif!important;letter-spacing:.03em;}
-  .juego-giro-dispositivo p{max-width:260px;margin:0 auto;font:700 12px/1.4 "Comic Sans MS",cursive!important;}
-}
-
 .museo-intro{position:absolute;z-index:620;inset:30px 0 0;display:grid;grid-template-columns:minmax(110px,32%) minmax(0,1fr);align-items:end;gap:clamp(8px,3vw,30px);padding:clamp(18px,5vw,54px);color:#242424;background:linear-gradient(180deg,rgba(238,238,232,.97),rgba(210,213,208,.97));font:12px/1.55 Arial,sans-serif}
 .museo-intro[hidden]{display:none}.museo-intro img{align-self:end;width:100%;max-height:72vh;object-fit:contain;object-position:center bottom;filter:drop-shadow(9px 11px 4px rgba(0,0,0,.2))}
 .museo-intro-dialogo{align-self:center;max-width:560px;padding:18px 20px;border:1px solid rgba(35,35,35,.45);border-radius:5px;background:rgba(252,251,246,.94);box-shadow:8px 9px 0 rgba(35,35,35,.1)}
@@ -7171,10 +7153,10 @@ html.hub-juegos-activo,html.hub-juegos-activo body{overflow:hidden!important;min
 body.modo-juego-global .ventana.juego-pantalla .mundo-menu-toggle{
   position:absolute!important;
   z-index:1100!important;
-  left:9px!important;
-  top:9px!important;
-  right:auto!important;
-  bottom:auto!important;
+  left:auto!important;
+  top:auto!important;
+  right:12px!important;
+  bottom:18px!important;
   width:28px!important;
   min-width:28px!important;
   height:28px!important;
@@ -7203,8 +7185,8 @@ body.modo-juego-global .ventana.juego-pantalla .mundo-menu-toggle::before{
 
 body.modo-juego-global .ventana.juego-pantalla .mundo-progreso{
   z-index:1090!important;
-  left:auto!important;
-  right:10px!important;
+  left:10px!important;
+  right:auto!important;
   top:10px!important;
   width:min(116px,31vw)!important;
   transform:none!important;
@@ -17835,14 +17817,6 @@ function mostrarHubJuegos(){
   asegurarHubJuegos().hidden=false;
 }
 function volverAlInicioJuegos(){if(document.body.classList.contains("modo-juego-global"))mostrarHubJuegos()}
-function instalarAvisoGiroJuego(v){
-  if(!v || v.querySelector(".juego-giro-dispositivo")) return;
-  const aviso=document.createElement("section");
-  aviso.className="juego-giro-dispositivo";
-  aviso.setAttribute("aria-live","polite");
-  aviso.innerHTML='<div class="juego-giro-icono" aria-hidden="true"><i></i></div><strong>GIRA EL TELÉFONO</strong><p>Estas partidas están diseñadas para jugarse en horizontal.</p>';
-  v.appendChild(aviso);
-}
 function abrirJuegoDesdeHub(tipo){
   const hub=asegurarHubJuegos();hub.hidden=true;
   document.documentElement.classList.remove("hub-juegos-activo");
@@ -17869,7 +17843,6 @@ function abrirJuegoDesdeHub(tipo){
     document.body.appendChild(v);
   }
   v.style.display="";
-  instalarAvisoGiroJuego(v);
   maximizarVentana(v);
 }
 
