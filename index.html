@@ -5787,6 +5787,36 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
   select{font-size:16px;}
 }
 
+/* En móvil las ventanas conservan escala de escritorio y el contenido queda
+   disponible en su propio desplazamiento, sin forzar pantalla completa. */
+@media (max-width:768px), (pointer:coarse){
+  .ventana:not(.max):not(.min){
+    width:min(66vw,320px) !important;
+    max-width:min(66vw,320px) !important;
+    min-width:180px !important;
+    min-height:126px !important;
+    max-height:min(58svh,500px) !important;
+    max-height:min(58dvh,500px) !important;
+    overflow:hidden !important;
+    transition:opacity .12s ease, box-shadow .12s ease !important;
+  }
+
+  .ventana:not(.max):not(.min) .texto{
+    max-height:calc(58svh - 38px) !important;
+    max-height:calc(58dvh - 38px) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    overscroll-behavior:contain !important;
+    -webkit-overflow-scrolling:touch !important;
+    touch-action:pan-y !important;
+  }
+
+  .ventana:not(.max):not(.min) .barra{
+    min-height:30px;
+    touch-action:none !important;
+  }
+}
+
 </style>
 
 <style>
@@ -14124,16 +14154,15 @@ if(window.isMobileMode){
 function colocarVentanaEnClick(v,x,y){
   const pos = coordenadasDocumentoDesdeClick(x,y);
   const margen = window.isMobileMode ? 10 : 0;
-  const anchoMovil=Math.min(460,window.innerWidth*.92);
-  const limiteDerecho=Math.max(margen,window.innerWidth-anchoMovil-margen);
+  const anchoMovil=Math.max(180,Math.min(320,window.innerWidth*.66));
   const izquierda=window.isMobileMode
-    ? Math.max(margen,Math.min(pos.x-8,limiteDerecho))
+    ? Math.max(margen,pos.x-8)
     : Math.max(margen,pos.x);
 
   v.style.left = izquierda + "px";
   v.style.top = Math.max(margen, pos.y - (window.isMobileMode ? 8 : 0)) + "px";
 
-  asegurarLienzoMovil(pos.x, pos.y, 900, 900);
+  asegurarLienzoMovil(pos.x, pos.y, anchoMovil+72, 620);
   asegurarLienzoEscritorio(pos.x, Math.max(760,parseFloat(v.style.width)||0));
 }
 
@@ -16694,8 +16723,8 @@ document.addEventListener("pointermove",(e)=>{
   if(!d || d.pointerId!==e.pointerId) return;
   if(e.cancelable) e.preventDefault();
 
-  const nx=(window.scrollX + e.clientX) - d.offsetX;
-  const ny=(window.scrollY + e.clientY) - d.offsetY;
+  const nx=Math.max(0,(window.scrollX + e.clientX) - d.offsetX);
+  const ny=Math.max(0,(window.scrollY + e.clientY) - d.offsetY);
 
   if(Math.abs(e.clientX-d.startX)>3 || Math.abs(e.clientY-d.startY)>3){
     d.moved=true;
