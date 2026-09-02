@@ -13489,14 +13489,10 @@ function mostrarAvisoProtegido(duracion=1250){
   setTimeout(()=>aviso.remove(),duracion);
 }
 
-document.addEventListener("contextmenu",e=>{
-  e.preventDefault();
-  mostrarAvisoProtegido();
-},true);
-
 document.addEventListener("dragstart",e=>{
-  if(e.target.closest("img,a,.texto")){
+  if(e.target.closest(".texto")){
     e.preventDefault();
+    mostrarAvisoProtegido();
   }
 },true);
 
@@ -13505,25 +13501,25 @@ document.addEventListener("copy",e=>{
   mostrarAvisoProtegido();
 },true);
 
+document.addEventListener("cut",e=>{
+  e.preventDefault();
+  mostrarAvisoProtegido();
+},true);
+
+document.addEventListener("selectstart",e=>{
+  if(!e.target.closest(".texto")) return;
+  e.preventDefault();
+  mostrarAvisoProtegido();
+},true);
+
 document.addEventListener("keydown",e=>{
   const tecla=String(e.key||"").toLowerCase();
-  const atajo=(e.ctrlKey||e.metaKey)&&["c","x","s","u","p"].includes(tecla);
-  if(atajo || e.key==="PrintScreen"){
+  const atajo=(e.ctrlKey||e.metaKey)&&["c","x"].includes(tecla);
+  if(atajo){
     e.preventDefault();
     mostrarAvisoProtegido();
   }
 },true);
-
-/* En móvil solo es posible reaccionar cuando el sistema avisa que la web pierde foco. */
-const activarVeloMovil=()=>{
-  if(window.matchMedia?.("(pointer:coarse)").matches || window.isMobileMode){
-    mostrarAvisoProtegido(2200);
-  }
-};
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden) activarVeloMovil();
-},true);
-window.addEventListener("blur",activarVeloMovil,true);
 
 document.addEventListener(
 "touchstart",
