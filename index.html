@@ -1932,9 +1932,9 @@ margin-right:auto;
 display:flex;
 justify-content:center;
 align-items:center;
-gap:4px;
+gap:7px;
 margin:14px auto 0;
-perspective:520px;
+perspective:none;
 }
 
 .obraGaleria3d button{
@@ -1947,15 +1947,17 @@ overflow:hidden;
 cursor:pointer;
 transform:rotateY(30deg) translateZ(-8px);
 opacity:.55;
-transition:transform .22s ease,opacity .22s ease,border-color .22s ease;
+filter:saturate(.78) brightness(.96);
+transition:opacity .24s ease,filter .24s ease,border-color .24s ease,box-shadow .24s ease;
 }
 
-.obraGaleria3d button:nth-child(even){transform:rotateY(-30deg) translateZ(-8px);}
+.obraGaleria3d button:nth-child(even){transform:none;}
 
 .obraGaleria3d button.is-activa{
-transform:rotateY(0) translateZ(18px) scale(1.08);
 opacity:1;
+filter:none;
 border-color:rgba(0,0,0,.62);
+box-shadow:0 2px 8px rgba(0,0,0,.12);
 }
 
 .obraGaleria3d img{width:100%;height:100%;object-fit:cover;}
