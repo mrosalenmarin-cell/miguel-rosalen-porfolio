@@ -7779,6 +7779,304 @@ body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
   }
 }
 
+
+
+/* =========================================================
+   HUB JUEGOS · ¿POR QUÉ?
+   Nota conceptual sobre la estética y los minijuegos.
+   ========================================================= */
+
+.juegos-hub{
+  position:relative !important;
+}
+
+.juegos-porque-btn{
+  position:absolute;
+  z-index:80;
+  top:clamp(10px,1.6vw,18px);
+  left:clamp(10px,1.6vw,18px);
+
+  appearance:none;
+  -webkit-appearance:none;
+
+  min-height:32px;
+  padding:7px 11px;
+
+  border:2px solid #71350e;
+  border-radius:999px;
+
+  color:#4b260b;
+  background:linear-gradient(#ffe16c,#e9a72c);
+  box-shadow:
+    inset 0 2px #fff4aa,
+    inset 0 -3px #bd6a18,
+    0 3px 0 #5d2c0b;
+
+  font:900 9px/1 "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive;
+  letter-spacing:.03em;
+  white-space:nowrap;
+
+  cursor:pointer;
+}
+
+.juegos-porque-btn:hover,
+.juegos-porque-btn:focus-visible{
+  background:linear-gradient(#fff08e,#f0b438);
+  outline:2px solid #fff;
+  outline-offset:2px;
+}
+
+.juegos-porque-btn:active{
+  transform:translateY(1px);
+  box-shadow:
+    inset 0 2px #fff4aa,
+    inset 0 -2px #bd6a18,
+    0 2px 0 #5d2c0b;
+}
+
+/* Dejamos sitio al botón sin desplazar el carrusel de forma brusca. */
+.juegos-hub > .juegos-hub-cabecera{
+  padding-left:96px !important;
+}
+
+.juegos-porque-overlay{
+  position:absolute;
+  inset:0;
+  z-index:500;
+
+  display:grid;
+  place-items:center;
+
+  padding:clamp(14px,3vw,34px);
+
+  background:rgba(30,35,70,.28);
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+
+  transition:opacity .2s ease,visibility .2s ease;
+}
+
+.juegos-porque-overlay.is-open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.juegos-porque-cartel{
+  position:relative;
+
+  width:min(690px,92vw);
+  max-height:min(78dvh,660px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+
+  padding:clamp(26px,4vw,46px);
+
+  border:3px solid #283c85;
+  border-radius:11px;
+
+  color:#16223d;
+  background:#fffde8;
+
+  box-shadow:
+    7px 7px 0 #263d8e,
+    13px 13px 0 rgba(16,24,68,.18);
+
+  font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive;
+}
+
+.juegos-porque-cartel::before{
+  content:"";
+  position:absolute;
+  inset:7px;
+  border:1px dashed rgba(45,61,119,.3);
+  border-radius:6px;
+  pointer-events:none;
+}
+
+.juegos-porque-cartel h2{
+  position:relative;
+  z-index:1;
+
+  margin:0 42px 8px 0;
+
+  color:#243d95;
+  font:900 clamp(23px,3.2vw,40px)/.95 "Arial Black",Arial,sans-serif;
+  letter-spacing:-.035em;
+  text-transform:uppercase;
+}
+
+.juegos-porque-cartel .juegos-porque-sub{
+  position:relative;
+  z-index:1;
+
+  display:block;
+  margin:0 0 24px;
+
+  color:#d74f3f;
+  font:900 9px/1.25 "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+
+.juegos-porque-texto{
+  position:relative;
+  z-index:1;
+}
+
+.juegos-porque-texto p{
+  margin:0 0 15px;
+  color:#253047;
+  font:700 11px/1.58 "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive;
+}
+
+.juegos-porque-texto p:last-child{
+  margin-bottom:0;
+}
+
+.juegos-porque-texto strong{
+  color:#243d95;
+}
+
+.juegos-porque-cerrar{
+  position:absolute;
+  z-index:4;
+  top:12px;
+  right:12px;
+
+  width:36px;
+  height:36px;
+  padding:0;
+
+  display:grid;
+  place-items:center;
+
+  border:2px solid #71350e;
+  border-radius:50%;
+
+  color:#4b260b;
+  background:linear-gradient(#ffe16c,#e9a72c);
+  box-shadow:
+    inset 0 2px #fff4aa,
+    inset 0 -3px #bd6a18,
+    0 3px 0 #5d2c0b;
+
+  font:900 20px/1 "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive;
+  cursor:pointer;
+}
+
+.juegos-porque-cerrar:hover,
+.juegos-porque-cerrar:focus-visible{
+  background:linear-gradient(#fff08e,#f0b438);
+  outline:2px solid #fff;
+  outline-offset:2px;
+}
+
+/* Móvil vertical */
+@media (max-width:768px), (pointer:coarse){
+  .juegos-porque-btn{
+    top:8px;
+    left:8px;
+    min-height:29px;
+    padding:6px 9px;
+    font-size:7.5px;
+  }
+
+  .juegos-hub > .juegos-hub-cabecera{
+    padding-left:76px !important;
+  }
+
+  .juegos-porque-overlay{
+    position:fixed;
+    padding:10px;
+  }
+
+  .juegos-porque-cartel{
+    width:min(94vw,620px);
+    max-height:88dvh;
+    padding:27px 20px 24px;
+    border-width:2px;
+    box-shadow:
+      5px 5px 0 #263d8e,
+      9px 9px 0 rgba(16,24,68,.16);
+  }
+
+  .juegos-porque-cartel h2{
+    margin-right:42px;
+    font-size:25px;
+  }
+
+  .juegos-porque-cartel .juegos-porque-sub{
+    margin-bottom:18px;
+    font-size:8px;
+  }
+
+  .juegos-porque-texto p{
+    font-size:9.5px;
+    line-height:1.5;
+    margin-bottom:13px;
+  }
+
+  .juegos-porque-cerrar{
+    width:34px;
+    height:34px;
+    top:9px;
+    right:9px;
+    font-size:19px;
+  }
+}
+
+/* Móvil horizontal: cartel ancho y bajo, con scroll interno */
+@media (orientation:landscape) and (max-height:560px) and (pointer:coarse){
+  .juegos-porque-btn{
+    top:5px;
+    left:7px;
+    min-height:25px;
+    padding:5px 8px;
+    font-size:7px;
+  }
+
+  .juegos-hub > .juegos-hub-cabecera{
+    padding-left:72px !important;
+  }
+
+  .juegos-porque-overlay{
+    padding:7px 18px;
+  }
+
+  .juegos-porque-cartel{
+    width:min(82vw,720px);
+    max-height:88dvh;
+    padding:20px 24px 20px;
+  }
+
+  .juegos-porque-cartel h2{
+    font-size:22px;
+  }
+
+  .juegos-porque-cartel .juegos-porque-sub{
+    margin-bottom:12px;
+    font-size:7px;
+  }
+
+  .juegos-porque-texto p{
+    font-size:8.5px;
+    line-height:1.38;
+    margin-bottom:10px;
+  }
+
+  .juegos-porque-cerrar{
+    width:30px;
+    height:30px;
+    font-size:17px;
+  }
+}
+
 </style>
 
 </head>
@@ -18689,8 +18987,57 @@ function asegurarHubJuegos(){
     ["PORTFOLIO","Roba las obras cuando nadie esté mirando.","assets/multiverse/hub-portfolio.webp"],
     ["IA","Responde al chat para construir y guardar tu avatar.","assets/multiverse/hub-ia-custom.webp"]
   ];
-  hub.innerHTML=`<header class="juegos-hub-cabecera"><div><h1>JUEGOS</h1><p>elige entre estas cinco partidas pequeñas para perder el tiempo con toda la intención.</p></div></header><section class="juegos-red">${juegos.map(([tipo,bajada,imagen])=>`<button class="juego-tarjeta" type="button" data-juego-tipo="${tipo}"><img src="${imagen}" alt="" loading="eager" decoding="async"><span class="juego-tarjeta-texto"><strong>${tipo}</strong><small>${bajada}</small></span></button>`).join("")}</section>`;
-  hub.addEventListener("click",e=>{const tarjeta=e.target.closest("[data-juego-tipo]");if(!tarjeta)return;e.preventDefault();abrirJuegoDesdeHub(tarjeta.dataset.juegoTipo)});
+  hub.innerHTML=`<button class="juegos-porque-btn" type="button" data-juegos-porque aria-expanded="false">¿POR QUÉ?</button><header class="juegos-hub-cabecera"><div><h1>JUEGOS</h1><p>elige entre estas cinco pequeñas partidas para perder el tiempo con toda la intención.</p></div></header><section class="juegos-red">${juegos.map(([tipo,bajada,imagen])=>`<button class="juego-tarjeta" type="button" data-juego-tipo="${tipo}"><img src="${imagen}" alt="" loading="eager" decoding="async"><span class="juego-tarjeta-texto"><strong>${tipo}</strong><small>${bajada}</small></span></button>`).join("")}</section><section class="juegos-porque-overlay" data-juegos-porque-overlay aria-hidden="true"><article class="juegos-porque-cartel" role="dialog" aria-modal="true" aria-labelledby="juegosPorqueTitulo"><button class="juegos-porque-cerrar" type="button" data-juegos-porque-cerrar aria-label="Cerrar">X</button><h2 id="juegosPorqueTitulo">¿POR QUÉ ESTOS JUEGOS?</h2><span class="juegos-porque-sub">una pequeña defensa de lo cutre</span><div class="juegos-porque-texto"><p><strong>Estos juegos no intentan ser buenos videojuegos.</strong> Nacen precisamente de todo lo contrario: de ese territorio extraño de internet donde jugar significaba cerrar ventanas emergentes, esquivar banners, entrar en páginas hechas en Flash o descubrir un minijuego promocional que parecía haber sido construido demasiado rápido.</p>
+
+<p>También miran a los juegos de los anuncios actuales: esas pequeñas partidas que prometen una experiencia enorme y, durante unos segundos, nos dejan arrastrar, ordenar, disparar, robar o resolver algo antes de devolvernos a la publicidad. Son interfaces exageradas, recompensas inmediatas, reglas demasiado simples, colores sospechosos y una sensación constante de que todo funciona… pero no del todo.</p>
+
+<p>La estética deliberadamente cutre de este multiverso nace de ahí. Tipografías incorrectas, botones excesivos, imágenes comprimidas, sonidos, instrucciones obvias y mecánicas un poco torpes no son errores que haya que esconder: son parte del juego. Me interesa ese momento en el que una interfaz deja de intentar ser elegante y empieza a ser absurda, insistente, divertida y extrañamente familiar.</p>
+
+<p>Aquí cada sección del portfolio se deforma hasta convertirse en una de esas experiencias: el currículum se vuelve encargo, el contacto se convierte en puntería, el portfolio en robo y la IA en creación de personaje. No se trata de gamificar la web para hacerla más eficiente. Se trata, más bien, de estropearla un poco para poder jugar con ella.</p></div></article></section>`;
+  hub.addEventListener("click",e=>{
+    const abrirPorque=e.target.closest("[data-juegos-porque]");
+    const cerrarPorque=e.target.closest("[data-juegos-porque-cerrar]");
+    const overlay=hub.querySelector("[data-juegos-porque-overlay]");
+
+    if(abrirPorque){
+      e.preventDefault();
+      e.stopPropagation();
+      overlay?.classList.add("is-open");
+      overlay?.setAttribute("aria-hidden","false");
+      abrirPorque.setAttribute("aria-expanded","true");
+      requestAnimationFrame(()=>hub.querySelector("[data-juegos-porque-cerrar]")?.focus());
+      return;
+    }
+
+    if(cerrarPorque || (e.target===overlay)){
+      e.preventDefault();
+      e.stopPropagation();
+      overlay?.classList.remove("is-open");
+      overlay?.setAttribute("aria-hidden","true");
+      const boton=hub.querySelector("[data-juegos-porque]");
+      boton?.setAttribute("aria-expanded","false");
+      boton?.focus();
+      return;
+    }
+
+    const tarjeta=e.target.closest("[data-juego-tipo]");
+    if(!tarjeta)return;
+    e.preventDefault();
+    abrirJuegoDesdeHub(tarjeta.dataset.juegoTipo);
+  });
+
+  hub.addEventListener("keydown",e=>{
+    if(e.key!=="Escape") return;
+    const overlay=hub.querySelector("[data-juegos-porque-overlay].is-open");
+    if(!overlay) return;
+    e.preventDefault();
+    overlay.classList.remove("is-open");
+    overlay.setAttribute("aria-hidden","true");
+    const boton=hub.querySelector("[data-juegos-porque]");
+    boton?.setAttribute("aria-expanded","false");
+    boton?.focus();
+  });
+
   document.body.appendChild(hub);return hub;
 }
 function mostrarHubJuegos(){
