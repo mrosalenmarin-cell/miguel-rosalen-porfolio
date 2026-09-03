@@ -7779,6 +7779,26 @@ body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
   }
 }
 
+
+
+/* =========================================================
+   IA · EXPORTAR AVATAR A LA INTERFAZ
+   ========================================================= */
+.ia-perfil-respuestas [data-avatar-interfaz]{
+  background:#2b55d9 !important;
+  color:#fff !important;
+  border:2px outset #dfe8ff !important;
+  box-shadow:4px 4px 0 rgba(31,45,110,.18) !important;
+}
+.ia-perfil-respuestas [data-avatar-interfaz]:hover,
+.ia-perfil-respuestas [data-avatar-interfaz]:focus-visible{
+  background:#0b63e5 !important;
+}
+.ia-perfil-respuestas [data-avatar-interfaz][disabled]{
+  background:#2f865e !important;
+  opacity:1 !important;
+}
+
 </style>
 
 </head>
@@ -17744,24 +17764,121 @@ function activarModoIACaptura(v){
 
   function anadirAvatarAInterfaz(){
     try{
-      const mini=document.createElement("canvas");
-      mini.width=220;
-      mini.height=300;
-      const ctx=mini.getContext("2d");
+      const sw=avatar.width||299,sh=avatar.height||220;
 
-      /* Recorte centrado sobre el personaje del canvas ya dibujado.
-         El canvas original mide 598x440. */
-      ctx.drawImage(
-        avatar,
-        170,150,258,290,
-        0,0,220,300
-      );
+      /* Recorte ajustado al personaje completo, con margen.
+         Trabajamos en proporción sobre el canvas real. */
+      const sx=Math.round(sw*(86/299));
+      const sy=Math.round(sh*(38/220));
+      const cw=Math.round(sw*(127/299));
+      const ch=Math.round(sh*(175/220));
 
-      const imagen=mini.toDataURL("image/webp",.78);
+      const temp=document.createElement("canvas");
+      temp.width=320;
+      temp.height=430;
+      const tctx=temp.getContext("2d",{alpha:true,willReadFrequently:true});
+      tctx.clearRect(0,0,temp.width,temp.height);
+      tctx.drawImage(avatar,sx,sy,cw,ch,0,0,temp.width,temp.height);
 
-      localStorage.setItem("miguel-avatar-interfaz-img",imagen);
+      /* El fondo no se "croma" a lo bruto.
+         Hacemos un borrado por inundación desde los bordes:
+         todo lo que esté conectado a los bordes y sea "no figura"
+         desaparece, dejando solo el personaje en transparencia. */
+      const img=tctx.getImageData(0,0,temp.width,temp.height);
+      const data=img.data;
+      const ref=new Uint8ClampedArray(data);
+      const w=temp.width,h=temp.height;
+      const seen=new Uint8Array(w*h);
+      const cola=[];
+
+      const idx=(x,y)=>y*w+x;
+
+      const empujar=(x,y)=>{
+        if(x<0||y<0||x>=w||y>=h) return;
+        const i=idx(x,y);
+        if(seen[i]) return;
+        seen[i]=1;
+        cola.push(i);
+      };
+
+      for(let x=0;x<w;x++){empujar(x,0);empujar(x,h-1)}
+      for(let y=1;y<h-1;y++){empujar(0,y);empujar(w-1,y)}
+
+      const dist=(a,b)=>{
+        const i=a*4,j=b*4;
+        const dr=ref[i]-ref[j],dg=ref[i+1]-ref[j+1],db=ref[i+2]-ref[j+2];
+        return Math.sqrt(dr*dr+dg*dg+db*db);
+      };
+
+      while(cola.length){
+        const p=cola.pop();
+        const x=p%w,y=(p/w)|0;
+        const base=p*4;
+        if(data[base+3]===0) continue;
+
+        /* borramos pixel actual */
+        data[base+3]=0;
+
+        const vecinos=[
+          p-1,p+1,p-w,p+w,
+          p-w-1,p-w+1,p+w-1,p+w+1
+        ];
+
+        for(const n of vecinos){
+          if(n<0||n>=w*h||seen[n]) continue;
+          const nx=n%w,ny=(n/w)|0;
+          if(Math.abs(nx-x)>1||Math.abs(ny-y)>1) continue;
+
+          const alpha=ref[n*4+3];
+          if(alpha===0) continue;
+
+          /* tolerancia local: borra regiones conectadas del fondo,
+             pero evita saltar a la figura. */
+          if(dist(p,n) <= 34){
+            seen[n]=1;
+            cola.push(n);
+          }
+        }
+      }
+
+      tctx.putImageData(img,0,0);
+
+      /* Recorte final al contorno visible */
+      const finalImg=tctx.getImageData(0,0,temp.width,temp.height).data;
+      let minX=w,minY=h,maxX=0,maxY=0,hay=false;
+      for(let y=0;y<h;y++){
+        for(let x=0;x<w;x++){
+          const a=finalImg[(y*w+x)*4+3];
+          if(a>8){
+            hay=true;
+            if(x<minX) minX=x;
+            if(y<minY) minY=y;
+            if(x>maxX) maxX=x;
+            if(y>maxY) maxY=y;
+          }
+        }
+      }
+      if(!hay) return false;
+
+      const pad=10;
+      minX=Math.max(0,minX-pad); minY=Math.max(0,minY-pad);
+      maxX=Math.min(w-1,maxX+pad); maxY=Math.min(h-1,maxY+pad);
+
+      const out=document.createElement("canvas");
+      out.width=maxX-minX+1;
+      out.height=maxY-minY+1;
+      const octx=out.getContext("2d",{alpha:true});
+      octx.clearRect(0,0,out.width,out.height);
+      octx.drawImage(temp,minX,minY,out.width,out.height,0,0,out.width,out.height);
+
+      const png=out.toDataURL("image/png");
+
+      localStorage.setItem("miguel-avatar-interfaz-img",png);
       localStorage.setItem("miguel-avatar-interfaz-activo","1");
       localStorage.setItem("miguel-avatar-interfaz-fecha",String(Date.now()));
+      try{
+        localStorage.setItem("miguel-avatar-interfaz-perfil",JSON.stringify(perfil));
+      }catch(_e){}
 
       return true;
     }catch(_e){
