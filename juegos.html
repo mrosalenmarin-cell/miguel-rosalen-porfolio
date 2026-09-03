@@ -8077,6 +8077,143 @@ body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
   }
 }
 
+
+
+/* =========================================================
+   JUEGOS V3 · STATEMENT + BOTÓN DERECHA + CURSOR GATO/GLITTER
+   ========================================================= */
+
+/* ¿POR QUÉ? al extremo derecho */
+.juegos-porque-btn{
+  left:auto !important;
+  right:clamp(10px,1.6vw,18px) !important;
+}
+.juegos-hub > .juegos-hub-cabecera{
+  padding-left:0 !important;
+  padding-right:104px !important;
+}
+
+/* El rectángulo de guiones desaparece: el cartel ya tiene marco propio. */
+.juegos-porque-cartel::before{
+  display:none !important;
+}
+
+/* El texto nunca queda visualmente fuera del cartel. */
+.juegos-porque-cartel{
+  box-sizing:border-box !important;
+}
+.juegos-porque-texto{
+  width:100%;
+  box-sizing:border-box;
+}
+.juegos-porque-texto p{
+  max-width:100%;
+}
+
+/* CURSOR GATO + GLITTER — solo dispositivos con cursor real */
+#juegosCursorGato{
+  position:fixed;
+  z-index:2147483647;
+  left:0;
+  top:0;
+  width:34px;
+  height:34px;
+  pointer-events:none;
+  opacity:0;
+  transform:translate3d(-100px,-100px,0);
+  transition:opacity .12s ease;
+  will-change:transform;
+  filter:drop-shadow(0 2px 0 rgba(33,27,72,.28));
+}
+
+#juegosCursorGato.visible{
+  opacity:1;
+}
+
+#juegosCursorGato svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.juegos-cursor-brillo{
+  position:fixed;
+  z-index:2147483646;
+  left:0;
+  top:0;
+  width:8px;
+  height:8px;
+  pointer-events:none;
+  color:#fff36e;
+  font:900 12px/1 Arial,sans-serif;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 7px #ff70c7;
+  transform:translate(-50%,-50%);
+  animation:juegosCursorGlitter .72s ease-out forwards;
+}
+
+.juegos-cursor-brillo:nth-of-type(3n){
+  color:#91ecff;
+}
+.juegos-cursor-brillo:nth-of-type(3n+1){
+  color:#ff89d2;
+}
+
+@keyframes juegosCursorGlitter{
+  0%{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(.35) rotate(0deg);
+  }
+  55%{
+    opacity:.86;
+  }
+  100%{
+    opacity:0;
+    transform:
+      translate(
+        calc(-50% + var(--gx,8px)),
+        calc(-50% + var(--gy,14px))
+      )
+      scale(1.25)
+      rotate(90deg);
+  }
+}
+
+@media (hover:hover) and (pointer:fine){
+  body.modo-juego-global,
+  body.modo-juego-global *{
+    cursor:none !important;
+  }
+}
+
+@media (max-width:768px), (pointer:coarse){
+  .juegos-porque-btn{
+    left:auto !important;
+    right:8px !important;
+  }
+  .juegos-hub > .juegos-hub-cabecera{
+    padding-left:0 !important;
+    padding-right:78px !important;
+  }
+  #juegosCursorGato,
+  .juegos-cursor-brillo{
+    display:none !important;
+  }
+}
+
+@media (orientation:landscape) and (max-height:560px) and (pointer:coarse){
+  .juegos-porque-btn{
+    left:auto !important;
+    right:7px !important;
+  }
+  .juegos-hub > .juegos-hub-cabecera{
+    padding-left:0 !important;
+    padding-right:72px !important;
+  }
+}
+
 </style>
 
 </head>
@@ -18977,6 +19114,72 @@ function desactivarModoVentana(v){
 function detenerSonidoMinijuego(){}
 function alternarSonidoMinijuego(){return false}
 
+
+function instalarCursorJuegos(){
+  if(document.getElementById("juegosCursorGato")) return;
+
+  const cursor=document.createElement("div");
+  cursor.id="juegosCursorGato";
+  cursor.setAttribute("aria-hidden","true");
+  cursor.innerHTML=`<svg viewBox="0 0 36 36" aria-hidden="true">
+    <path d="M8 13 6 4l8 5c2-1 6-1 8 0l8-5-2 9c2 2 3 5 3 8 0 7-5 11-13 11S5 28 5 21c0-3 1-6 3-8Z"
+      fill="#ffe45d" stroke="#3b3277" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M10.2 8.1 8.9 6.7l4.3 2.8Z" fill="#ff8ccc"/>
+    <path d="m25.8 8.1 1.3-1.4-4.3 2.8Z" fill="#ff8ccc"/>
+    <ellipse cx="13.4" cy="19" rx="1.65" ry="2.15" fill="#28305f"/>
+    <ellipse cx="22.6" cy="19" rx="1.65" ry="2.15" fill="#28305f"/>
+    <path d="M16 23c1.2 1 2.8 1 4 0M18 21.5v2" fill="none" stroke="#28305f" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M7 21 1.5 19.5M7 24 1.5 25M29 21l5.5-1.5M29 24l5.5 1" fill="none" stroke="#3b3277" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M29.2 6.2 30.4 2l1.3 4.2L35 7.5l-3.3 1.2-1.3 4.2-1.2-4.2L26 7.5Z"
+      fill="#fff" stroke="#ff78c8" stroke-width=".8"/>
+  </svg>`;
+  document.body.appendChild(cursor);
+
+  let ultimoBrillo=0;
+  let visible=false;
+
+  const crearBrillo=(x,y)=>{
+    const ahora=performance.now();
+    if(ahora-ultimoBrillo<38) return;
+    ultimoBrillo=ahora;
+
+    const brillo=document.createElement("i");
+    brillo.className="juegos-cursor-brillo";
+    brillo.textContent=Math.random()>.48 ? "✦" : "·";
+    brillo.style.left=x+"px";
+    brillo.style.top=y+"px";
+    brillo.style.setProperty("--gx",`${(Math.random()*20-10).toFixed(1)}px`);
+    brillo.style.setProperty("--gy",`${(8+Math.random()*19).toFixed(1)}px`);
+    document.body.appendChild(brillo);
+    brillo.addEventListener("animationend",()=>brillo.remove(),{once:true});
+  };
+
+  document.addEventListener("pointermove",e=>{
+    if(e.pointerType==="touch" || !document.body.classList.contains("modo-juego-global")){
+      cursor.classList.remove("visible");
+      visible=false;
+      return;
+    }
+
+    cursor.style.transform=`translate3d(${e.clientX-5}px,${e.clientY-5}px,0)`;
+    if(!visible){
+      cursor.classList.add("visible");
+      visible=true;
+    }
+    crearBrillo(e.clientX+3,e.clientY+7);
+  },{passive:true});
+
+  document.addEventListener("pointerleave",()=>{
+    cursor.classList.remove("visible");
+    visible=false;
+  },{passive:true});
+
+  window.addEventListener("blur",()=>{
+    cursor.classList.remove("visible");
+    visible=false;
+  });
+}
+
 function asegurarHubJuegos(){
   let hub=document.getElementById("juegosHub");if(hub)return hub;
   hub=document.createElement("main");hub.id="juegosHub";hub.className="juegos-hub";hub.hidden=true;
@@ -18987,13 +19190,19 @@ function asegurarHubJuegos(){
     ["PORTFOLIO","Roba las obras cuando nadie esté mirando.","assets/multiverse/hub-portfolio.webp"],
     ["IA","Responde al chat para construir y guardar tu avatar.","assets/multiverse/hub-ia-custom.webp"]
   ];
-  hub.innerHTML=`<button class="juegos-porque-btn" type="button" data-juegos-porque aria-expanded="false">¿POR QUÉ?</button><header class="juegos-hub-cabecera"><div><h1>JUEGOS</h1><p>elige entre estas cinco pequeñas partidas para perder el tiempo con toda la intención.</p></div></header><section class="juegos-red">${juegos.map(([tipo,bajada,imagen])=>`<button class="juego-tarjeta" type="button" data-juego-tipo="${tipo}"><img src="${imagen}" alt="" loading="eager" decoding="async"><span class="juego-tarjeta-texto"><strong>${tipo}</strong><small>${bajada}</small></span></button>`).join("")}</section><section class="juegos-porque-overlay" data-juegos-porque-overlay aria-hidden="true"><article class="juegos-porque-cartel" role="dialog" aria-modal="true" aria-labelledby="juegosPorqueTitulo"><button class="juegos-porque-cerrar" type="button" data-juegos-porque-cerrar aria-label="Cerrar">X</button><h2 id="juegosPorqueTitulo">¿POR QUÉ ESTOS JUEGOS?</h2><span class="juegos-porque-sub">una pequeña defensa de lo cutre</span><div class="juegos-porque-texto"><p><strong>Estos juegos no intentan ser buenos videojuegos.</strong> Nacen precisamente de todo lo contrario: de ese territorio extraño de internet donde jugar significaba cerrar ventanas emergentes, esquivar banners, entrar en páginas hechas en Flash o descubrir un minijuego promocional que parecía haber sido construido demasiado rápido.</p>
+  hub.innerHTML=`<button class="juegos-porque-btn" type="button" data-juegos-porque aria-expanded="false">¿POR QUÉ?</button><header class="juegos-hub-cabecera"><div><h1>JUEGOS</h1><p>elige entre estas cinco pequeñas partidas para perder el tiempo con toda la intención.</p></div></header><section class="juegos-red">${juegos.map(([tipo,bajada,imagen])=>`<button class="juego-tarjeta" type="button" data-juego-tipo="${tipo}"><img src="${imagen}" alt="" loading="eager" decoding="async"><span class="juego-tarjeta-texto"><strong>${tipo}</strong><small>${bajada}</small></span></button>`).join("")}</section><section class="juegos-porque-overlay" data-juegos-porque-overlay aria-hidden="true"><article class="juegos-porque-cartel" role="dialog" aria-modal="true" aria-labelledby="juegosPorqueTitulo"><button class="juegos-porque-cerrar" type="button" data-juegos-porque-cerrar aria-label="Cerrar">X</button><h2 id="juegosPorqueTitulo">LO CUTRE TAMBIÉN ES DISEÑO.</h2><span class="juegos-porque-sub">una defensa innecesariamente seria de jugar mal</span><div class="juegos-porque-texto"><p><strong>Nos han enseñado a reconocer el buen diseño porque parece que no está ahí.</strong> Todo debe ser limpio, intuitivo, rápido, elegante. Estos juegos parten de una sospecha bastante menos educada: quizá una interfaz también puede funcionar precisamente porque se nota demasiado.</p>
 
-<p>También miran a los juegos de los anuncios actuales: esas pequeñas partidas que prometen una experiencia enorme y, durante unos segundos, nos dejan arrastrar, ordenar, disparar, robar o resolver algo antes de devolvernos a la publicidad. Son interfaces exageradas, recompensas inmediatas, reglas demasiado simples, colores sospechosos y una sensación constante de que todo funciona… pero no del todo.</p>
+<p>Internet no aprendió a jugar solo en grandes videojuegos. También aprendió entre banners, páginas en Flash, promociones, ventanas emergentes y minijuegos construidos para vender cereales, películas, zapatillas o cualquier otra cosa. El videojuego publicitario no necesitaba ser una obra maestra: necesitaba que entendieras qué hacer en tres segundos y que no apartaras la mirada durante los siguientes treinta. En ese sentido era brutalmente honesto. Un botón enorme quería ser pulsado. Un premio quería brillar. Una flecha quería mandarte a algún sitio. Nada fingía neutralidad.</p>
 
-<p>La estética deliberadamente cutre de este multiverso nace de ahí. Tipografías incorrectas, botones excesivos, imágenes comprimidas, sonidos, instrucciones obvias y mecánicas un poco torpes no son errores que haya que esconder: son parte del juego. Me interesa ese momento en el que una interfaz deja de intentar ser elegante y empieza a ser absurda, insistente, divertida y extrañamente familiar.</p>
+<p>Los anuncios jugables actuales continúan esa tradición con otra tecnología y la misma ansiedad. Ordenar objetos, disparar, rescatar a alguien, multiplicar números, elegir una puerta: pequeñas fantasías de control comprimidas dentro de una interrupción. A menudo el juego que aparece en el anuncio ni siquiera se parece demasiado al juego que se anuncia. Y, sin embargo, seguimos sabiendo jugarlo. <strong>Es un lenguaje visual tan rudimentario que ha terminado siendo sofisticado.</strong></p>
 
-<p>Aquí cada sección del portfolio se deforma hasta convertirse en una de esas experiencias: el currículum se vuelve encargo, el contacto se convierte en puntería, el portfolio en robo y la IA en creación de personaje. No se trata de gamificar la web para hacerla más eficiente. Se trata, más bien, de estropearla un poco para poder jugar con ella.</p></div></article></section>`;
+<p>Por eso aquí la cutrez no intenta imitar una falta de recursos. Es una herramienta. Botones excesivos, tipografías equivocadas, imágenes comprimidas, sonidos innecesarios, recompensas inmediatas y mecánicas un poco tontas forman una gramática que reconocemos antes incluso de pensarla. Si todo parece hecho con demasiada prisa, quizá sea porque parte de internet siempre quiso que actuáramos antes de tener tiempo para preguntarnos por qué.</p>
+
+<p>Estos juegos toman el portfolio —un formato normalmente diseñado para demostrar control, criterio y profesionalidad— y hacen exactamente lo contrario. El currículum se convierte en encargo, el contacto en puntería, el portfolio en robo y la IA en creación de personaje. La información sigue ahí, pero para llegar a ella hay que perder un poco el tiempo.</p>
+
+<p><strong>No es gamificación.</strong> La gamificación suele usar el juego para hacer una tarea más eficiente, productiva o soportable. Aquí el juego introduce fricción, distracción y una cantidad perfectamente evitable de absurdo. No intenta mejorar la web. Intenta contaminarla.</p>
+
+<p>Y quizá ahí esté el argumento: una interfaz no tiene por qué desaparecer para estar bien diseñada. A veces puede hacer ruido, comportarse mal, pedir un clic de más y seguir diciendo exactamente lo que tiene que decir. <strong>Si parece un anuncio malo, perfecto. Ya sabes cómo jugar.</strong></p></div></article></section>`;
   hub.addEventListener("click",e=>{
     const abrirPorque=e.target.closest("[data-juegos-porque]");
     const cerrarPorque=e.target.closest("[data-juegos-porque-cerrar]");
@@ -19041,6 +19250,7 @@ function asegurarHubJuegos(){
   document.body.appendChild(hub);return hub;
 }
 function mostrarHubJuegos(){
+  instalarCursorJuegos();
   detenerSonidoMinijuego();
   document.querySelectorAll(".ventana").forEach(v=>{limpiarMinijuego(v);v.classList.remove("max");v.style.display="none"});
   document.body.classList.remove("ventana-max-activa");
@@ -19057,6 +19267,7 @@ function instalarAvisoGiroJuego(v){
   v.appendChild(aviso);
 }
 function abrirJuegoDesdeHub(tipo){
+  instalarCursorJuegos();
   const hub=asegurarHubJuegos();hub.hidden=true;
   document.documentElement.classList.remove("hub-juegos-activo");
   document.querySelectorAll(".ventana").forEach(v=>{limpiarMinijuego(v);v.style.display="none"});
