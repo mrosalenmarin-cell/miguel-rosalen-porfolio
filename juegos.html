@@ -8773,6 +8773,317 @@ html.hub-juegos-activo > body{
 }
 
 </style>
+
+<style>
+
+/* =========================================================
+   JUEGOS V9 · TÍTULO LIMPIO
+   Quita estrella y sombra dibujada de “LO CUTRE TAMBIÉN ES DISEÑO.”
+   ========================================================= */
+.juegos-porque-cartel h2{
+  text-shadow:none !important;
+}
+
+.juegos-porque-cartel h2::before{
+  display:none !important;
+  content:none !important;
+}
+
+</style>
+
+<style>
+
+/* =========================================================
+   JUEGOS V10 · GLITTER SIEMPRE POR ENCIMA
+   ========================================================= */
+
+#juegosCursorOverlay{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  z-index:2147483647 !important;
+  pointer-events:none !important;
+  overflow:visible !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  transform:none !important;
+  filter:none !important;
+  mix-blend-mode:normal !important;
+  isolation:isolate;
+}
+
+#juegosCursorOverlay .juegos-cursor-glitter{
+  position:absolute !important;
+  z-index:2147483647 !important;
+  pointer-events:none !important;
+  display:block !important;
+}
+
+@media (hover:hover) and (pointer:fine){
+  #juegosCursorOverlay{
+    display:block !important;
+  }
+}
+
+@media (pointer:coarse), (hover:none){
+  #juegosCursorOverlay{
+    display:none !important;
+  }
+}
+
+</style>
+
+<style>
+
+/* =========================================================
+   JUEGOS V11 · LOADER CENTRADO ESTÉTICA MULTIVERSO
+   ========================================================= */
+
+#sistemaLoader{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:2147483646 !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  padding:18px !important;
+  box-sizing:border-box !important;
+
+  pointer-events:none !important;
+
+  opacity:0;
+  visibility:hidden;
+
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,243,123,.12) 0 16%, transparent 17% 100%),
+    rgba(22,18,52,.46) !important;
+
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+
+  transition:opacity .16s ease, visibility .16s ease !important;
+}
+
+#sistemaLoader.visible{
+  opacity:1 !important;
+  visibility:visible !important;
+}
+
+#sistemaLoader::before,
+#sistemaLoader::after{
+  display:none !important;
+  content:none !important;
+}
+
+#sistemaLoader .juegos-loader-core{
+  position:relative !important;
+
+  width:min(270px,78vw) !important;
+  min-height:190px !important;
+  aspect-ratio:auto !important;
+
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:9px !important;
+
+  padding:22px 20px 18px !important;
+  box-sizing:border-box !important;
+
+  border:3px solid #263d8e !important;
+  border-radius:10px !important;
+
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.23),rgba(255,255,255,0) 38%),
+    #df4c35 !important;
+
+  box-shadow:
+    inset 0 0 0 3px rgba(255,244,156,.42),
+    6px 6px 0 #263d8e,
+    11px 11px 0 rgba(26,18,63,.25) !important;
+
+  transform:rotate(-1deg);
+}
+
+/* Etiqueta absurda de interfaz */
+#sistemaLoader .juegos-loader-core::before{
+  content:"JUEGOS.EXE";
+  position:absolute;
+  top:-13px;
+  left:16px;
+
+  padding:5px 9px 4px;
+
+  border:2px solid #263d8e;
+  border-radius:4px;
+
+  background:#fff36e;
+  color:#263d8e;
+
+  font:900 9px/1 "Arial Black",Arial,sans-serif;
+  letter-spacing:.05em;
+
+  box-shadow:3px 3px 0 #263d8e;
+  transform:rotate(-3deg);
+}
+
+/* Marco de flechas */
+#sistemaLoader .juegos-loader-flechas{
+  position:relative;
+  width:104px;
+  height:104px;
+  margin:2px auto 1px;
+
+  display:grid;
+  place-items:center;
+}
+
+#sistemaLoader .juegos-loader-flechas::before{
+  content:"";
+  position:absolute;
+  inset:16px;
+
+  border-radius:50%;
+  border:2px dashed rgba(255,255,255,.58);
+
+  animation:juegosLoaderDashed 3.2s linear infinite;
+}
+
+#sistemaLoader .juegos-loader-aro{
+  position:absolute !important;
+  inset:auto !important;
+
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+
+  font-family:"Arial Black",Arial,sans-serif !important;
+  font-weight:900 !important;
+  font-size:72px !important;
+  line-height:1 !important;
+
+  transform-origin:center center;
+}
+
+#sistemaLoader .juegos-loader-aro.a{
+  color:#fff36e !important;
+  text-shadow:
+    2px 2px 0 #263d8e,
+    0 0 8px rgba(255,243,110,.75) !important;
+
+  animation:juegosLoaderSpinA .78s linear infinite !important;
+}
+
+#sistemaLoader .juegos-loader-aro.b{
+  color:#7fe8ff !important;
+  text-shadow:
+    2px 2px 0 #263d8e,
+    0 0 8px rgba(127,232,255,.75) !important;
+
+  animation:juegosLoaderSpinB .98s linear infinite !important;
+}
+
+#sistemaLoader .juegos-loader-texto{
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+  transform:none !important;
+
+  display:block;
+  width:100%;
+
+  margin:0 !important;
+
+  color:#fff !important;
+  text-align:center !important;
+
+  font:900 20px/.95 "Arial Black",Arial,sans-serif !important;
+  letter-spacing:-.03em !important;
+  text-transform:uppercase !important;
+
+  text-shadow:
+    2px 2px 0 #263d8e,
+    4px 4px 0 rgba(38,61,142,.28) !important;
+}
+
+#sistemaLoader .juegos-loader-sub{
+  display:block;
+
+  color:#fff9c9;
+  text-align:center;
+
+  font:700 9px/1.25 "Comic Sans MS","Comic Sans",Arial,sans-serif;
+  letter-spacing:.02em;
+}
+
+#sistemaLoader .juegos-loader-puntos{
+  display:block;
+  min-width:32px;
+
+  color:#fff36e;
+  text-align:left;
+
+  font:900 14px/1 "Courier New",monospace;
+}
+
+#sistemaLoader .juegos-loader-puntos::after{
+  content:"";
+  animation:juegosLoaderPuntos 1.05s steps(4,end) infinite;
+}
+
+@keyframes juegosLoaderDashed{
+  to{ transform:rotate(360deg); }
+}
+
+@keyframes juegosLoaderPuntos{
+  0%{content:""}
+  25%{content:"."}
+  50%{content:".."}
+  75%,100%{content:"..."}
+}
+
+@keyframes juegosLoaderSpinA{
+  to{transform:rotate(360deg)}
+}
+
+@keyframes juegosLoaderSpinB{
+  to{transform:rotate(-360deg)}
+}
+
+@media(max-width:760px){
+  #sistemaLoader{
+    padding:12px !important;
+  }
+
+  #sistemaLoader .juegos-loader-core{
+    width:min(245px,82vw) !important;
+    min-height:174px !important;
+    padding:20px 17px 16px !important;
+  }
+
+  #sistemaLoader .juegos-loader-flechas{
+    width:91px;
+    height:91px;
+  }
+
+  #sistemaLoader .juegos-loader-aro{
+    font-size:63px !important;
+  }
+
+  #sistemaLoader .juegos-loader-texto{
+    font-size:18px !important;
+  }
+
+  #sistemaLoader .juegos-loader-sub{
+    font-size:8px;
+  }
+}
+
+</style>
 </head>
 
 <body>
@@ -8874,7 +9185,7 @@ function mostrarLoaderSistema(ms=650){
 
   if(!loader.dataset.juegosReady){
     loader.dataset.juegosReady="1";
-    loader.innerHTML='<div class="juegos-loader-core" aria-hidden="true"><span class="juegos-loader-aro a">↻</span><span class="juegos-loader-aro b">↺</span><span class="juegos-loader-texto">CARGANDO</span></div>';
+    loader.innerHTML='<div class="juegos-loader-core" aria-hidden="true"><div class="juegos-loader-flechas"><span class="juegos-loader-aro a">↻</span><span class="juegos-loader-aro b">↺</span></div><span class="juegos-loader-texto">CARGANDO<span class="juegos-loader-puntos"></span></span><span class="juegos-loader-sub">preparando una experiencia innecesariamente interactiva</span></div>';
   }
 
   loader.classList.add("visible");
@@ -19683,37 +19994,55 @@ function instalarCursorJuegos(){
   if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
   window.__glitterTrailJuegosInstalado=true;
 
+  let overlay=document.getElementById("juegosCursorOverlay");
+  if(!overlay){
+    overlay=document.createElement("div");
+    overlay.id="juegosCursorOverlay";
+    overlay.setAttribute("aria-hidden","true");
+
+    /* Directamente bajo <html>, después de <body>.
+       Así no queda atrapado en ningún stacking context de la web. */
+    document.documentElement.appendChild(overlay);
+  }
+
   let ultimo=0;
 
   function crearGlitter(x,y){
     const ahora=performance.now();
-    if(ahora-ultimo<18) return;
+    if(ahora-ultimo<16) return;
     ultimo=ahora;
 
-    const colores=["#fff37b","#ff7ec8","#8eeaff","#c7a2ff","#7dffbd","#ffffff","#ffb36b"];
-    const simbolos=["✦","✧","⋆","✶","✹","✷","✺","·"];
-    const cantidad=2 + (Math.random()>.35 ? 1 : 0) + (Math.random()>.78 ? 1 : 0);
+    const colores=["#fff37b","#ff5fba","#72e7ff","#ba8cff","#62ffae","#ffffff","#ff9d5c"];
+    const simbolos=["✦","✧","⋆","✶","✹","✷","✺"];
+    const cantidad=3 + (Math.random()>.55 ? 1 : 0);
 
     for(let i=0;i<cantidad;i++){
       const part=document.createElement("i");
       const sizeRoll=Math.random();
-      part.className="juegos-cursor-glitter " + (sizeRoll<.22 ? "g1" : sizeRoll<.58 ? "g2" : sizeRoll<.85 ? "g3" : "g4");
+
+      part.className="juegos-cursor-glitter " +
+        (sizeRoll<.18 ? "g1" : sizeRoll<.52 ? "g2" : sizeRoll<.82 ? "g3" : "g4");
+
       part.textContent=simbolos[Math.floor(Math.random()*simbolos.length)];
       part.style.color=colores[Math.floor(Math.random()*colores.length)];
-      part.style.left=(x + (Math.random()*10-5)) + "px";
-      part.style.top=(y + (Math.random()*10-5)) + "px";
-      part.style.setProperty("--gx1", `${(Math.random()*16-8).toFixed(1)}px`);
-      part.style.setProperty("--gy1", `${(Math.random()*10-2).toFixed(1)}px`);
-      part.style.setProperty("--gx", `${(Math.random()*46-23).toFixed(1)}px`);
-      part.style.setProperty("--gy", `${(14+Math.random()*30).toFixed(1)}px`);
-      document.body.appendChild(part);
+
+      /* Coordenadas del viewport: coinciden exactamente con la capa fixed. */
+      part.style.left=(x + (Math.random()*12-6)) + "px";
+      part.style.top=(y + (Math.random()*12-6)) + "px";
+
+      part.style.setProperty("--gx1", `${(Math.random()*18-9).toFixed(1)}px`);
+      part.style.setProperty("--gy1", `${(Math.random()*12-3).toFixed(1)}px`);
+      part.style.setProperty("--gx", `${(Math.random()*50-25).toFixed(1)}px`);
+      part.style.setProperty("--gy", `${(12+Math.random()*32).toFixed(1)}px`);
+
+      overlay.appendChild(part);
       part.addEventListener("animationend",()=>part.remove(),{once:true});
     }
   }
 
   document.addEventListener("mousemove",e=>{
     crearGlitter(e.clientX,e.clientY);
-  },{passive:true});
+  },{passive:true,capture:true});
 }
 
 if(document.readyState==="loading"){
