@@ -7064,6 +7064,78 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 }
 
 </style>
+
+<style>
+
+/* =========================================================
+   PORTFOLIO MÓVIL V2 · SWIPE DE CARPETAS FLUIDO
+   Corrige el conflicto pan-y del contenedor padre.
+   SOLO afecta a PORTFOLIO abierto parcialmente en móvil.
+   ========================================================= */
+@media (max-width:768px), (pointer:coarse){
+
+  /* El padre ya no bloquea el gesto horizontal de las carpetas.
+     Sigue permitiendo scroll vertical donde el contenido lo necesite. */
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min) .texto{
+    touch-action:auto !important;
+    overscroll-behavior-x:contain !important;
+  }
+
+  /* Deslizamiento horizontal nativo, con inercia y sin snap agresivo. */
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min)
+  .portfolio-wrap[data-mode="home"]
+  .portfolio-folders:not(.portfolio-node-map),
+
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min)
+  .portfolio-wrap[data-mode="folders"]
+  .portfolio-folders:not(.portfolio-node-map){
+    touch-action:pan-x !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior-x:contain !important;
+    scroll-snap-type:x proximity !important;
+    scroll-behavior:auto !important;
+  }
+
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min)
+  .portfolio-wrap[data-mode="home"]
+  .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder,
+
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min)
+  .portfolio-wrap[data-mode="folders"]
+  .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder{
+    touch-action:pan-x !important;
+    scroll-snap-align:start !important;
+    scroll-snap-stop:normal !important;
+  }
+}
+
+</style>
+
+<style>
+
+/* =========================================================
+   PORTFOLIO MÓVIL V3 · DESLIZAMIENTO HORIZONTAL RÁPIDO
+   Solo la fila de carpetas cuando la ventana está medio abierta.
+   ========================================================= */
+@media (max-width:768px), (pointer:coarse){
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min)
+  .portfolio-wrap[data-mode="home"]
+  .portfolio-folders:not(.portfolio-node-map),
+
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min)
+  .portfolio-wrap[data-mode="folders"]
+  .portfolio-folders:not(.portfolio-node-map){
+    /* Vertical puede seguir perteneciendo al contenedor de la ventana.
+       El horizontal lo aceleramos con JS. */
+    touch-action:pan-y !important;
+    scroll-snap-type:none !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+</style>
 </head>
 
 <body>
@@ -19683,6 +19755,137 @@ window.addEventListener("orientationchange",()=>{
 if(window.visualViewport){
   window.visualViewport.addEventListener("resize",reajustarPortfolioMinimizadoMovil,{passive:true});
 }
+
+</script>
+
+<script>
+
+(function instalarSwipeRapidoPortfolioMovil(){
+  if(window.__portfolioSwipeRapidoV3) return;
+  window.__portfolioSwipeRapidoV3=true;
+
+  const esMovil=()=>matchMedia("(max-width:768px), (pointer:coarse)").matches;
+  const esFilaValida=el=>{
+    if(!el || !el.matches?.(".portfolio-folders:not(.portfolio-node-map)")) return false;
+    const ventana=el.closest('.ventana[data-tipo="PORTFOLIO"]');
+    if(!ventana || ventana.classList.contains("max") || ventana.classList.contains("min")) return false;
+    const wrap=el.closest(".portfolio-wrap");
+    return !!wrap && (wrap.dataset.mode==="home" || wrap.dataset.mode==="folders");
+  };
+
+  let gesto=null;
+  let rafInercia=0;
+
+  const pararInercia=()=>{
+    if(rafInercia){
+      cancelAnimationFrame(rafInercia);
+      rafInercia=0;
+    }
+  };
+
+  document.addEventListener("pointerdown",e=>{
+    if(!esMovil() || e.pointerType==="mouse") return;
+
+    const fila=e.target.closest?.(".portfolio-folders:not(.portfolio-node-map)");
+    if(!esFilaValida(fila)) return;
+
+    pararInercia();
+
+    gesto={
+      fila,
+      pointerId:e.pointerId,
+      x0:e.clientX,
+      y0:e.clientY,
+      xPrev:e.clientX,
+      tPrev:performance.now(),
+      scroll0:fila.scrollLeft,
+      horizontal:false,
+      movido:false,
+      velocidad:0
+    };
+  },true);
+
+  document.addEventListener("pointermove",e=>{
+    if(!gesto || e.pointerId!==gesto.pointerId) return;
+
+    const dx=e.clientX-gesto.x0;
+    const dy=e.clientY-gesto.y0;
+
+    if(!gesto.horizontal){
+      if(Math.abs(dx)<6 && Math.abs(dy)<6) return;
+
+      /* Solo tomamos el gesto si es claramente horizontal.
+         Si es vertical, dejamos que la ventana haga su scroll normal. */
+      if(Math.abs(dx) <= Math.abs(dy)*1.08){
+        gesto=null;
+        return;
+      }
+
+      gesto.horizontal=true;
+      gesto.movido=true;
+      gesto.fila.setPointerCapture?.(e.pointerId);
+    }
+
+    if(!gesto.horizontal) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const MULTIPLICADOR=2.55;
+    gesto.fila.scrollLeft=gesto.scroll0-dx*MULTIPLICADOR;
+
+    const ahora=performance.now();
+    const dt=Math.max(8,ahora-gesto.tPrev);
+    const deltaX=e.clientX-gesto.xPrev;
+
+    /* px/ms de scroll, ya multiplicado */
+    gesto.velocidad=(-deltaX*MULTIPLICADOR)/dt;
+    gesto.xPrev=e.clientX;
+    gesto.tPrev=ahora;
+  },{capture:true,passive:false});
+
+  const terminar=e=>{
+    if(!gesto || (e.pointerId!=null && e.pointerId!==gesto.pointerId)) return;
+
+    const actual=gesto;
+    gesto=null;
+
+    if(!actual.horizontal) return;
+
+    try{ actual.fila.releasePointerCapture?.(actual.pointerId); }catch(_){}
+
+    /* Evita abrir una carpeta accidentalmente después de un swipe. */
+    actual.fila.dataset.swipeRapidoMovido="1";
+    setTimeout(()=>{ delete actual.fila.dataset.swipeRapidoMovido; },120);
+
+    let velocidad=actual.velocidad*16.67; // px/frame aprox.
+    if(Math.abs(velocidad)<1.2) return;
+
+    const paso=()=>{
+      velocidad*=0.92;
+      actual.fila.scrollLeft+=velocidad;
+
+      if(Math.abs(velocidad)>0.55){
+        rafInercia=requestAnimationFrame(paso);
+      }else{
+        rafInercia=0;
+      }
+    };
+    rafInercia=requestAnimationFrame(paso);
+  };
+
+  document.addEventListener("pointerup",terminar,true);
+  document.addEventListener("pointercancel",terminar,true);
+
+  /* Si hubo swipe, anulamos únicamente el click accidental de esa carpeta. */
+  document.addEventListener("click",e=>{
+    const fila=e.target.closest?.(".portfolio-folders:not(.portfolio-node-map)");
+    if(!fila || fila.dataset.swipeRapidoMovido!=="1") return;
+    if(!fila.closest('.ventana[data-tipo="PORTFOLIO"]')) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  },true);
+})();
 
 </script>
 </body>
