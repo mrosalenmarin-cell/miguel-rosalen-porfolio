@@ -8358,103 +8358,6 @@ body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
   }
 }
 
-
-
-/* =========================================================
-   JUEGOS V5 · SOLO ESTELA DE GLITTER
-   ========================================================= */
-@media (hover:hover) and (pointer:fine){
-  html,
-  body,
-  body *{
-    cursor:auto !important;
-  }
-
-  #juegosCursorGato{
-    display:none !important;
-  }
-}
-
-.juegos-cursor-brillo{
-  font-size:15px !important;
-  text-shadow:
-    0 0 3px #fff,
-    0 0 7px #ff70c7,
-    0 0 11px rgba(255,255,255,.65) !important;
-  animation-duration:.9s !important;
-}
-
-
-
-/* =========================================================
-   JUEGOS V6 · MÁS GLITTER
-   ========================================================= */
-
-.juegos-cursor-brillo{
-  width:auto !important;
-  height:auto !important;
-
-  font-size:18px !important;
-  font-weight:900 !important;
-
-  text-shadow:
-    0 0 3px #fff,
-    0 0 6px #fff,
-    0 0 10px currentColor,
-    0 0 16px currentColor !important;
-
-  filter:
-    drop-shadow(0 0 4px currentColor)
-    drop-shadow(0 0 7px rgba(255,255,255,.7));
-
-  animation:juegosCursorGlitterXL 1.15s cubic-bezier(.16,.72,.26,1) forwards !important;
-}
-
-.juegos-cursor-brillo.glitter-mini{
-  font-size:11px !important;
-  opacity:.95;
-}
-
-.juegos-cursor-brillo.glitter-maxi{
-  font-size:24px !important;
-}
-
-@keyframes juegosCursorGlitterXL{
-  0%{
-    opacity:1;
-    transform:
-      translate(-50%,-50%)
-      scale(.2)
-      rotate(0deg);
-  }
-
-  28%{
-    opacity:1;
-    transform:
-      translate(
-        calc(-50% + var(--gx1,0px)),
-        calc(-50% + var(--gy1,2px))
-      )
-      scale(1.15)
-      rotate(35deg);
-  }
-
-  68%{
-    opacity:.72;
-  }
-
-  100%{
-    opacity:0;
-    transform:
-      translate(
-        calc(-50% + var(--gx,14px)),
-        calc(-50% + var(--gy,25px))
-      )
-      scale(.55)
-      rotate(145deg);
-  }
-}
-
 </style>
 
 </head>
@@ -19357,63 +19260,68 @@ function alternarSonidoMinijuego(){return false}
 
 
 function instalarCursorJuegos(){
-  if(window.__juegosGlitterInstalado) return;
-  window.__juegosGlitterInstalado=true;
+  if(document.getElementById("juegosCursorGato")) return;
+
+  const cursor=document.createElement("div");
+  cursor.id="juegosCursorGato";
+  cursor.setAttribute("aria-hidden","true");
+  cursor.innerHTML=`<svg viewBox="0 0 36 36" aria-hidden="true">
+    <path d="M8 13 6 4l8 5c2-1 6-1 8 0l8-5-2 9c2 2 3 5 3 8 0 7-5 11-13 11S5 28 5 21c0-3 1-6 3-8Z"
+      fill="#ffe45d" stroke="#3b3277" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M10.2 8.1 8.9 6.7l4.3 2.8Z" fill="#ff8ccc"/>
+    <path d="m25.8 8.1 1.3-1.4-4.3 2.8Z" fill="#ff8ccc"/>
+    <ellipse cx="13.4" cy="19" rx="1.65" ry="2.15" fill="#28305f"/>
+    <ellipse cx="22.6" cy="19" rx="1.65" ry="2.15" fill="#28305f"/>
+    <path d="M16 23c1.2 1 2.8 1 4 0M18 21.5v2" fill="none" stroke="#28305f" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M7 21 1.5 19.5M7 24 1.5 25M29 21l5.5-1.5M29 24l5.5 1" fill="none" stroke="#3b3277" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M29.2 6.2 30.4 2l1.3 4.2L35 7.5l-3.3 1.2-1.3 4.2-1.2-4.2L26 7.5Z"
+      fill="#fff" stroke="#ff78c8" stroke-width=".8"/>
+  </svg>`;
+  document.body.appendChild(cursor);
 
   let ultimoBrillo=0;
+  let visible=false;
 
-  const crearParticula=(x,y,indice=0)=>{
+  const crearBrillo=(x,y)=>{
+    const ahora=performance.now();
+    if(ahora-ultimoBrillo<38) return;
+    ultimoBrillo=ahora;
+
     const brillo=document.createElement("i");
     brillo.className="juegos-cursor-brillo";
-
-    const simbolos=["✦","✧","⋆","✶","✹","✷","·","✺"];
-    brillo.textContent=simbolos[Math.floor(Math.random()*simbolos.length)];
-
-    const roll=Math.random();
-    if(roll<.25) brillo.classList.add("glitter-mini");
-    else if(roll>.82) brillo.classList.add("glitter-maxi");
-
-    const colores=["#fff36e","#ff7bc8","#8eeaff","#cda0ff","#ffffff","#7dffbd"];
-    brillo.style.color=colores[Math.floor(Math.random()*colores.length)];
-
-    const dispersion=indice===0 ? 8 : 20;
-    const offsetX=(Math.random()*dispersion*2-dispersion);
-    const offsetY=(Math.random()*dispersion*1.25-dispersion*.35);
-
-    brillo.style.left=(x+offsetX)+"px";
-    brillo.style.top=(y+offsetY)+"px";
-
-    brillo.style.setProperty("--gx1",`${(Math.random()*16-8).toFixed(1)}px`);
-    brillo.style.setProperty("--gy1",`${(Math.random()*10-2).toFixed(1)}px`);
-
-    brillo.style.setProperty("--gx",`${(Math.random()*44-22).toFixed(1)}px`);
-    brillo.style.setProperty("--gy",`${(15+Math.random()*34).toFixed(1)}px`);
-
+    brillo.textContent=Math.random()>.48 ? "✦" : "·";
+    brillo.style.left=x+"px";
+    brillo.style.top=y+"px";
+    brillo.style.setProperty("--gx",`${(Math.random()*20-10).toFixed(1)}px`);
+    brillo.style.setProperty("--gy",`${(8+Math.random()*19).toFixed(1)}px`);
     document.body.appendChild(brillo);
     brillo.addEventListener("animationend",()=>brillo.remove(),{once:true});
   };
 
   document.addEventListener("pointermove",e=>{
-    if(e.pointerType==="touch") return;
-
-    const ahora=performance.now();
-    if(ahora-ultimoBrillo<24) return;
-    ultimoBrillo=ahora;
-
-    crearParticula(e.clientX,e.clientY,0);
-
-    if(Math.random()>.18){
-      crearParticula(e.clientX,e.clientY,1);
+    if(e.pointerType==="touch"){
+      cursor.classList.remove("visible");
+      visible=false;
+      return;
     }
 
-    if(Math.random()>.58){
-      crearParticula(e.clientX,e.clientY,2);
+    cursor.style.transform=`translate3d(${e.clientX-4}px,${e.clientY-4}px,0)`;
+    if(!visible){
+      cursor.classList.add("visible");
+      visible=true;
     }
-
-    if(Math.random()>.86){
-      crearParticula(e.clientX,e.clientY,3);
-    }
+    crearBrillo(e.clientX+3,e.clientY+7);
   },{passive:true});
+
+  document.addEventListener("pointerleave",()=>{
+    cursor.classList.remove("visible");
+    visible=false;
+  },{passive:true});
+
+  window.addEventListener("blur",()=>{
+    cursor.classList.remove("visible");
+    visible=false;
+  });
 }
 
 document.addEventListener("DOMContentLoaded",()=>instalarCursorJuegos(),{once:true});
