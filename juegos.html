@@ -9084,6 +9084,34 @@ html.hub-juegos-activo > body{
 }
 
 </style>
+
+<style>
+
+/* =========================================================
+   JUEGOS V12 · GLITTER NO SE CONGELA EN EL HUB
+   ========================================================= */
+
+/* El hub pausa animaciones externas para ahorrar recursos.
+   El cursor vive en una capa superior fuera del hub, así que
+   hay que excluirlo explícitamente de esa pausa. */
+html.hub-juegos-activo #juegosCursorOverlay,
+html.hub-juegos-activo #juegosCursorOverlay *,
+body.modo-juego-global #juegosCursorOverlay,
+body.modo-juego-global #juegosCursorOverlay *{
+  animation-play-state:running !important;
+}
+
+/* Garantizamos que cada partícula complete su fade y desaparezca. */
+html.hub-juegos-activo #juegosCursorOverlay .juegos-cursor-glitter{
+  animation-name:juegosGlitterTrail !important;
+  animation-duration:1s !important;
+  animation-timing-function:cubic-bezier(.16,.72,.26,1) !important;
+  animation-fill-mode:forwards !important;
+  animation-iteration-count:1 !important;
+  animation-play-state:running !important;
+}
+
+</style>
 </head>
 
 <body>
