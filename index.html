@@ -7017,6 +7017,53 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 <!-- MUSEOGRAFIA-NODOS-V4 -->
 <!-- MOBILE-LANDSCAPE-V1 -->
 <!-- INDEX-V5 · CABECERA-MINIMIZADA-TRAS-MAX-OK -->
+
+<style>
+
+/* =========================================================
+   PORTFOLIO MÓVIL · MINIATURA VISIBLE + SWIPE CARPETAS
+   Parche aislado: no modifica escritorio ni otras ventanas.
+   ========================================================= */
+@media (max-width:768px), (pointer:coarse){
+
+  /* La ventana de portfolio deja pasar los gestos hacia sus zonas scrollables.
+     La barra conserva touch-action:none y sigue siendo la zona de arrastre. */
+  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min){
+    touch-action:auto !important;
+  }
+
+  .ventana[data-tipo="PORTFOLIO"] > .barra{
+    touch-action:none !important;
+  }
+
+  /* Las carpetas reciben el gesto horizontal de forma nativa. */
+  .ventana[data-tipo="PORTFOLIO"]
+  .portfolio-wrap[data-mode="home"]
+  .portfolio-folders:not(.portfolio-node-map),
+
+  .ventana[data-tipo="PORTFOLIO"]
+  .portfolio-wrap[data-mode="folders"]
+  .portfolio-folders:not(.portfolio-node-map){
+    touch-action:pan-x !important;
+    overscroll-behavior-x:contain !important;
+    scroll-snap-type:x mandatory !important;
+    scroll-padding-inline:8px !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  .ventana[data-tipo="PORTFOLIO"]
+  .portfolio-wrap[data-mode="home"]
+  .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder,
+
+  .ventana[data-tipo="PORTFOLIO"]
+  .portfolio-wrap[data-mode="folders"]
+  .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder{
+    touch-action:pan-x !important;
+    scroll-snap-align:start !important;
+  }
+}
+
+</style>
 </head>
 
 <body>
@@ -17758,6 +17805,26 @@ function asegurarCabeceraVentanaMinimizada(v){
   });
 }
 
+
+function ajustarPortfolioMinimizadoEnViewport(v){
+  if(!v || v.dataset.tipo!=="PORTFOLIO" || !v.classList.contains("min")) return;
+  if(!matchMedia("(max-width:768px), (pointer:coarse)").matches) return;
+
+  const margen=8;
+  const vv=window.visualViewport;
+  const anchoViewport=(vv && vv.width) || window.innerWidth || document.documentElement.clientWidth || 0;
+  const scrollX=window.scrollX || window.pageXOffset || 0;
+
+  const ancho=Math.min(v.offsetWidth || 0, Math.max(0,anchoViewport-margen*2));
+  const minimo=scrollX+margen;
+  const maximo=Math.max(minimo,scrollX+anchoViewport-ancho-margen);
+
+  const actual=Number.parseFloat(v.style.left);
+  const izquierda=Number.isFinite(actual) ? actual : v.offsetLeft;
+
+  v.style.left=Math.max(minimo,Math.min(izquierda,maximo))+"px";
+}
+
 function alternarMinimizarVentana(v){
   if(!v) return;
 
@@ -17800,10 +17867,20 @@ function alternarMinimizarVentana(v){
   v.style.overflow = "hidden";
   traerVentanaAlFrente(v);
 
+  /* PORTFOLIO móvil: la barra minimizada nunca puede quedar recortada
+     por la izquierda o la derecha. data-left conserva la posición original
+     y se recupera automáticamente al restaurar la ventana. */
+  if(minimizadaMovil && v.dataset.tipo==="PORTFOLIO"){
+    requestAnimationFrame(()=>ajustarPortfolioMinimizadoEnViewport(v));
+  }
+
   /* Reaplicamos al siguiente frame para ganar a cualquier estilo/transición
      que termine justo después de salir de maximizado. */
   requestAnimationFrame(()=>{
-    if(v.classList.contains("min")) asegurarCabeceraVentanaMinimizada(v);
+    if(v.classList.contains("min")){
+      asegurarCabeceraVentanaMinimizada(v);
+      ajustarPortfolioMinimizadoEnViewport(v);
+    }
   });
 }
 
@@ -19592,5 +19669,21 @@ document.addEventListener("pointerdown",e=>{
 }
 </style>
 
+
+<script>
+
+function reajustarPortfolioMinimizadoMovil(){
+  document.querySelectorAll('.ventana[data-tipo="PORTFOLIO"].min')
+    .forEach(ajustarPortfolioMinimizadoEnViewport);
+}
+window.addEventListener("resize",reajustarPortfolioMinimizadoMovil,{passive:true});
+window.addEventListener("orientationchange",()=>{
+  requestAnimationFrame(()=>requestAnimationFrame(reajustarPortfolioMinimizadoMovil));
+},{passive:true});
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",reajustarPortfolioMinimizadoMovil,{passive:true});
+}
+
+</script>
 </body>
 </html>
