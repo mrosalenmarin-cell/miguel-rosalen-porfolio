@@ -8708,6 +8708,71 @@ html.hub-juegos-activo > body{
 }
 
 </style>
+
+<style>
+
+/* =========================================================
+   JUEGOS V8 · ESTELA DE GLITTER DE COLORES
+   Sustituye el corazón por una estela visible en ordenador.
+   ========================================================= */
+@media (hover:hover) and (pointer:fine){
+  html,
+  body,
+  body *{
+    cursor:auto !important;
+  }
+
+  #cursorCorazonJuegos{
+    display:none !important;
+  }
+}
+
+.juegos-cursor-glitter{
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:2147483647;
+  pointer-events:none;
+  opacity:0;
+  transform:translate(-50%,-50%) scale(.2) rotate(0deg);
+  will-change:transform, opacity;
+  font-weight:900;
+  line-height:1;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 8px currentColor,
+    0 0 14px currentColor;
+  animation:juegosGlitterTrail 1s cubic-bezier(.16,.72,.26,1) forwards;
+}
+
+.juegos-cursor-glitter.g1{ font-size:11px; }
+.juegos-cursor-glitter.g2{ font-size:15px; }
+.juegos-cursor-glitter.g3{ font-size:20px; }
+.juegos-cursor-glitter.g4{ font-size:25px; }
+
+@keyframes juegosGlitterTrail{
+  0%{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(.25) rotate(0deg);
+  }
+  24%{
+    opacity:1;
+    transform:translate(calc(-50% + var(--gx1,0px)), calc(-50% + var(--gy1,0px))) scale(1.15) rotate(38deg);
+  }
+  70%{
+    opacity:.72;
+  }
+  100%{
+    opacity:0;
+    transform:translate(calc(-50% + var(--gx,0px)), calc(-50% + var(--gy,0px))) scale(.55) rotate(140deg);
+  }
+}
+
+@media (pointer:coarse), (hover:none){
+  .juegos-cursor-glitter{ display:none !important; }
+}
+
+</style>
 </head>
 
 <body>
@@ -19614,46 +19679,42 @@ function alternarSonidoMinijuego(){return false}
 
 
 function instalarCursorJuegos(){
-  if(window.__cursorCorazonJuegosInstalado) return;
+  if(window.__glitterTrailJuegosInstalado) return;
   if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
-  window.__cursorCorazonJuegosInstalado=true;
+  window.__glitterTrailJuegosInstalado=true;
 
-  let cursor=document.getElementById("cursorCorazonJuegos");
-  if(!cursor){
-    cursor=document.createElement("div");
-    cursor.id="cursorCorazonJuegos";
-    cursor.setAttribute("aria-hidden","true");
-    cursor.innerHTML='<span class="cursor-corazon-latido">♥</span><span class="cursor-corazon-brillo">✦</span>';
-    document.body.appendChild(cursor);
+  let ultimo=0;
+
+  function crearGlitter(x,y){
+    const ahora=performance.now();
+    if(ahora-ultimo<18) return;
+    ultimo=ahora;
+
+    const colores=["#fff37b","#ff7ec8","#8eeaff","#c7a2ff","#7dffbd","#ffffff","#ffb36b"];
+    const simbolos=["✦","✧","⋆","✶","✹","✷","✺","·"];
+    const cantidad=2 + (Math.random()>.35 ? 1 : 0) + (Math.random()>.78 ? 1 : 0);
+
+    for(let i=0;i<cantidad;i++){
+      const part=document.createElement("i");
+      const sizeRoll=Math.random();
+      part.className="juegos-cursor-glitter " + (sizeRoll<.22 ? "g1" : sizeRoll<.58 ? "g2" : sizeRoll<.85 ? "g3" : "g4");
+      part.textContent=simbolos[Math.floor(Math.random()*simbolos.length)];
+      part.style.color=colores[Math.floor(Math.random()*colores.length)];
+      part.style.left=(x + (Math.random()*10-5)) + "px";
+      part.style.top=(y + (Math.random()*10-5)) + "px";
+      part.style.setProperty("--gx1", `${(Math.random()*16-8).toFixed(1)}px`);
+      part.style.setProperty("--gy1", `${(Math.random()*10-2).toFixed(1)}px`);
+      part.style.setProperty("--gx", `${(Math.random()*46-23).toFixed(1)}px`);
+      part.style.setProperty("--gy", `${(14+Math.random()*30).toFixed(1)}px`);
+      document.body.appendChild(part);
+      part.addEventListener("animationend",()=>part.remove(),{once:true});
+    }
   }
 
-  let visible=false;
-
-  const mostrar=()=>{ if(!visible){ cursor.classList.add("visible"); visible=true; } };
-  const ocultar=()=>{ cursor.classList.remove("visible"); visible=false; };
-
-  const mover=(x,y)=>{
-    cursor.style.transform=`translate3d(${x-7}px,${y-6}px,0)`;
-    mostrar();
-  };
-
-  document.addEventListener("mousemove",e=>mover(e.clientX,e.clientY),{passive:true});
-  document.addEventListener("mouseenter",e=>{
-    if(typeof e.clientX==="number") mover(e.clientX,e.clientY);
-    else mostrar();
+  document.addEventListener("mousemove",e=>{
+    crearGlitter(e.clientX,e.clientY);
   },{passive:true});
-  document.addEventListener("mouseleave",ocultar,{passive:true});
-  window.addEventListener("blur",ocultar,{passive:true});
-
-  document.addEventListener("mousedown",()=>cursor.classList.add("pulsado"),{passive:true});
-  document.addEventListener("mouseup",()=>cursor.classList.remove("pulsado"),{passive:true});
-
-  /* si el script entra después de cargar la página, el cursor sigue listo */
-  cursor.classList.remove("pulsado");
 }
-
-
-
 
 if(document.readyState==="loading"){
   document.addEventListener("DOMContentLoaded",()=>instalarCursorJuegos(),{once:true});
