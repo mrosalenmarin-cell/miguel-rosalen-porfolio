@@ -20271,8 +20271,109 @@ function asegurarHubJuegos(){
 
   document.body.appendChild(hub);return hub;
 }
+
+/* =========================================================
+   JUEGOS · MÚSICA PROCEDURAL WEB 2000
+   Sin archivos de audio. Solo dentro de las partidas.
+   ========================================================= */
+let juegosMusicaCtx=null;
+let juegosMusicaTimer=0;
+let juegosMusicaPaso=0;
+let juegosMusicaGain=null;
+
+function detenerMusicaJuegos(){
+  clearTimeout(juegosMusicaTimer);
+  juegosMusicaTimer=0;
+  juegosMusicaPaso=0;
+
+  if(juegosMusicaGain && juegosMusicaCtx){
+    try{
+      juegosMusicaGain.gain.cancelScheduledValues(juegosMusicaCtx.currentTime);
+      juegosMusicaGain.gain.setTargetAtTime(0,juegosMusicaCtx.currentTime,.025);
+    }catch(_){}
+  }
+}
+
+function iniciarMusicaJuegos(){
+  detenerMusicaJuegos();
+
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx) return;
+
+  try{
+    if(!juegosMusicaCtx){
+      juegosMusicaCtx=new AudioCtx();
+      juegosMusicaGain=juegosMusicaCtx.createGain();
+      juegosMusicaGain.gain.value=.055;
+      juegosMusicaGain.connect(juegosMusicaCtx.destination);
+    }
+
+    if(juegosMusicaCtx.state==="suspended"){
+      juegosMusicaCtx.resume().catch(()=>{});
+    }
+
+    const ctx=juegosMusicaCtx;
+    juegosMusicaGain.gain.cancelScheduledValues(ctx.currentTime);
+    juegosMusicaGain.gain.setTargetAtTime(.055,ctx.currentTime,.03);
+
+    const escala=[261.63,329.63,392.00,523.25,392.00,329.63,293.66,349.23];
+    const bajo=[130.81,130.81,146.83,146.83,174.61,174.61,146.83,146.83];
+
+    const tocarNota=(freq,duracion=.11,tipo="square",vol=.018)=>{
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+
+      osc.type=tipo;
+      osc.frequency.setValueAtTime(freq,ctx.currentTime);
+
+      gain.gain.setValueAtTime(0,ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(vol,ctx.currentTime+.008);
+      gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+duracion);
+
+      osc.connect(gain);
+      gain.connect(juegosMusicaGain);
+
+      osc.start();
+      osc.stop(ctx.currentTime+duracion+.025);
+    };
+
+    const tick=()=>{
+      if(!document.body.classList.contains("modo-juego-global")){
+        detenerMusicaJuegos();
+        return;
+      }
+
+      const hub=document.getElementById("juegosHub");
+      if(hub && !hub.hidden){
+        detenerMusicaJuegos();
+        return;
+      }
+
+      const i=juegosMusicaPaso%8;
+
+      tocarNota(escala[i],.12,"square",.022);
+
+      if(i%2===0){
+        tocarNota(bajo[i],.18,"triangle",.025);
+      }
+
+      if(i===3 || i===7){
+        tocarNota(880,.045,"square",.009);
+      }
+
+      juegosMusicaPaso++;
+      juegosMusicaTimer=setTimeout(tick,185);
+    };
+
+    tick();
+  }catch(error){
+    console.warn("Música JUEGOS:",error);
+  }
+}
+
 function mostrarHubJuegos(){
   instalarCursorJuegos();
+  detenerMusicaJuegos();
   detenerSonidoMinijuego();
   document.querySelectorAll(".ventana").forEach(v=>{limpiarMinijuego(v);v.classList.remove("max");v.style.display="none"});
   document.body.classList.remove("ventana-max-activa");
@@ -20318,9 +20419,11 @@ function abrirJuegoDesdeHub(tipo){
   v.style.display="";
   /* juego vertical: no se instala aviso de giro */
   maximizarVentana(v);
+  iniciarMusicaJuegos();
 }
 
 function desactivarModoJuegoGlobal(){
+  detenerMusicaJuegos();
   if(/juegos(?:-prueba)?\.html$/i.test(location.pathname)){
     location.href="index.html";
     return;
@@ -23941,5 +24044,20 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 
 <!-- PORTFOLIO-VIGILANTE-INTENSIDAD-V2 -->
+
+<script>
+
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    detenerMusicaJuegos();
+  }else{
+    const hub=document.getElementById("juegosHub");
+    if(document.body.classList.contains("modo-juego-global") && hub?.hidden){
+      iniciarMusicaJuegos();
+    }
+  }
+});
+
+</script>
 </body>
 </html>
