@@ -7779,34 +7779,6 @@ body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
   }
 }
 
-
-
-/* =========================================================
-   IA · AVATAR A LA INTERFAZ
-   ========================================================= */
-.ia-perfil-respuestas .ia-avatar-add-ui{
-  border:2px outset #e4edff !important;
-  background:#3450b8 !important;
-  color:#fff !important;
-  box-shadow:4px 4px 0 rgba(30,40,95,.22) !important;
-  text-transform:uppercase !important;
-}
-.ia-perfil-respuestas .ia-avatar-add-ui:hover,
-.ia-perfil-respuestas .ia-avatar-add-ui:focus-visible{
-  background:#0b63e5 !important;
-}
-.ia-perfil-respuestas .ia-avatar-add-ui[aria-pressed="true"]{
-  background:#247b59 !important;
-}
-.ia-avatar-add-status{
-  display:block;
-  width:100%;
-  margin-top:7px;
-  color:#33416d;
-  font:700 8px/1.3 "Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive;
-  text-align:center;
-}
-
 </style>
 
 </head>
@@ -17769,42 +17741,6 @@ function activarModoIACaptura(v){
   function burbuja(texto,usuario=false,extra=""){const b=document.createElement("div");b.className=`ia-perfil-burbuja${usuario?" usuario":""}${extra?` ${extra}`:""}`;b.innerHTML=`<small>${usuario?(perfil.nombre||"TÚ"):"IA"}</small>${texto}`;mensajes.appendChild(b);mensajes.scrollTop=mensajes.scrollHeight;return b}
   function escribirIA(texto,despues,demora=700){const espera=burbuja("escribiendo",false,"escribiendo");setTimeout(()=>{if(!mundo.isConnected)return;espera.remove();burbuja(texto);if(despues)despues()},demora)}
   function guardar(){try{const datos=JSON.stringify(perfil);localStorage.setItem("miguel-avatar",datos);sessionStorage.setItem("miguel-avatar",datos)}catch(_e){};window.miguelPerfilUsuario=perfil;window.dispatchEvent(new CustomEvent("miguel:perfil",{detail:perfil}))}
-
-  function guardarAvatarEnInterfaz(){
-    try{
-      /* Guardamos una miniatura vertical centrada en el personaje,
-         no el canvas completo del escenario. */
-      const mini=document.createElement("canvas");
-      mini.width=260;
-      mini.height=350;
-      const mctx=mini.getContext("2d",{alpha:false});
-
-      const sx=avatar.width*(76/299);
-      const sy=avatar.height*(24/220);
-      const sw=avatar.width*(148/299);
-      const sh=avatar.height*(194/220);
-
-      mctx.imageSmoothingEnabled=true;
-      mctx.imageSmoothingQuality="high";
-      mctx.drawImage(avatar,sx,sy,sw,sh,0,0,mini.width,mini.height);
-
-      const imagen=mini.toDataURL("image/webp",.84);
-
-      localStorage.setItem("miguel-avatar-interfaz-img",imagen);
-      localStorage.setItem("miguel-avatar-interfaz-activo","1");
-      localStorage.setItem("miguel-avatar-interfaz-perfil",JSON.stringify(perfil));
-      localStorage.setItem("miguel-avatar-interfaz-fecha",String(Date.now()));
-
-      window.dispatchEvent(new CustomEvent("miguel:avatar-interfaz",{
-        detail:{imagen,perfil}
-      }));
-
-      return true;
-    }catch(_e){
-      return false;
-    }
-  }
-
   function limpiarNombre(valor){return String(valor).trim().replace(/^(?:hola[,. ]*)?(?:me llamo|mi nombre es|soy)\s+/i,"").split(/[,.!?]/)[0].trim().split(/\s+/).slice(0,2).join(" ")}
   function comentarioPerfil(k,v){const n=parseFloat(String(v))||0;if(k==="nombre")return `Vale, ${v}. A partir de ahora te reconoceré mejor.`;if(k==="color")return `Voy a dejar que ${v} te acompañe en este espacio.`;if(k==="energia")return n>=8?"Te noto con mucha energía.":n>=4?"Hay movimiento, aunque todavía controlado.":"Hoy tu presencia puede quedarse más tranquila.";if(k==="tristeza"&&n>=7)return "No voy a corregir esa cara. También puede quedarse así.";if(k==="enfado"&&n>=7)return "Entendido. Mejor no suavizarlo.";if(k==="enamoramiento"&&n>=6)return "Se te está notando un poco en las mejillas.";if(k==="pelo"&&String(v).includes("rizado"))return "Eso va a complicar bastante el dibujo del pelo.";if(k==="tatuajes"&&v!=="no")return v==="pocos"?"Con una marca basta.":"Voy a necesitar algo más de piel.";if(k==="musica")return `Me guardaré ${v} para cuando esta conversación necesite ritmo.`;return ""}
   function responder(valor){const p=preguntas[paso];if(!p)return;const limpio=p.k==="nombre"?limpiarNombre(valor):valor;if(!limpio)return;perfil[p.k]=limpio;const emociones={felicidad:"contento",tristeza:"triste",enfado:"enfadado",enamoramiento:"enamorado"};if(emociones[p.k])perfil.emocionActual=emociones[p.k];burbuja(String(limpio),true);guardar();dibujarAvatar();respuestas.replaceChildren();const comentario=comentarioPerfil(p.k,limpio);paso++;if(comentario)escribirIA(comentario,render,760);else render()}
@@ -17916,68 +17852,10 @@ function activarModoIACaptura(v){
   }
   function render(){
     respuestas.replaceChildren();
-    if(paso>=preguntas.length){
-      actualizarProgresoMundo(v,100,"AVATAR");
-      escribirIA(
-        `Ya puedo reconocerte como ${perfil.nombre||"tú"}. He guardado tus rasgos, gustos y estado de hoy para adaptar nuestra conversación.`,
-        ()=>{
-          const yaAnadido=(()=>{
-            try{return localStorage.getItem("miguel-avatar-interfaz-activo")==="1"}catch(_e){return false}
-          })();
-
-          respuestas.innerHTML=`
-            <button type="button" class="ia-avatar-add-ui" data-add-avatar-ui aria-pressed="${yaAnadido?"true":"false"}">
-              ${yaAnadido?"AÑADIDO A LA INTERFAZ ✓":"AÑADIR A LA INTERFAZ"}
-            </button>
-            <button type="button" data-repetir>CREAR OTRO AVATAR</button>
-            <small class="ia-avatar-add-status" data-avatar-add-status>
-              ${yaAnadido?"Este avatar aparecerá a la izquierda de la web principal.":"Puedes dejar este avatar viviendo en la interfaz de la web principal."}
-            </small>`;
-        },
-        760
-      );
-      return;
-    }
-    const p=preguntas[paso];
-    actualizarProgresoMundo(v,paso/preguntas.length*100,"AVATAR");
-    escribirIA(p.q,()=>controles(p),620);
+    if(paso>=preguntas.length){actualizarProgresoMundo(v,100,"AVATAR");escribirIA(`Ya puedo reconocerte como ${perfil.nombre||"tú"}. He guardado tus rasgos, gustos y estado de hoy para adaptar nuestra conversación.`,()=>{respuestas.innerHTML='<button type="button" data-repetir>CREAR OTRO AVATAR</button>'},760);return}
+    const p=preguntas[paso];actualizarProgresoMundo(v,paso/preguntas.length*100,"AVATAR");escribirIA(p.q,()=>controles(p),620);
   }
-  respuestas.addEventListener("click",e=>{
-    const b=e.target.closest("[data-valor]");
-    if(b){
-      e.preventDefault();
-      responder(b.dataset.valor);
-    }
-
-    if(e.target.closest("[data-rango-ok]")){
-      const r=respuestas.querySelector('input[type="range"]');
-      responder(r.value+"/10");
-    }
-
-    const add=e.target.closest("[data-add-avatar-ui]");
-    if(add){
-      e.preventDefault();
-      const ok=guardarAvatarEnInterfaz();
-      const estado=respuestas.querySelector("[data-avatar-add-status]");
-
-      if(ok){
-        add.textContent="AÑADIDO A LA INTERFAZ ✓";
-        add.setAttribute("aria-pressed","true");
-        if(estado)estado.textContent="Listo. Tu avatar aparecerá a la izquierda cuando vuelvas a la web principal.";
-      }else{
-        if(estado)estado.textContent="No he podido guardarlo en este navegador.";
-      }
-    }
-
-    if(e.target.closest("[data-repetir]")){
-      perfil={};
-      paso=0;
-      mensajes.replaceChildren();
-      guardar();
-      dibujarAvatar();
-      render();
-    }
-  },{signal});
+  respuestas.addEventListener("click",e=>{const b=e.target.closest("[data-valor]");if(b){e.preventDefault();responder(b.dataset.valor)}if(e.target.closest("[data-rango-ok]")){const r=respuestas.querySelector('input[type="range"]');responder(r.value+"/10")}if(e.target.closest("[data-repetir]")){perfil={};paso=0;mensajes.replaceChildren();guardar();dibujarAvatar();render()}},{signal});
   respuestas.addEventListener("input",e=>{if(e.target.type==="range"){e.target.nextElementSibling.value=e.target.value;const actual=preguntas[paso];if(actual?.tipo==="rango"){perfil[actual.k]=e.target.value+"/10";const emociones={felicidad:"contento",tristeza:"triste",enfado:"enfadado",enamoramiento:"enamorado"};if(emociones[actual.k])perfil.emocionActual=emociones[actual.k];dibujarAvatar()}}},{signal});
   respuestas.addEventListener("submit",e=>{e.preventDefault();const i=e.target.querySelector("input");if(i.value.trim())responder(i.value.trim())},{signal});
   v.addEventListener("mundo:nueva",()=>{perfil={};paso=0;mensajes.replaceChildren();guardar();dibujarAvatar();render()},{signal});
