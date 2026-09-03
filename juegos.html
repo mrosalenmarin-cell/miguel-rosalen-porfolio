@@ -8516,6 +8516,198 @@ html.hub-juegos-activo > body{
 }
 
 </style>
+
+<style>
+
+/* =========================================================
+   JUEGOS V7 · CURSOR CORAZÓN ROBUSTO + CARGANDO DEL MULTIVERSO
+   ========================================================= */
+
+@media (hover:hover) and (pointer:fine){
+  html,
+  body,
+  body *{
+    cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 42S6 31 6 16A10 10 0 0 1 24 10A10 10 0 0 1 42 16C42 31 24 42 24 42Z' fill='%23ff4f9a' stroke='%23752853' stroke-width='2'/%3E%3Cpath d='M35 8l1.5-4 1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5Z' fill='%23fff07c' stroke='%23ff7cc0' stroke-width='0.7'/%3E%3C/svg%3E") 11 8, pointer !important;
+  }
+}
+
+@media (pointer:coarse), (hover:none){
+  html,
+  body,
+  body *{
+    cursor:auto !important;
+  }
+}
+
+#cursorCorazonJuegos{
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:2147483647;
+  width:32px;
+  height:32px;
+  pointer-events:none;
+  display:none;
+  opacity:0;
+  transform:translate3d(-100px,-100px,0);
+  will-change:transform;
+  transition:opacity .08s linear;
+}
+
+#cursorCorazonJuegos.visible{
+  opacity:1;
+}
+
+#cursorCorazonJuegos .cursor-corazon-latido{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:#ff4f9a;
+  font:900 30px/1 Arial,sans-serif;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 6px #fff,
+    0 0 12px #ff8cc1,
+    2px 2px 0 #6c2853;
+  transform-origin:center center;
+  animation:cursorCorazonLatidoV2 .82s ease-in-out infinite;
+}
+
+#cursorCorazonJuegos .cursor-corazon-brillo{
+  position:absolute;
+  right:-3px;
+  top:-6px;
+  color:#fff680;
+  font:900 12px/1 Arial,sans-serif;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 8px #ff76c5;
+  animation:cursorCorazonBrilloV2 1.06s ease-in-out infinite;
+}
+
+@keyframes cursorCorazonLatidoV2{
+  0%,100%{transform:scale(1) rotate(-6deg)}
+  18%{transform:scale(1.25) rotate(-6deg)}
+  35%{transform:scale(1.03) rotate(-6deg)}
+  50%{transform:scale(1.18) rotate(-6deg)}
+  68%{transform:scale(1) rotate(-6deg)}
+}
+
+@keyframes cursorCorazonBrilloV2{
+  0%,100%{opacity:.35;transform:scale(.65) rotate(0deg)}
+  45%{opacity:1;transform:scale(1.22) rotate(90deg)}
+}
+
+#cursorCorazonJuegos.pulsado .cursor-corazon-latido{
+  animation:none;
+  transform:scale(.8) rotate(-9deg);
+}
+
+@media (hover:hover) and (pointer:fine){
+  #cursorCorazonJuegos{display:block !important;}
+}
+@media (pointer:coarse), (hover:none){
+  #cursorCorazonJuegos{display:none !important;}
+}
+
+/* Loader del mundo JUEGOS */
+#sistemaLoader{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:2147483646 !important;
+  display:grid !important;
+  place-items:center !important;
+  pointer-events:none !important;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .18s ease, visibility .18s ease;
+  background:
+    radial-gradient(circle at center, rgba(255,240,198,.18), rgba(221,76,53,.12) 34%, rgba(19,14,49,.38) 68%, rgba(19,14,49,.52) 100%);
+}
+
+#sistemaLoader.visible{
+  opacity:1 !important;
+  visibility:visible !important;
+}
+
+#sistemaLoader::before,
+#sistemaLoader::after{
+  display:none !important;
+  content:none !important;
+}
+
+#sistemaLoader .juegos-loader-core{
+  position:relative;
+  width:min(160px,34vw);
+  aspect-ratio:1 / 1;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,.28) 0 24%, rgba(255,255,255,.08) 24% 40%, transparent 40% 100%);
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.18),
+    0 0 30px rgba(255,255,255,.18),
+    0 0 46px rgba(255,86,156,.14);
+}
+
+#sistemaLoader .juegos-loader-aro{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font:900 clamp(52px,8vw,84px)/1 "Arial Black",Arial,sans-serif;
+  letter-spacing:0;
+}
+
+#sistemaLoader .juegos-loader-aro.a{
+  color:#fff37b;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 18px rgba(255,243,123,.9),
+    2px 2px 0 #7a3054;
+  animation:juegosLoaderSpinA .82s linear infinite;
+}
+
+#sistemaLoader .juegos-loader-aro.b{
+  color:#86ecff;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 18px rgba(134,236,255,.9),
+    2px 2px 0 #7a3054;
+  animation:juegosLoaderSpinB 1.02s linear infinite;
+}
+
+#sistemaLoader .juegos-loader-texto{
+  position:absolute;
+  left:50%;
+  top:calc(100% + 12px);
+  transform:translateX(-50%);
+  white-space:nowrap;
+  color:#fff;
+  font:900 clamp(10px,1.3vw,14px)/1 "Comic Sans MS","Comic Sans","Arial",cursive;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  text-shadow:
+    2px 2px 0 rgba(42,22,64,.62),
+    0 0 8px rgba(255,255,255,.32);
+}
+
+@keyframes juegosLoaderSpinA{to{transform:rotate(360deg)}}
+@keyframes juegosLoaderSpinB{to{transform:rotate(-360deg)}}
+
+@media (max-width:760px){
+  #sistemaLoader .juegos-loader-core{
+    width:min(132px,42vw);
+  }
+  #sistemaLoader .juegos-loader-texto{
+    top:calc(100% + 9px);
+    font-size:10px;
+  }
+}
+
+</style>
 </head>
 
 <body>
@@ -8614,6 +8806,12 @@ document.documentElement.classList.add("performance-mode");
 function mostrarLoaderSistema(ms=650){
   const loader=document.getElementById("sistemaLoader");
   if(!loader) return;
+
+  if(!loader.dataset.juegosReady){
+    loader.dataset.juegosReady="1";
+    loader.innerHTML='<div class="juegos-loader-core" aria-hidden="true"><span class="juegos-loader-aro a">↻</span><span class="juegos-loader-aro b">↺</span><span class="juegos-loader-texto">CARGANDO</span></div>';
+  }
+
   loader.classList.add("visible");
   clearTimeout(window._loaderSistemaTimer);
   window._loaderSistemaTimer=setTimeout(()=>{
@@ -19417,52 +19615,51 @@ function alternarSonidoMinijuego(){return false}
 
 function instalarCursorJuegos(){
   if(window.__cursorCorazonJuegosInstalado) return;
+  if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
   window.__cursorCorazonJuegosInstalado=true;
 
-  const cursor=document.createElement("div");
-  cursor.id="cursorCorazonJuegos";
-  cursor.setAttribute("aria-hidden","true");
-  cursor.innerHTML='<span class="cursor-corazon-latido">♥</span><span class="cursor-corazon-brillo">✦</span>';
-  document.body.appendChild(cursor);
+  let cursor=document.getElementById("cursorCorazonJuegos");
+  if(!cursor){
+    cursor=document.createElement("div");
+    cursor.id="cursorCorazonJuegos";
+    cursor.setAttribute("aria-hidden","true");
+    cursor.innerHTML='<span class="cursor-corazon-latido">♥</span><span class="cursor-corazon-brillo">✦</span>';
+    document.body.appendChild(cursor);
+  }
 
-  let dentro=false;
+  let visible=false;
+
+  const mostrar=()=>{ if(!visible){ cursor.classList.add("visible"); visible=true; } };
+  const ocultar=()=>{ cursor.classList.remove("visible"); visible=false; };
 
   const mover=(x,y)=>{
-    cursor.style.transform=`translate3d(${x-6}px,${y-5}px,0)`;
-    if(!dentro){
-      cursor.classList.add("visible");
-      dentro=true;
-    }
+    cursor.style.transform=`translate3d(${x-7}px,${y-6}px,0)`;
+    mostrar();
   };
 
-  document.addEventListener("mousemove",e=>{
-    mover(e.clientX,e.clientY);
-  },{passive:true});
-
+  document.addEventListener("mousemove",e=>mover(e.clientX,e.clientY),{passive:true});
   document.addEventListener("mouseenter",e=>{
     if(typeof e.clientX==="number") mover(e.clientX,e.clientY);
+    else mostrar();
   },{passive:true});
+  document.addEventListener("mouseleave",ocultar,{passive:true});
+  window.addEventListener("blur",ocultar,{passive:true});
 
-  document.addEventListener("mouseleave",()=>{
-    cursor.classList.remove("visible");
-    dentro=false;
-  },{passive:true});
+  document.addEventListener("mousedown",()=>cursor.classList.add("pulsado"),{passive:true});
+  document.addEventListener("mouseup",()=>cursor.classList.remove("pulsado"),{passive:true});
 
-  window.addEventListener("blur",()=>{
-    cursor.classList.remove("visible");
-    dentro=false;
-  },{passive:true});
-
-  document.addEventListener("mousedown",()=>{
-    cursor.classList.add("pulsado");
-  },{passive:true});
-
-  document.addEventListener("mouseup",()=>{
-    cursor.classList.remove("pulsado");
-  },{passive:true});
+  /* si el script entra después de cargar la página, el cursor sigue listo */
+  cursor.classList.remove("pulsado");
 }
 
-document.addEventListener("DOMContentLoaded",()=>instalarCursorJuegos(),{once:true});
+
+
+
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",()=>instalarCursorJuegos(),{once:true});
+}else{
+  instalarCursorJuegos();
+}
 
 function asegurarHubJuegos(){
   let hub=document.getElementById("juegosHub");if(hub)return hub;
@@ -19535,6 +19732,7 @@ function asegurarHubJuegos(){
 }
 function mostrarHubJuegos(){
   instalarCursorJuegos();
+  mostrarLoaderSistema(520);
   detenerSonidoMinijuego();
   document.querySelectorAll(".ventana").forEach(v=>{limpiarMinijuego(v);v.classList.remove("max");v.style.display="none"});
   document.body.classList.remove("ventana-max-activa");
@@ -19552,6 +19750,7 @@ function instalarAvisoGiroJuego(v){
 }
 function abrirJuegoDesdeHub(tipo){
   instalarCursorJuegos();
+  mostrarLoaderSistema(920);
   const hub=asegurarHubJuegos();hub.hidden=true;
   document.documentElement.classList.remove("hub-juegos-activo");
   document.querySelectorAll(".ventana").forEach(v=>{limpiarMinijuego(v);v.style.display="none"});
@@ -19610,6 +19809,7 @@ function activarModoJuegoGlobal(){
   const boton=document.getElementById("modoJuegoGlobal");if(boton) boton.title="volver al modo web";
   if(typeof autoScrollActive!=="undefined") autoScrollActive=false;
   window.scrollTo({top:0,left:0,behavior:"auto"});
+  mostrarLoaderSistema(820);
   mostrarHubJuegos();
   mostrarAvisoModo("juego");
 }
