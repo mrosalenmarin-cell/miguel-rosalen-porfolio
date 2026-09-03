@@ -1,7 +1,6 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<!-- INDEX-LIGERO-V1 · MOTOR-JS-DIFERIDO -->
 
 <head>
     <link
@@ -6326,958 +6325,352 @@ body.ventana-max-activa #modoJuegoGlobal{opacity:0;pointer-events:none}
 
 </style>
 
-<style>
-/* =========================================================
-   MÓVIL HORIZONTAL — LAYOUT ESPECÍFICO
-   Solo teléfonos/táctiles con poca altura en landscape.
-   No modifica móvil vertical ni escritorio.
-   ========================================================= */
-@media (orientation:landscape) and (max-height:560px) and (pointer:coarse){
-
-  :root{
-    --land-safe-top:max(8px, env(safe-area-inset-top, 0px));
-    --land-safe-left:max(8px, env(safe-area-inset-left, 0px));
-    --land-safe-right:max(8px, env(safe-area-inset-right, 0px));
-    --land-safe-bottom:max(8px, env(safe-area-inset-bottom, 0px));
-  }
-
-  html,body{
-    -webkit-text-size-adjust:100% !important;
-    text-size-adjust:100% !important;
-    overflow-x:hidden !important;
-  }
-
-  /* ---------- controles fijos: una sola franja superior ---------- */
-
-  #iaControles{
-    top:var(--land-safe-top) !important;
-    left:var(--land-safe-left) !important;
-    padding:3px !important;
-    gap:3px !important;
-  }
-
-  #iaControles button,
-  #microIA{
-    width:32px !important;
-    height:32px !important;
-    min-width:32px !important;
-    min-height:32px !important;
-  }
-
-  #timer{
-    top:var(--land-safe-top) !important;
-    right:var(--land-safe-right) !important;
-    padding:6px 8px !important;
-    font-size:9px !important;
-    letter-spacing:2px !important;
-    white-space:nowrap !important;
-  }
-
-  #menuSistema{
-    top:var(--land-safe-top) !important;
-    bottom:auto !important;
-    left:50% !important;
-    right:auto !important;
-    transform:translateX(-50%) !important;
-
-    width:max-content !important;
-    max-width:calc(100vw - 190px) !important;
-    min-height:34px !important;
-
-    padding:6px 7px !important;
-    overflow-x:auto !important;
-    overflow-y:hidden !important;
-    white-space:nowrap !important;
-    scrollbar-width:none !important;
-    -webkit-overflow-scrolling:touch !important;
-  }
-
-  #menuSistema::-webkit-scrollbar{display:none !important;}
-
-  #menuSistema button{
-    flex:0 0 auto !important;
-    padding:0 4px !important;
-    font-size:8.5px !important;
-    white-space:nowrap !important;
-  }
-
-  #menuSistema button:not(:last-child)::after{
-    padding-left:7px !important;
-  }
-
-  #sub{
-    bottom:var(--land-safe-bottom) !important;
-    max-width:55vw !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-    white-space:nowrap !important;
-    font-size:8px !important;
-    letter-spacing:1.2px !important;
-  }
-
-  /* ---------- teclado / juegos: esquinas inferiores ---------- */
-
-  #teclado{
-    left:var(--land-safe-left) !important;
-    right:auto !important;
-    bottom:var(--land-safe-bottom) !important;
-  }
-
-  #teclado .teclado-toggle{
-    width:36px !important;
-    height:36px !important;
-  }
-
-  #teclado .teclado-panel{
-    left:50% !important;
-    right:auto !important;
-    bottom:calc(var(--land-safe-bottom) + 44px) !important;
-    width:min(82vw,680px) !important;
-    max-height:58dvh !important;
-    overflow-y:auto !important;
-    transform:translate(-50%,14px) scale(.97) !important;
-  }
-
-  #teclado.abierto .teclado-panel{
-    transform:translate(-50%,0) scale(1) !important;
-  }
-
-  #teclado .teclado-row{
-    gap:3px !important;
-  }
-
-  #teclado .teclado-row button{
-    min-height:27px !important;
-    padding:4px 5px !important;
-    font-size:9px !important;
-  }
-
-  #modoJuegoGlobal{
-    left:auto !important;
-    right:var(--land-safe-right) !important;
-    bottom:var(--land-safe-bottom) !important;
-  }
-
-  /* ---------- nombre principal ---------- */
-
-  #nombre{
-    font-size:clamp(38px,9vw,74px) !important;
-    max-width:88vw !important;
-  }
-
-  /* ---------- ventanas normales ---------- */
-
-  .ventana:not(.max):not(.min){
-    width:min(58vw,520px) !important;
-    max-width:min(58vw,520px) !important;
-    min-width:230px !important;
-
-    height:min(72dvh,300px) !important;
-    max-height:min(72dvh,300px) !important;
-    min-height:145px !important;
-
-    overflow:hidden !important;
-  }
-
-  .ventana:not(.max):not(.min) > .barra{
-    height:34px !important;
-    min-height:34px !important;
-    max-height:34px !important;
-    padding:0 8px !important;
-    font-size:8.5px !important;
-    gap:6px !important;
-    overflow:hidden !important;
-  }
-
-  .ventana:not(.max):not(.min) > .barra > div:first-child{
-    min-width:0 !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-    white-space:nowrap !important;
-  }
-
-  .ventana:not(.max):not(.min) > .barra > div:last-child{
-    flex:0 0 auto !important;
-    gap:5px !important;
-  }
-
-  .ventana:not(.max):not(.min) .btn{
-    width:27px !important;
-    height:27px !important;
-    min-width:27px !important;
-    flex:0 0 27px !important;
-    display:grid !important;
-    place-items:center !important;
-  }
-
-  .ventana:not(.max):not(.min) > .texto{
-    max-height:calc(72dvh - 34px) !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    -webkit-overflow-scrolling:touch !important;
-    overscroll-behavior:contain !important;
-  }
-
-  /* Las ventanas puramente informativas se leen mejor anchas y bajas. */
-  .ventana[data-tipo="CONTACTO"]:not(.max):not(.min),
-  .ventana[data-tipo="READ ME"]:not(.max):not(.min),
-  .ventana[data-tipo="CURRICULUM"]:not(.max):not(.min){
-    width:min(54vw,500px) !important;
-    max-width:min(54vw,500px) !important;
-    height:min(68dvh,285px) !important;
-    max-height:min(68dvh,285px) !important;
-  }
-
-  .ventana.ventana-lectura:not(.max):not(.min){
-    height:min(70dvh,290px) !important;
-    max-height:min(70dvh,290px) !important;
-  }
-
-  .ventana.ventana-lectura > .barra{
-    flex:0 0 34px !important;
-    min-height:34px !important;
-    max-height:34px !important;
-  }
-
-  /* Minimizado compacto para que varias barras no ocupen media pantalla. */
-  .ventana.min,
-  .ventana[data-tipo="PORTFOLIO"].min,
-  .ventana[data-tipo="CONTACTO"].min,
-  .ventana[data-tipo="READ ME"].min{
-    width:min(44vw,250px) !important;
-    min-width:170px !important;
-    max-width:min(44vw,250px) !important;
-
-    height:40px !important;
-    min-height:40px !important;
-    max-height:40px !important;
-  }
-
-  .ventana.min > .barra,
-  .ventana[data-tipo="PORTFOLIO"].min > .barra,
-  .ventana[data-tipo="CONTACTO"].min > .barra,
-  .ventana[data-tipo="READ ME"].min > .barra{
-    height:40px !important;
-    min-height:40px !important;
-    max-height:40px !important;
-    padding:0 8px !important;
-  }
-
-  .ventana.min .btn{
-    width:27px !important;
-    height:27px !important;
-    flex:0 0 27px !important;
-  }
-
-  /* ---------- PORTFOLIO ---------- */
-
-  .ventana[data-tipo="PORTFOLIO"]:not(.max):not(.min){
-    width:min(80vw,760px) !important;
-    max-width:min(80vw,760px) !important;
-    height:min(82dvh,335px) !important;
-    max-height:min(82dvh,335px) !important;
-  }
-
-  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap{
-    height:calc(100% - 34px) !important;
-    min-height:0 !important;
-    max-height:none !important;
-  }
-
-  .portfolio-wrap[data-mode="editorial"]{
-    height:100% !important;
-    min-height:0 !important;
-    max-height:none !important;
-  }
-
-  .portfolio-editorial{
-    inset:40px 0 8px !important;
-    padding-bottom:24px !important;
-  }
-
-  .portfolio-back{
-    top:7px !important;
-    left:8px !important;
-    width:28px !important;
-    height:24px !important;
-    min-width:28px !important;
-  }
-
-  .portfolio-meta{
-    left:10px !important;
-    right:10px !important;
-    bottom:7px !important;
-    font-size:8px !important;
-    line-height:1.25 !important;
-  }
-
-  /* Sobre el proyecto vuelve a formato lateral en horizontal. */
-  .portfolio-editorial-intro,
-  .portfolio-editorial-intro--orb{
-    min-height:0 !important;
-    margin-bottom:12px !important;
-    padding:10px 8px 14px !important;
-  }
-
-  .portfolio-editorial-intro--orb{
-    flex-direction:row !important;
-    align-items:flex-start !important;
-    gap:10px !important;
-  }
-
-  .portfolio-brand-orb{
-    width:58px !important;
-    height:58px !important;
-    flex:0 0 58px !important;
-    padding:7px !important;
-    font-size:7px !important;
-  }
-
-  .portfolio-brand-panel{
-    width:min(70vw,620px) !important;
-    max-width:none !important;
-    max-height:48dvh !important;
-    padding:11px 12px !important;
-    overflow-y:auto !important;
-  }
-
-  .portfolio-editorial-intro p{
-    font-size:10px !important;
-    line-height:1.48 !important;
-  }
-
-  .portfolio-editorial-kicker,
-  .portfolio-editorial-facts{
-    font-size:7.5px !important;
-  }
-
-  /* Títulos Museografía / Mediación / Asistencia. */
-  .portfolio-nodos-info{
-    flex-wrap:wrap !important;
-    gap:6px 14px !important;
-    margin-bottom:10px !important;
-    padding:0 8px 7px !important;
-  }
-
-  .portfolio-nodo-link{
-    font-size:8px !important;
-  }
-
-  /* Ventanas de nodos más anchas y bajas en landscape. */
-  .portfolio-nodos-overlay .portfolio-nodo-ventana{
-    width:min(34vw,290px) !important;
-    height:min(54dvh,215px) !important;
-    min-width:180px !important;
-    min-height:130px !important;
-    max-width:46vw !important;
-    max-height:60dvh !important;
-  }
-
-  .portfolio-inline-nodo-ventana{
-    width:min(56vw,470px) !important;
-    height:min(58dvh,235px) !important;
-    min-height:150px !important;
-    max-height:64dvh !important;
-  }
-
-  .portfolio-nodo-cabecera{
-    height:27px !important;
-    min-height:27px !important;
-    flex-basis:27px !important;
-  }
-
-  .portfolio-nodo-contenido{
-    padding:10px 12px 14px !important;
-  }
-
-  .portfolio-nodo-texto{
-    font-size:9.5px !important;
-    line-height:1.48 !important;
-  }
-
-  /* Carruseles editoriales: más piezas a la vista gracias al ancho. */
-  .portfolio-editorial-group{
-    margin-bottom:10px !important;
-  }
-
-  .portfolio-editorial-label{
-    padding:12px 8px 6px !important;
-    font-size:8px !important;
-  }
-
-  .portfolio-editorial-strip{
-    gap:8px !important;
-    padding:0 8px 8px !important;
-  }
-
-  .portfolio-editorial-shot,
-  .portfolio-editorial-shot[data-span]{
-    flex-basis:min(31vw,230px) !important;
-    gap:5px !important;
-  }
-
-  .portfolio-editorial-shot img{
-    height:min(30dvh,120px) !important;
-  }
-
-  .portfolio-editorial-caption{
-    min-height:18px !important;
-    font-size:8px !important;
-    line-height:1.15 !important;
-  }
-
-  /* Carpetas del portfolio: una fila usable sin textos aplastados. */
-  .portfolio-folders{
-    inset:42px 8px 40px !important;
-    gap:8px !important;
-  }
-
-  .portfolio-wrap[data-mode="home"] .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder,
-  .portfolio-wrap[data-mode="folders"] .portfolio-folders:not(.portfolio-node-map) > .portfolio-folder{
-    flex-basis:min(25vw,170px) !important;
-    height:100% !important;
-    min-height:110px !important;
-    padding:9px !important;
-    gap:10px !important;
-  }
-
-  .portfolio-folder-title{
-    font-size:9px !important;
-  }
-
-  .portfolio-folder-note{
-    font-size:7px !important;
-    line-height:1.18 !important;
-  }
-
-  /* Mapas/archivo disperso: eliminamos min-heights pensados para vertical. */
-  .ventana.portfolio-carteleria-map-activa .portfolio-wrap{
-    height:100% !important;
-    min-height:0 !important;
-  }
-
-  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap[data-mode="performance-archivo"] .portfolio-performance-archivo{
-    inset:40px 0 40px !important;
-    min-height:0 !important;
-    height:auto !important;
-  }
-
-  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap[data-mode="performance-archivo"] .portfolio-performance-escena{
-    min-height:250px !important;
-    height:250px !important;
-  }
-
-  .ventana[data-tipo="PORTFOLIO"] .portfolio-wrap[data-mode="performance-archivo"] .portfolio-performance-item{
-    width:62px !important;
-  }
-
-  .portfolio-wrap[data-mode="mosaic"] .track{
-    inset:40px 8px 38px !important;
-    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-    grid-auto-rows:72px !important;
-    gap:5px !important;
-  }
-
-  /* ---------- visor de obra ---------- */
-
-  #obra{
-    padding:
-      max(10px,env(safe-area-inset-top,0px))
-      max(46px,env(safe-area-inset-right,0px))
-      max(10px,env(safe-area-inset-bottom,0px))
-      max(46px,env(safe-area-inset-left,0px)) !important;
-  }
-
-  #obra img{
-    max-height:68dvh !important;
-    width:auto !important;
-    max-width:76vw !important;
-  }
-
-  .cerrarObra{
-    top:8px !important;
-    right:max(10px,env(safe-area-inset-right,0px)) !important;
-    font-size:30px !important;
-  }
-
-  .ficha{
-    margin-top:16px !important;
-    font-size:12px !important;
-    line-height:1.5 !important;
-  }
-
-  .titulo{
-    font-size:22px !important;
-    margin-bottom:10px !important;
-  }
-}
-</style>
-
 
 <style>
 /* =========================================================
-   MUSEOGRAFÍA — NODOS V4
-   Orden estable + links subrayados + líneas vivas.
+   AVATAR DEL OTRO MUNDO · PNG TRANSPARENTE + ANIMACIÓN
    ========================================================= */
-
-/* Esta sección tiene un orden explícito:
-   1 Sobre el proyecto
-   2 Museología / Mediación / Asistencia
-   3 grupos de imágenes */
-.portfolio-editorial.portfolio-editorial--con-nodos{
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:stretch !important;
+#avatarInterfazUsuario{
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:24;
+  width:clamp(96px,8.2vw,128px);
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-select:none;
+  will-change:transform;
+  opacity:.98;
 }
 
-.portfolio-editorial.portfolio-editorial--con-nodos
-> .portfolio-editorial-intro{
-  order:1 !important;
-  position:relative !important;
-  z-index:2 !important;
+#avatarInterfazUsuario .avatar-stage{
+  position:relative;
+  width:100%;
+  transform-origin:50% 100%;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.14));
 }
 
-.portfolio-editorial.portfolio-editorial--con-nodos
-> .portfolio-nodos-info{
-  order:2 !important;
-
-  position:relative !important;
-  inset:auto !important;
-  left:auto !important;
-  right:auto !important;
-  top:auto !important;
-  bottom:auto !important;
-
-  width:100% !important;
-  max-width:1160px !important;
-  height:auto !important;
-  min-height:0 !important;
-
-  margin:0 auto 18px !important;
-  padding:0 10px 10px !important;
-
-  display:flex !important;
-  flex-direction:row !important;
-  flex-wrap:nowrap !important;
-  align-items:center !important;
-  justify-content:flex-start !important;
-  gap:26px !important;
-
-  overflow:visible !important;
-  transform:none !important;
-  z-index:3 !important;
+/* walking bounce */
+#avatarInterfazUsuario.is-walking .avatar-stage{
+  animation:avatarWalk .62s ease-in-out infinite;
+}
+/* singing/dancing */
+#avatarInterfazUsuario.is-performing .avatar-stage{
+  animation:avatarDance .44s ease-in-out infinite;
 }
 
-.portfolio-editorial.portfolio-editorial--con-nodos
-> .portfolio-editorial-group{
-  order:3 !important;
+#avatarInterfazUsuario.is-facing-left .avatar-stage{
+  --avatar-flip:-1;
+}
+#avatarInterfazUsuario:not(.is-facing-left) .avatar-stage{
+  --avatar-flip:1;
 }
 
-/* Los conceptos pasan a comportarse visualmente como links.
-   Siempre subrayados; azul al hover/focus y cuando están abiertos. */
-.portfolio-editorial--con-nodos .portfolio-nodo-link{
-  display:inline-block !important;
-  flex:0 0 auto !important;
-
-  margin:0 !important;
-  padding:2px 0 3px !important;
-
-  border:0 !important;
-  background:transparent !important;
-
-  color:rgba(0,0,0,.58) !important;
-
-  font:inherit !important;
-  font-size:10px !important;
-  line-height:1.25 !important;
-  letter-spacing:.045em !important;
-  text-transform:uppercase !important;
-
-  white-space:nowrap !important;
-
-  text-decoration-line:underline !important;
-  text-decoration-thickness:1px !important;
-  text-underline-offset:3px !important;
-  text-decoration-color:currentColor !important;
-
-  cursor:pointer !important;
-  pointer-events:auto !important;
-
-  transition:color .16s ease, opacity .16s ease !important;
+#avatarInterfazUsuario img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:42vh;
+  object-fit:contain;
+  transform:scaleX(var(--avatar-flip,1));
+  image-rendering:auto;
 }
 
-/* El subrayado ya es real: anulamos el pseudo-elemento antiguo. */
-.portfolio-editorial--con-nodos .portfolio-nodo-link::after{
-  display:none !important;
-  content:none !important;
+#avatarInterfazUsuario .avatar-note{
+  position:absolute;
+  left:50%;
+  top:16%;
+  color:#1f55ff;
+  font-family:"Comic Sans MS","Comic Sans","Chalkboard SE","Comic Neue",cursive;
+  font-weight:700;
+  line-height:1;
+  opacity:0;
+  white-space:nowrap;
+  transform:translate(-50%,0) scale(.7);
+  animation:avatarNoteFloat var(--dur,.95s) ease-out forwards;
+  text-shadow:0 1px 0 rgba(255,255,255,.7);
 }
 
-/* Y eliminamos por completo cualquier flecha heredada. */
-.portfolio-editorial--con-nodos .portfolio-nodo-arrow,
-.portfolio-editorial--con-nodos .portfolio-nodo-arrow::before,
-.portfolio-editorial--con-nodos .portfolio-nodo-arrow::after{
-  display:none !important;
-  content:none !important;
+#avatarInterfazUsuario .avatar-note:nth-child(odd){
+  color:#8b39ff;
+}
+#avatarInterfazUsuario .avatar-note:nth-child(3n){
+  color:#ff4b88;
 }
 
-.portfolio-editorial--con-nodos .portfolio-nodo-link:hover,
-.portfolio-editorial--con-nodos .portfolio-nodo-link:focus-visible,
-.portfolio-editorial--con-nodos .portfolio-nodo-link.is-active{
-  color:#0067ff !important;
-  opacity:1 !important;
-  outline:0 !important;
+#avatarInterfazUsuario::after{
+  content:"TU AVATAR";
+  display:block;
+  margin-top:4px;
+  text-align:center;
+  color:rgba(0,0,0,.35);
+  font:7px/1.1 "Courier New",monospace;
+  letter-spacing:.08em;
 }
 
-/* Las líneas deben poder dibujarse por todo el overlay. */
-.portfolio-nodos-overlay,
-.portfolio-nodos-overlay .portfolio-nodos-svg{
-  overflow:visible !important;
+@keyframes avatarWalk{
+  0%{transform:translateY(0) scaleX(var(--avatar-flip,1)) rotate(-1.1deg)}
+  25%{transform:translateY(-3px) scaleX(var(--avatar-flip,1)) rotate(1.1deg)}
+  50%{transform:translateY(0) scaleX(var(--avatar-flip,1)) rotate(-.8deg)}
+  75%{transform:translateY(-2px) scaleX(var(--avatar-flip,1)) rotate(1.2deg)}
+  100%{transform:translateY(0) scaleX(var(--avatar-flip,1)) rotate(-1.1deg)}
+}
+@keyframes avatarDance{
+  0%{transform:translateY(0) scaleX(var(--avatar-flip,1)) rotate(-3deg)}
+  25%{transform:translateY(-6px) scaleX(var(--avatar-flip,1)) rotate(4deg)}
+  50%{transform:translateY(0) scaleX(var(--avatar-flip,1)) rotate(-2deg)}
+  75%{transform:translateY(-5px) scaleX(var(--avatar-flip,1)) rotate(5deg)}
+  100%{transform:translateY(0) scaleX(var(--avatar-flip,1)) rotate(-3deg)}
+}
+@keyframes avatarNoteFloat{
+  0%{opacity:0;transform:translate(var(--x,0px),8px) scale(.55) rotate(-8deg)}
+  18%{opacity:1}
+  100%{opacity:0;transform:translate(calc(var(--x,0px) + var(--drift,0px)),-54px) scale(1.08) rotate(10deg)}
 }
 
-.portfolio-nodos-overlay .portfolio-nodos-svg{
-  z-index:1 !important;
-}
-
-.portfolio-nodos-overlay .portfolio-nodo-linea{
-  fill:none !important;
-  stroke:rgba(0,0,0,.42) !important;
-  stroke-width:1px !important;
-  vector-effect:non-scaling-stroke !important;
-  pointer-events:none !important;
-}
-
-/* MÓVIL: los tres conceptos obligatoriamente en UNA SOLA LÍNEA. */
 @media (max-width:768px), (pointer:coarse){
-  .portfolio-editorial.portfolio-editorial--con-nodos
-  > .portfolio-nodos-info{
-    display:grid !important;
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    align-items:center !important;
-
-    width:100% !important;
-    gap:5px !important;
-
-    margin:0 0 14px !important;
-    padding:0 7px 8px !important;
-
-    overflow:visible !important;
+  #avatarInterfazUsuario{
+    width:clamp(58px,18vw,80px);
+    opacity:.96;
   }
-
-  .portfolio-editorial--con-nodos .portfolio-nodo-link{
-    width:100% !important;
-    min-width:0 !important;
-
-    padding:2px 1px 3px !important;
-
-    font-size:clamp(6.7px,2.05vw,8px) !important;
-    line-height:1.15 !important;
-    letter-spacing:.005em !important;
-
-    text-align:center !important;
-    white-space:nowrap !important;
+  #avatarInterfazUsuario img{
+    max-height:30dvh;
+  }
+  #avatarInterfazUsuario .avatar-note{
+    font-size:13px;
+  }
+  #avatarInterfazUsuario::after{
+    font-size:5.5px;
+    letter-spacing:.04em;
   }
 }
 
-/* Móvil horizontal: conservar también los 3 conceptos en una fila. */
 @media (orientation:landscape) and (max-height:560px) and (pointer:coarse){
-  .portfolio-editorial.portfolio-editorial--con-nodos
-  > .portfolio-nodos-info{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    gap:9px !important;
-    padding-inline:8px !important;
+  #avatarInterfazUsuario{
+    width:clamp(50px,9vw,68px);
   }
-
-  .portfolio-editorial--con-nodos .portfolio-nodo-link{
-    font-size:7.5px !important;
+  #avatarInterfazUsuario img{
+    max-height:40dvh;
+  }
+  #avatarInterfazUsuario::after{
+    display:none;
+  }
+  #avatarInterfazUsuario .avatar-note{
+    font-size:11px;
   }
 }
+</style>
 
+
+
+
+
+<script>
 /* =========================================================
-   MINIMIZAR DESDE MAXIMIZADO — CABECERA SIEMPRE VISIBLE
+   AVATAR DEL OTRO MUNDO · PNG TRANSPARENTE + ANIMACIÓN
    ========================================================= */
-.ventana.min > .barra{
-  display:flex !important;
-  visibility:visible !important;
-  pointer-events:auto !important;
-  position:relative !important;
-  width:100% !important;
-  opacity:.45 !important;
-  z-index:2147483646 !important;
-}
+(function(){
+  const ID="avatarInterfazUsuario";
+  const KEY_IMG="miguel-avatar-interfaz-img";
+  const KEY_ACTIVO="miguel-avatar-interfaz-activo";
 
-.ventana.min > .barra > *,
-.ventana.min > .barra .btn{
-  visibility:visible !important;
-}
-
-.ventana.min > .barra .btn{
-  display:flex !important;
-}
-</style>
-
-<!-- MUSEOGRAFIA-NODOS-V4 -->
-<!-- MOBILE-LANDSCAPE-V1 -->
-<!-- INDEX-V5 · CABECERA-MINIMIZADA-TRAS-MAX-OK -->
-<link rel="preload" href="site-engine.js?v=20260903-1" as="script">
-</head>
-
-<body>
-
-  <input id="ghostInput"
-       type="text" 
-       style="
-         position:fixed;
-         opacity:0.01;
-         pointer-events:none;
-         height:0;
-       ">
-
-<div id="nombre">MIGUEL ROSALÉN</div>
-<div id="iaControles" aria-label="controles de IA" style="position:fixed;top:24px;left:24px;z-index:2147483647;display:flex;align-items:center;gap:6px;padding:6px;border:1px solid rgba(0,0,0,.13);border-radius:999px;background:rgba(255,255,255,.56);box-shadow:0 8px 24px rgba(0,0,0,.06);">
-<button id="microIA" type="button" aria-label="hablar con la IA" title="hablar con la IA" style="appearance:none;-webkit-appearance:none;width:36px;height:36px;min-width:36px;min-height:36px;border:1px solid rgba(0,0,0,.16);border-radius:50%;background:rgba(255,255,255,.72);color:rgba(0,0,0,.66);display:flex;align-items:center;justify-content:center;margin:0;padding:0;cursor:pointer;">
-<span aria-hidden="true" style="display:block;width:11px;height:11px;border-radius:50%;background:currentColor;"></span>
-</button>
-</div>
-<nav id="menuSistema" aria-label="abrir secciones">
-<button type="button" data-open="read">read me</button>
-<button type="button" data-open="contacto">contacto</button>
-<button type="button" data-open="curriculum">curriculum</button>
-<button type="button" data-open="portfolio">portfolio</button>
-<button type="button" data-open="ia">ia</button>
-</nav>
-<div id="sub">toca para abrir · baja para perderte</div>
-
-<div id="timer" role="button" tabindex="0" aria-label="abrir información sobre el tiempo">
-
-10:00
-
-</div>
-
-<div class="cursor"></div>
-<div id="sistemaLoader" aria-hidden="true"></div>
-<button id="modoJuegoGlobal" type="button" aria-label="activar modo juego" title="activar modo juego"><span class="consola" aria-hidden="true"></span></button>
-<div id="espacio"></div>
-<div id="obra">
-
-<div class="cerrarObra">
-
-×
-
-</div>
-
-<img id="obraImg">
-
-<div class="ficha">
-
-<div class="titulo">
-
-Título
-
-</div>
-
-<div id="obraDim">
-
-Dimensiones
-
-</div>
-
-<div id="obraMat">
-
-Material
-
-</div>
-
-</div>
-
-</div>
-
-<div id="escape"></div>
-
-
-
-
-
-
-<div id="teclado" aria-label="teclado móvil">
-  <div class="teclado-toggle" role="button" aria-label="abrir teclado"></div>
-
-  <div class="teclado-panel">
-    <div class="teclado-row">
-      <button data-key="1">1</button>
-      <button data-key="2">2</button>
-      <button data-key="3">3</button>
-      <button data-key="4">4</button>
-      <button data-key="5">5</button>
-      <button data-key="6">6</button>
-      <button data-key="7">7</button>
-      <button data-key="8">8</button>
-      <button data-key="9">9</button>
-      <button data-key="0">0</button>
-    </div>
-
-    <div class="teclado-row">
-      <button data-key="q">Q</button>
-      <button data-key="w">W</button>
-      <button data-key="e">E</button>
-      <button data-key="r">R</button>
-      <button data-key="t">T</button>
-      <button data-key="y">Y</button>
-      <button data-key="u">U</button>
-      <button data-key="i">I</button>
-      <button data-key="o">O</button>
-      <button data-key="p">P</button>
-    </div>
-
-    <div class="teclado-row">
-      <button data-key="a">A</button>
-      <button data-key="s">S</button>
-      <button data-key="d">D</button>
-      <button data-key="f">F</button>
-      <button data-key="g">G</button>
-      <button data-key="h">H</button>
-      <button data-key="j">J</button>
-      <button data-key="k">K</button>
-      <button data-key="l">L</button>
-      <button data-key="ñ">Ñ</button>
-    </div>
-
-    <div class="teclado-row">
-      <button data-key="z">Z</button>
-      <button data-key="x">X</button>
-      <button data-key="c">C</button>
-      <button data-key="v">V</button>
-      <button data-key="b">B</button>
-      <button data-key="n">N</button>
-      <button data-key="m">M</button>
-      <button data-key="Backspace">⌫</button>
-    </div>
-
-    <div class="teclado-row">
-      <button data-key="Escape">ESC</button>
-      <button data-key="Space">ESPACIO</button>
-      <button data-key="Enter">ENTER</button>
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-<style>
-/* CURRICULUM · móvil:
-   al minimizar dejamos solo el título, sin el enlace de descarga
-   pegado a los controles de la ventana. */
-@media (max-width:768px), (pointer:coarse){
-  .ventana.ventana-curriculum.min .cv-descarga-wrap{
-    display:none !important;
-    visibility:hidden !important;
-    pointer-events:none !important;
+  function leer(clave){
+    try{return localStorage.getItem(clave)}catch(_e){return null}
   }
 
-  .ventana.ventana-curriculum.min > .barra > div:first-child{
-    padding-right:8px !important;
-  }
-}
-</style>
+  function crearDOM(){
+    let avatar=document.getElementById(ID);
+    if(avatar) return avatar;
 
-
-
-<style>
-/* =========================================================
-   MUSEOGRAFÍA · ESCRITORIO
-   Galería uniforme + Sobre el proyecto más a la izquierda.
-   ========================================================= */
-@media (min-width:769px) and (pointer:fine){
-
-  /* El bloque de introducción deja de estar centrado.
-     El botón queda cerca del margen izquierdo del portfolio. */
-  .portfolio-editorial--museografia
-  > .portfolio-editorial-intro--orb{
-    width:calc(100% - 32px) !important;
-    max-width:1040px !important;
-    margin-left:16px !important;
-    margin-right:auto !important;
-    padding-left:0 !important;
-    padding-right:0 !important;
+    avatar=document.createElement("div");
+    avatar.id=ID;
+    avatar.setAttribute("aria-hidden","true");
+    avatar.innerHTML='<div class="avatar-stage"><img alt="" decoding="async"><div class="avatar-notes" aria-hidden="true"></div></div>';
+    document.body.appendChild(avatar);
+    return avatar;
   }
 
-  .portfolio-editorial--museografia
-  > .portfolio-editorial-intro--orb
-  > .portfolio-brand-orb{
-    margin-left:0 !important;
-    margin-right:0 !important;
-    flex:0 0 86px !important;
+  function borrarDOM(){
+    document.getElementById(ID)?.remove();
   }
 
-  /* Cada grupo de imágenes pasa a una cuadrícula de 3 columnas
-     exactamente iguales. */
-  .portfolio-editorial--museografia
-  > .portfolio-editorial-group{
-    display:grid !important;
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    align-items:start !important;
+  let raf=0,last=0;
+  let x=0,y=0,dir=1;
+  let mode="walk";
+  let modeUntil=0;
+  let lastNote=0;
 
-    width:calc(100% - 32px) !important;
-    max-width:1040px !important;
+  function trayecto(){
+    const esMovil=window.matchMedia("(max-width:768px), (pointer:coarse)").matches;
+    const horizontal=window.matchMedia("(orientation: landscape) and (max-height: 560px) and (pointer: coarse)").matches;
 
-    margin:0 auto 18px !important;
-    gap:10px !important;
+    if(horizontal){
+      return {
+        minX:6,
+        maxX:Math.min(56,Math.max(22,window.innerWidth*.075)),
+        baseY:window.innerHeight*.57,
+        speed:20
+      };
+    }
+    if(esMovil){
+      return {
+        minX:5,
+        maxX:Math.min(48,Math.max(18,window.innerWidth*.12)),
+        baseY:window.innerHeight*.58,
+        speed:18
+      };
+    }
+    return {
+      minX:14,
+      maxX:Math.min(118,Math.max(48,window.innerWidth*.085)),
+      baseY:window.innerHeight*.52,
+      speed:22
+    };
   }
 
-  .portfolio-editorial--museografia
-  > .portfolio-editorial-group
-  > .portfolio-editorial-label{
-    grid-column:1 / -1 !important;
-    width:100% !important;
+  function asegurarEstado(){
+    const t=trayecto();
+    if(!x) x=t.minX;
+    y=t.baseY;
   }
 
-  .portfolio-editorial--museografia
-  .portfolio-editorial-strip{
-    display:contents !important;
+  function cambiarModo(nuevo,ahora){
+    mode=nuevo;
+    if(mode==="walk"){
+      modeUntil=ahora+(4200+Math.random()*2200);
+    }else{
+      modeUntil=ahora+(3200+Math.random()*1200);
+    }
   }
 
-  /* Las seis piezas comparten exactamente el mismo marco 4:3.
-     Los !important ganan a los tamaños inline calculados por JS. */
-  .portfolio-editorial--museografia
-  .portfolio-editorial-shot,
-  .portfolio-editorial--museografia
-  .portfolio-editorial-shot[data-span]{
-    width:100% !important;
-    height:auto !important;
-    min-width:0 !important;
-    max-width:none !important;
-
-    flex:none !important;
-    flex-basis:auto !important;
-
-    aspect-ratio:4 / 3 !important;
-
-    grid-column:auto !important;
-    grid-row:auto !important;
-
-    overflow:hidden !important;
-    background:rgba(255,255,255,.12) !important;
+  function emitirNota(avatar){
+    const caja=avatar.querySelector(".avatar-notes");
+    if(!caja) return;
+    const nota=document.createElement("span");
+    nota.className="avatar-note";
+    nota.textContent=Math.random()>.45?"♪":"♫";
+    nota.style.setProperty("--x",`${-10+Math.random()*24}px`);
+    nota.style.setProperty("--drift",`${-14+Math.random()*28}px`);
+    nota.style.setProperty("--dur",`${.82+Math.random()*.36}s`);
+    nota.style.fontSize=`${12+Math.random()*8}px`;
+    caja.appendChild(nota);
+    nota.addEventListener("animationend",()=>nota.remove(),{once:true});
   }
 
-  .portfolio-editorial--museografia
-  .portfolio-editorial-shot img{
-    display:block !important;
-    width:100% !important;
-    height:100% !important;
-
-    object-fit:contain !important;
-    object-position:center !important;
-
-    background:rgba(255,255,255,.12) !important;
+  function actualizarClases(avatar){
+    avatar.classList.toggle("is-walking",mode==="walk");
+    avatar.classList.toggle("is-performing",mode!=="walk");
+    avatar.classList.toggle("is-facing-left",dir<0);
   }
-}
-</style>
+
+  function tick(t){
+    const avatar=document.getElementById(ID);
+    if(!avatar){
+      cancelAnimationFrame(raf);
+      raf=0;
+      return;
+    }
+
+    if(!last){
+      last=t;
+      if(!modeUntil) cambiarModo("walk",t);
+    }
+
+    const dt=Math.min(.05,(t-last)/1000);
+    last=t;
+
+    const tr=trayecto();
+    y=tr.baseY;
+
+    if(mode==="walk"){
+      x+=dir*tr.speed*dt;
+
+      if(x>=tr.maxX){
+        x=tr.maxX;
+        dir=-1;
+        cambiarModo("perform",t);
+      }else if(x<=tr.minX){
+        x=tr.minX;
+        dir=1;
+        cambiarModo("perform",t);
+      }else if(t>=modeUntil){
+        cambiarModo("perform",t);
+      }
+    }else{
+      if(t-lastNote>340){
+        emitirNota(avatar);
+        lastNote=t;
+      }
+      if(t>=modeUntil){
+        cambiarModo("walk",t);
+      }
+    }
+
+    actualizarClases(avatar);
+    avatar.style.transform=`translate3d(${Math.round(x)}px,${Math.round(y)}px,0) translateY(-50%)`;
+
+    raf=requestAnimationFrame(tick);
+  }
+
+  function arrancarAnimacion(){
+    if(raf) return;
+    asegurarEstado();
+    last=0;
+    lastNote=0;
+    raf=requestAnimationFrame(tick);
+  }
+
+  function pararAnimacion(){
+    if(raf){
+      cancelAnimationFrame(raf);
+      raf=0;
+    }
+  }
+
+  function renderAvatarInterfaz(){
+    const activo=leer(KEY_ACTIVO)==="1";
+    const imagen=leer(KEY_IMG);
+
+    if(!activo || !imagen){
+      pararAnimacion();
+      borrarDOM();
+      return;
+    }
+
+    const avatar=crearDOM();
+    const img=avatar.querySelector("img");
+    if(img && img.src!==imagen) img.src=imagen;
+
+    asegurarEstado();
+    avatar.style.transform=`translate3d(${Math.round(x)}px,${Math.round(y)}px,0) translateY(-50%)`;
+
+    arrancarAnimacion();
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",renderAvatarInterfaz,{once:true});
+  }else{
+    renderAvatarInterfaz();
+  }
+
+  window.addEventListener("resize",()=>{
+    asegurarEstado();
+    const avatar=document.getElementById(ID);
+    if(avatar){
+      avatar.style.transform=`translate3d(${Math.round(x)}px,${Math.round(y)}px,0) translateY(-50%)`;
+    }
+  },{passive:true});
+
+  window.addEventListener("storage",e=>{
+    if(e.key===KEY_IMG || e.key===KEY_ACTIVO || e.key==="miguel-avatar-interfaz-fecha"){
+      renderAvatarInterfaz();
+    }
+  });
+
+  window.addEventListener("focus",renderAvatarInterfaz);
+})();
+</script>
 
 
-<script src="site-engine.js?v=20260903-1" defer></script>
 </body>
 </html>
