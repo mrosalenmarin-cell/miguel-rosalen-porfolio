@@ -9157,6 +9157,38 @@ body.modo-juego-global #sistemaLoader *{
 }
 
 </style>
+
+<style>
+
+/* =========================================================
+   JUEGOS V15 · GLITTER TAMBIÉN EN MÓVIL
+   Sigue al dedo durante touch/pointer.
+   ========================================================= */
+
+/* La capa debe existir también en dispositivos táctiles. */
+#juegosCursorOverlay{
+  display:block !important;
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100dvh !important;
+  z-index:2147483647 !important;
+  pointer-events:none !important;
+  overflow:visible !important;
+}
+
+/* En móvil las partículas siguen siendo visibles. */
+@media (pointer:coarse), (hover:none){
+  #juegosCursorOverlay{
+    display:block !important;
+  }
+
+  #juegosCursorOverlay .juegos-cursor-glitter{
+    display:block !important;
+  }
+}
+
+</style>
 </head>
 
 <body>
@@ -20137,7 +20169,6 @@ function alternarSonidoMinijuego(){return false}
 
 function instalarCursorJuegos(){
   if(window.__glitterTrailJuegosInstalado) return;
-  if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
   window.__glitterTrailJuegosInstalado=true;
 
   let overlay=document.getElementById("juegosCursorOverlay");
@@ -20145,22 +20176,22 @@ function instalarCursorJuegos(){
     overlay=document.createElement("div");
     overlay.id="juegosCursorOverlay";
     overlay.setAttribute("aria-hidden","true");
-
-    /* Directamente bajo <html>, después de <body>.
-       Así no queda atrapado en ningún stacking context de la web. */
     document.documentElement.appendChild(overlay);
   }
 
   let ultimo=0;
 
-  function crearGlitter(x,y){
+  function crearGlitter(x,y,movil=false){
     const ahora=performance.now();
-    if(ahora-ultimo<16) return;
+    const intervalo=movil ? 26 : 16;
+    if(ahora-ultimo<intervalo) return;
     ultimo=ahora;
 
     const colores=["#fff37b","#ff5fba","#72e7ff","#ba8cff","#62ffae","#ffffff","#ff9d5c"];
     const simbolos=["✦","✧","⋆","✶","✹","✷","✺"];
-    const cantidad=3 + (Math.random()>.55 ? 1 : 0);
+    const cantidad=movil
+      ? 2 + (Math.random()>.62 ? 1 : 0)
+      : 3 + (Math.random()>.55 ? 1 : 0);
 
     for(let i=0;i<cantidad;i++){
       const part=document.createElement("i");
@@ -20172,9 +20203,9 @@ function instalarCursorJuegos(){
       part.textContent=simbolos[Math.floor(Math.random()*simbolos.length)];
       part.style.color=colores[Math.floor(Math.random()*colores.length)];
 
-      /* Coordenadas del viewport: coinciden exactamente con la capa fixed. */
-      part.style.left=(x + (Math.random()*12-6)) + "px";
-      part.style.top=(y + (Math.random()*12-6)) + "px";
+      const dispersion=movil ? 16 : 12;
+      part.style.left=(x + (Math.random()*dispersion-dispersion/2)) + "px";
+      part.style.top=(y + (Math.random()*dispersion-dispersion/2)) + "px";
 
       part.style.setProperty("--gx1", `${(Math.random()*18-9).toFixed(1)}px`);
       part.style.setProperty("--gy1", `${(Math.random()*12-3).toFixed(1)}px`);
@@ -20186,8 +20217,23 @@ function instalarCursorJuegos(){
     }
   }
 
+  /* Ordenador */
   document.addEventListener("mousemove",e=>{
-    crearGlitter(e.clientX,e.clientY);
+    crearGlitter(e.clientX,e.clientY,false);
+  },{passive:true,capture:true});
+
+  /* Móvil / tablet: estela siguiendo el dedo */
+  document.addEventListener("pointermove",e=>{
+    if(e.pointerType!=="touch" && e.pointerType!=="pen") return;
+    crearGlitter(e.clientX,e.clientY,true);
+  },{passive:true,capture:true});
+
+  /* También genera un pequeño destello al tocar, aunque no haya desplazamiento. */
+  document.addEventListener("pointerdown",e=>{
+    if(e.pointerType!=="touch" && e.pointerType!=="pen") return;
+    for(let i=0;i<2;i++){
+      setTimeout(()=>crearGlitter(e.clientX,e.clientY,true),i*28);
+    }
   },{passive:true,capture:true});
 }
 
