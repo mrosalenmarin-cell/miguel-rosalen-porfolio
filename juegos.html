@@ -18337,10 +18337,10 @@ function activarMuseoPortfolioSalas(v){
     /* Más obras rojas conforme avanzan las salas.
        Siempre queda al menos una obra sin vigilar. */
     const rangos=[
-      [2,3],
-      [2,4],
       [3,4],
-      [3,5]
+      [3,4],
+      [3,5],
+      [4,5]
     ][Math.min(sala,3)];
 
     const maximo=Math.max(1,Math.min(rangos[1],disponibles.length-1));
@@ -18359,17 +18359,18 @@ function activarMuseoPortfolioSalas(v){
 
   function programarSiguienteMirada(t){
     if(!museoEsMovil()){
-      proximoCambio=t+Math.max(3900,5700-sala*260)+Math.random()*1700;
+      const base=Math.max(3250,4000-sala*250);
+      proximoCambio=t+base+Math.random()*1250;
       return;
     }
 
     /* Ventana temporal aleatoria por sala:
        cada sala da menos tiempo para actuar. */
     const tiempos=[
-      [3400,5200],
-      [2400,4000],
-      [1500,2900],
-      [900,1900]
+      [2700,4100],
+      [1900,3100],
+      [1150,2250],
+      [700,1450]
     ][Math.min(sala,3)];
 
     proximoCambio=t+tiempos[0]+Math.random()*(tiempos[1]-tiempos[0]);
@@ -18598,7 +18599,7 @@ function activarMuseoPortfolioSalas(v){
     else dibujarEscritorio(t);
   }
   let ultimoDibujo=0;
-  function loop(t){if(!activo)return;if(t-ultimoDibujo<32){raf=requestAnimationFrame(loop);return}ultimoDibujo=t;if(juegoIniciado&&t>=proximoCambio){if(museoEsMovil()){elegirNuevaMiradaMovil();hablante="ÁLEX";const avisos=["No aparto la vista de esas piezas.","Estoy controlando varias obras a la vez.","No te fíes de dónde estaba mirando antes.","Hoy tengo demasiados ojos en esta sala."];dialogo=avisos[Math.floor(Math.random()*avisos.length)]}else{let nueva=Math.floor(Math.random()*3);if(nueva===zonaGuardia)nueva=(nueva+1+Math.floor(Math.random()*2))%3;zonaGuardia=nueva;zonaGuardiaExtra=null;const direcciones=["izquierda","centro","derecha"];const vigiladasAhora=zonasVigiladasMuseo();hablante="ÁLEX";dialogo=vigiladasAhora.length===3?`Estoy vigilando toda la sala.`:vigiladasAhora.length>1?`Estoy vigilando ${direcciones[vigiladasAhora[0]]} y ${direcciones[vigiladasAhora[1]]}.`:`Estoy mirando las obras de ${direcciones[zonaGuardia]}.`}programarSiguienteMirada(t);actualizarHud()}if(juegoIniciado&&t>=proximoDialogo){const repertorio=dialogosSala[sala],entrada=repertorio[Math.floor(Math.random()*repertorio.length)];hablante=entrada.habla;dialogo=entrada.texto;proximoDialogo=t+7200+Math.random()*4200}dibujar(t);raf=requestAnimationFrame(loop)}
+  function loop(t){if(!activo)return;if(t-ultimoDibujo<32){raf=requestAnimationFrame(loop);return}ultimoDibujo=t;if(juegoIniciado&&t>=proximoCambio){if(museoEsMovil()){elegirNuevaMiradaMovil();hablante="ÁLEX";const avisos=["No aparto la vista de esas piezas.","Estoy controlando varias obras a la vez.","No te fíes de dónde estaba mirando antes.","Hoy tengo demasiados ojos en esta sala.","Te estoy viendo moverte.","Cada vez queda menos sitio donde esconder las manos."];dialogo=avisos[Math.floor(Math.random()*avisos.length)]}else{let nueva=Math.floor(Math.random()*3);if(nueva===zonaGuardia)nueva=(nueva+1+Math.floor(Math.random()*2))%3;zonaGuardia=nueva;zonaGuardiaExtra=null;const direcciones=["izquierda","centro","derecha"];const vigiladasAhora=zonasVigiladasMuseo();hablante="ÁLEX";dialogo=vigiladasAhora.length===3?`Estoy vigilando toda la sala.`:vigiladasAhora.length>1?`Estoy vigilando ${direcciones[vigiladasAhora[0]]} y ${direcciones[vigiladasAhora[1]]}.`:`Estoy mirando las obras de ${direcciones[zonaGuardia]}.`}programarSiguienteMirada(t);actualizarHud()}if(juegoIniciado&&t>=proximoDialogo){const repertorio=dialogosSala[sala],entrada=repertorio[Math.floor(Math.random()*repertorio.length)];hablante=entrada.habla;dialogo=entrada.texto;proximoDialogo=t+7200+Math.random()*4200}dibujar(t);raf=requestAnimationFrame(loop)}
   canvas.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();if(!juegoIniciado||performance.now()<transicionHasta||performance.now()<alarmaHasta)return;const r=canvas.getBoundingClientRect(),px=e.clientX-r.left,py=e.clientY-r.top,item=salas[sala].obras.find(o=>o.hit&&px>=o.hit.x&&px<=o.hit.x+o.hit.w&&py>=o.hit.y&&py<=o.hit.y+o.hit.h);if(!item)return;const indiceItem=salas[sala].obras.indexOf(item);const estaVigilada=museoEsMovil()?obrasVigiladasMovil.has(indiceItem):zonasVigiladasMuseo().includes(item.zona);if(estaVigilada){alarmaHasta=performance.now()+1300;hablante="ÁLEX";dialogo="Esa pieza pertenece al museo. La sala vuelve a su estado inicial.";salas[sala].obras.forEach(o=>o.robada=false);mensaje.textContent="Álex recuperó la sala";actualizarHud();return}item.robada=true;hablante="ÁLEX";dialogo="Un momento... ese marco ha cambiado.";mensaje.textContent="algo ha desaparecido";actualizarHud();if(salas[sala].obras.every(o=>o.robada)){if(sala<salas.length-1){const siguiente=sala+1,cap=capitulos[siguiente];transicionTitulo=cap.sala;transicionSubtitulo=cap.nombre;transicionTexto=cap.texto;transicionCuenta=`${salas[siguiente].obras.length} OBRAS EN ESTA SALA`;hablante="ÁLEX";dialogo="La sala ha quedado vacía.";transicionHasta=performance.now()+4200;setTimeout(()=>{if(!activo)return;sala=siguiente;zonaGuardiaExtra=null;obrasVigiladasMovil.clear();if(museoEsMovil())elegirNuevaMiradaMovil();const entrada=dialogosSala[sala][0];hablante=entrada.habla;dialogo=entrada.texto;mensaje.textContent="nueva sala · observa las miradas";proximoDialogo=performance.now()+7200;programarSiguienteMirada(performance.now());actualizarHud()},3600)}else{if(typeof recuperarTiempo==="function")recuperarTiempo(10);if(typeof mostrarVictoriaMundo==="function")mostrarVictoriaMundo(v,10,()=>mostrarPostalMuseo(v,salas))}}},{signal});
   introduccion.querySelector("button").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();juegoIniciado=true;introduccion.hidden=true;zonaGuardiaExtra=null;obrasVigiladasMovil.clear();if(museoEsMovil())elegirNuevaMiradaMovil();programarSiguienteMirada(performance.now());proximoDialogo=performance.now()+9000;canvas.focus({preventScroll:true})},{signal});
   const sospechas=["Juraría que había una obra ahí. Justo cuando no miro... qué despiste.","Creo que falta algo en esta sala. Y creo que empiezo a sospechar de alguien.","Ese marco estaba ocupado hace un momento. Ya sé quién es el ladrón.","No he visto nada. Eso es lo peor: alguien está aprovechando cada giro."];
@@ -22355,5 +22356,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   </div>
 </div>
 
+
+<!-- PORTFOLIO-VIGILANTE-INTENSIDAD-V2 -->
 </body>
 </html>
