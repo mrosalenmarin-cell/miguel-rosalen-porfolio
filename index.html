@@ -3,6 +3,46 @@
 <html lang="es">
 
 <head>
+
+<script>
+/* =========================================================
+   INDEX · ARRANQUE SEGURO TEMPRANO
+   Evita que el navegador recupere una posición antigua.
+   ========================================================= */
+(()=>{
+  try{
+    if("scrollRestoration" in history){
+      history.scrollRestoration="manual";
+    }
+  }catch(_){}
+
+  /* Marca de arranque: evita flashes de IA/interferencias
+     automáticas antes de que la portada esté lista. */
+  document.documentElement.classList.add("arranque-seguro");
+
+  const arriba=()=>{
+    try{
+      window.scrollTo(0,0);
+      document.documentElement.scrollTop=0;
+      if(document.body) document.body.scrollTop=0;
+    }catch(_){}
+  };
+
+  arriba();
+})();
+</script>
+
+<style>
+/* Durante los primeros instantes nunca dejamos que una ventana
+   automática de IA/interferencia se pinte antes que el inicio. */
+html.arranque-seguro .ventana-ia,
+html.arranque-seguro .ventana-interferencia{
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+</style>
+
     <link
 rel="icon"
 type="image/svg+xml"
@@ -19894,79 +19934,1011 @@ if(window.visualViewport){
 
 <script>
 /* =========================================================
-   MIGUELROSALEN.COM · IA CEREBRO ÚNICO V3
-   ---------------------------------------------------------
-   UNA SOLA IA PARA:
-   - ordenador
-   - móvil
-   - conocimiento general
-   - conocimiento de la web
-   - portfolio
-   - memoria de conversación
-   - contexto de la interfaz
-
-   Usa el endpoint existente: /api/ia
+   INDEX · ARRANQUE SEGURO FINAL
+   - Inicio siempre arriba
+   - Una restauración del navegador NO cuenta como scroll humano
+   - IA/interferencias solo reaccionan tras interacción real
    ========================================================= */
-
 (()=>{
-  if(window.__IA_CEREBRO_UNICO_V3) return;
-  window.__IA_CEREBRO_UNICO_V3 = true;
+  if(window.__arranqueSeguroInstalado) return;
+  window.__arranqueSeguroInstalado=true;
 
-  const IA_MEMORIA_KEY = "miguel-ia-memoria-v3";
-  const IA_MAX_MENSAJES = 14;
-  const IA_MAX_CONTEXTO_WEB = 10000;
-
-
-  /* =======================================================
-     NORMALIZAR TEXTO
-     ======================================================= */
-
-  function iaTextoPlano(valor){
-
-    if(valor === null || valor === undefined){
-      return "";
+  try{
+    if("scrollRestoration" in history){
+      history.scrollRestoration="manual";
     }
+  }catch(_){}
 
-    if(typeof valor === "string"){
+  let usuarioHaNavegado=false;
+  let gestoHumano=false;
+  let arranqueTerminado=false;
 
-      const div = document.createElement("div");
-
-      div.innerHTML = valor;
-
-      return (div.textContent || div.innerText || "")
-        .replace(/\s+/g," ")
-        .trim();
-    }
-
+  const subirAlInicio=()=>{
     try{
-      return JSON.stringify(valor);
-    }catch(_){
-      return String(valor);
+      window.scrollTo(0,0);
+      document.documentElement.scrollTop=0;
+      if(document.body) document.body.scrollTop=0;
+    }catch(_){}
+  };
+
+  const limpiarVentanasAutomaticasDeArranque=()=>{
+    if(usuarioHaNavegado) return;
+
+    /* Interferencias solo tienen sentido después de navegar. */
+    document.querySelectorAll(".ventana-interferencia").forEach(v=>v.remove());
+
+    /* Si la IA se abrió únicamente porque el navegador restauró
+       una posición antigua, también la retiramos. */
+    document.querySelectorAll(".ventana-ia").forEach(v=>{
+      const out=v.querySelector(".ia-output");
+      const contenido=(out?.textContent||"").toLowerCase();
+
+      if(
+        contenido.includes("scroll detectado") ||
+        contenido.includes("sé que todavía estás ahí") ||
+        contenido.includes("sigues dentro aunque no escribas") ||
+        contenido.includes("tu dedo deja ruido")
+      ){
+        v.remove();
+      }
+    });
+  };
+
+  const estabilizarInicio=()=>{
+    subirAlInicio();
+    limpiarVentanasAutomaticasDeArranque();
+  };
+
+  /* Forzamos varias veces porque los navegadores pueden restaurar
+     el scroll en momentos distintos del ciclo de carga. */
+  estabilizarInicio();
+
+  requestAnimationFrame(()=>{
+    estabilizarInicio();
+
+    requestAnimationFrame(()=>{
+      estabilizarInicio();
+    });
+  });
+
+  window.addEventListener("load",()=>{
+    estabilizarInicio();
+
+    setTimeout(estabilizarInicio,40);
+    setTimeout(estabilizarInicio,160);
+    setTimeout(()=>{
+      estabilizarInicio();
+      arranqueTerminado=true;
+      document.documentElement.classList.remove("arranque-seguro");
+    },320);
+  },{once:true});
+
+  /* BFCache / botones atrás y adelante. */
+  window.addEventListener("pageshow",()=>{
+    usuarioHaNavegado=false;
+    gestoHumano=false;
+    arranqueTerminado=false;
+
+    document.documentElement.classList.add("arranque-seguro");
+
+    estabilizarInicio();
+
+    requestAnimationFrame(()=>{
+      estabilizarInicio();
+
+      requestAnimationFrame(()=>{
+        estabilizarInicio();
+        arranqueTerminado=true;
+        document.documentElement.classList.remove("arranque-seguro");
+      });
+    });
+  });
+
+  /* ---------------------------------------------------------
+     Detectar navegación HUMANA.
+     --------------------------------------------------------- */
+
+  const marcarGesto=()=>{
+    if(!arranqueTerminado) return;
+    gestoHumano=true;
+  };
+
+  window.addEventListener("wheel",marcarGesto,{passive:true});
+  window.addEventListener("touchstart",marcarGesto,{passive:true});
+  window.addEventListener("touchmove",marcarGesto,{passive:true});
+
+  document.addEventListener("pointerdown",marcarGesto,{
+    passive:true,
+    capture:true
+  });
+
+  document.addEventListener("keydown",e=>{
+    if(
+      e.key==="ArrowDown" ||
+      e.key==="ArrowUp" ||
+      e.key==="PageDown" ||
+      e.key==="PageUp" ||
+      e.key==="Home" ||
+      e.key==="End" ||
+      e.key===" "
+    ){
+      marcarGesto();
     }
+  },true);
+
+  window.addEventListener("scroll",()=>{
+    /* Un scroll disparado por restauración, scrollTo() o carga
+       no desbloquea la IA. Tiene que venir precedido de gesto humano. */
+    if(
+      arranqueTerminado &&
+      gestoHumano &&
+      Math.abs(window.scrollY)>12
+    ){
+      usuarioHaNavegado=true;
+    }
+  },{passive:true});
+
+
+  /* ---------------------------------------------------------
+     PROTEGER IA AUTÓNOMA
+     --------------------------------------------------------- */
+
+  if(typeof window.hablarIAAlScrollear==="function"){
+    const originalHablarIA=window.hablarIAAlScrollear;
+
+    window.hablarIAAlScrollear=function(...args){
+      if(!usuarioHaNavegado) return;
+      return originalHablarIA.apply(this,args);
+    };
   }
 
 
-  function iaNormalizarBusqueda(texto){
+  /* ---------------------------------------------------------
+     PROTEGER VENTANAS DE INTERFERENCIA
+     --------------------------------------------------------- */
 
+  if(typeof window.abrirInterferenciaIA==="function"){
+    const originalInterferencia=window.abrirInterferenciaIA;
+
+    window.abrirInterferenciaIA=function(...args){
+      if(!usuarioHaNavegado) return;
+      return originalInterferencia.apply(this,args);
+    };
+  }
+
+
+  /* Si el navegador ya había restaurado la posición antes de
+     ejecutar este script, corregimos cualquier efecto residual. */
+  estabilizarInicio();
+
+  /* Si por alguna razón load ya ocurrió antes de este script. */
+  if(document.readyState==="complete"){
+    setTimeout(()=>{
+      estabilizarInicio();
+      arranqueTerminado=true;
+      document.documentElement.classList.remove("arranque-seguro");
+    },80);
+  }
+})();
+</script>
+
+
+
+<script>
+/* =========================================================
+   MIGUELROSALEN.COM
+   IA CEREBRO ÚNICO V4 · BIBLIOTECA
+   ---------------------------------------------------------
+   UNA SOLA IA PARA MÓVIL + ORDENADOR
+
+   Añade:
+   - conocimiento general vía /api/ia
+   - contexto real del portfolio
+   - biblioteca teórica compacta
+   - memoria corta de conversación
+   - tolerancia a erratas / escritura rápida
+   - búsqueda difusa por autores y conceptos
+   - respuesta local de biblioteca si /api/ia falla
+
+   No incluye claves privadas.
+   ========================================================= */
+
+(()=>{
+  if(window.__IA_CEREBRO_UNICO_V4) return;
+  window.__IA_CEREBRO_UNICO_V4 = true;
+
+  const IA_MEMORIA_KEY = "miguel-ia-memoria-v4";
+  const IA_MAX_MENSAJES = 16;
+  const IA_MAX_CONTEXTO_WEB = 10500;
+  const IA_MAX_CONTEXTO_BIBLIOTECA = 9000;
+
+
+  /* =======================================================
+     1. BIBLIOTECA TEÓRICA V1
+
+     Son fichas de conocimiento, NO copias completas de los PDFs.
+     Así la web no se vuelve gigantesca y la búsqueda es rápida.
+     ======================================================= */
+
+  const IA_BIBLIOTECA_V1 = [
+    {
+      id:"cartografias-criticas-ciudad",
+      titulo:"Cartografías críticas de la ciudad",
+      autor:"Elia Canosa Zamora y Ángela García Carballo",
+      fecha:"2017",
+      temas:[
+        "cartografía crítica","ciudad","arte","mapa","deriva",
+        "psicogeografía","urbanismo","Rogelio López Cuenca",
+        "geografía crítica","espacio urbano"
+      ],
+      aliases:[
+        "cartografias criticas","cartografia critica",
+        "psicogeografia","deriva urbana","rogelio lopez cuenca"
+      ],
+      resumen:
+        "Estudia la convergencia entre cartografía crítica y prácticas artísticas en la ciudad. " +
+        "Entiende el mapa como una herramienta transversal capaz de intervenir en cómo se representa, " +
+        "lee y disputa el espacio urbano. Sitúa deriva y psicogeografía dentro de esta genealogía " +
+        "y presta especial atención al contexto español y a proyectos de Rogelio López Cuenca."
+    },
+
+    {
+      id:"cartografias-queer-preciado",
+      titulo:"Cartografías queer: el flâneur perverso, la lesbiana topofóbica y la puta multicartográfica",
+      autor:"Beatriz Preciado",
+      fecha:"2008",
+      temas:[
+        "queer","cartografía queer","género","sexualidad","espacio",
+        "identidad","feminismo","lesbiana","gay","trans","cuerpo",
+        "normalización","representación","ciudad"
+      ],
+      aliases:[
+        "preciado","beatriz preciado","cartografias queer",
+        "flaneur perverso","lesbiana topofobica","multicartografica"
+      ],
+      resumen:
+        "Propone pensar qué tipo de cartografía puede surgir de movimientos feministas, gays, lesbianos, " +
+        "queer y trans. Cuestiona los mapas identitarios dominantes y las representaciones espaciales " +
+        "que fijan cuerpos, sexualidades e identidades como si fueran categorías naturales. La cartografía " +
+        "aparece como práctica crítica capaz de registrar desplazamientos, fugas, resistencias y posiciones no normativas."
+    },
+
+    {
+      id:"comentarios-sociedad-espectaculo",
+      titulo:"Comentarios sobre la sociedad del espectáculo",
+      autor:"Guy Debord",
+      fecha:"1988",
+      temas:[
+        "Debord","sociedad del espectáculo","espectáculo","poder",
+        "mercancía","economía","dominación","medios","política",
+        "capitalismo","gobierno"
+      ],
+      aliases:[
+        "debor","debord","comentarios sociedad espectaculo",
+        "comentarios sobre la sociedad del espectaculo"
+      ],
+      resumen:
+        "Revisa décadas después la crítica de la sociedad del espectáculo. Debord describe la consolidación " +
+        "del espectáculo como forma de poder ligada a la economía mercantil y a técnicas modernas de gobierno, " +
+        "subrayando su capacidad para extenderse, concentrarse y desarrollar mecanismos de defensa."
+    },
+
+    {
+      id:"sociedad-espectaculo",
+      titulo:"La sociedad del espectáculo",
+      autor:"Guy Debord",
+      fecha:"1967",
+      temas:[
+        "Debord","situacionismo","espectáculo","mercancía","imagen",
+        "capitalismo","vida cotidiana","alienación","medios","consumo",
+        "representación","política"
+      ],
+      aliases:[
+        "sociedad del espectaculo","guy debord","debor",
+        "espectaculo debord"
+      ],
+      resumen:
+        "Texto central de la crítica situacionista de la vida moderna. Analiza cómo las relaciones sociales, " +
+        "la experiencia cotidiana, el consumo y la economía mercantil quedan organizados mediante formas de representación " +
+        "y espectacularización. Es una referencia clave para pensar imagen, mercancía, pasividad, separación y poder."
+    },
+
+    {
+      id:"situacionistas-arte",
+      titulo:"Posiciones situacionistas sobre el Arte",
+      autor:"María Fuentes Carrasco",
+      fecha:"2008",
+      temas:[
+        "Internacional Situacionista","situacionismo","arte","vanguardia",
+        "deriva","urbanismo unitario","Debord","Internacional Letrista",
+        "Bauhaus Imaginista","psicogeografía","arte contemporáneo"
+      ],
+      aliases:[
+        "situacionismo","situacionistas","internacional situacionista",
+        "posiciones situacionistas","urbanismo unitario",
+        "internacional letrista","bauhaus imaginista"
+      ],
+      resumen:
+        "Recorre las tesis de la Internacional Situacionista sobre arte, vanguardia y cultura. " +
+        "Sitúa su fundación en 1957 a partir de diferentes grupos europeos y recuerda el peso de la Internacional Letrista " +
+        "en conceptos como la deriva y el urbanismo unitario. Permite relacionar práctica artística, crítica de la vida cotidiana " +
+        "y transformación del espacio."
+    },
+
+    {
+      id:"vida-urbana-desigualdad",
+      titulo:"Vida urbana: entre la desigualdad social y los espacios del habitar",
+      autor:"Juan Carlos de Pablos y Joaquín Susino",
+      fecha:"",
+      temas:[
+        "ciudad","sociología urbana","desigualdad","clase social","habitar",
+        "movilidad cotidiana","espacio urbano","vivienda","habitus",
+        "clases populares","clases medias"
+      ],
+      aliases:[
+        "vida urbana","desigualdad urbana","espacios del habitar",
+        "clase y ciudad","habitus de clase"
+      ],
+      resumen:
+        "Analiza cómo la desigualdad social también se manifiesta en la forma de vivir y significar el espacio urbano. " +
+        "Contrasta perspectivas más funcionales del espacio con formas expresivas y de sociabilidad asociadas a grupos trabajadores " +
+        "y populares, vinculando clase, movilidad cotidiana, vivienda y experiencia de ciudad."
+    },
+
+    {
+      id:"ritual-pilar-albarracin",
+      titulo:"Contrahaciendo el ritual: disgresiones sobre la Semana Santa andaluza",
+      autor:"David Florido del Corral",
+      fecha:"",
+      temas:[
+        "ritual","Pilar Albarracín","Semana Santa","Andalucía",
+        "performance","tradición","cultura popular","poder","género",
+        "acción social","símbolo","folclore"
+      ],
+      aliases:[
+        "contrahaciendo el ritual","pilar albarracin",
+        "semana santa andaluza","ritual performativo"
+      ],
+      resumen:
+        "Analiza una propuesta de Pilar Albarracín a partir de rituales y códigos de la Semana Santa andaluza. " +
+        "Plantea el ritual como acción social performativa: un hacer que produce significado, transforma lo ordinario " +
+        "y permite reforzar, invertir o cuestionar valores, relaciones y estructuras de poder."
+    },
+
+    {
+      id:"fotoconceptualismo",
+      titulo:"Del fotoconceptualismo al fototableau. Fotografía, performance y escenificación en España (1970-2000)",
+      autor:"Juan Albarrán Diego",
+      fecha:"2012",
+      temas:[
+        "fotografía","performance","fotoconceptualismo","arte conceptual",
+        "España","años setenta","años ochenta","años noventa",
+        "documentación","archivo","escenificación","fototableau",
+        "Nueva Lente","cuerpo","acción"
+      ],
+      aliases:[
+        "fotoconceptualismo","fototableau","juan albarran",
+        "fotografia performance","nueva lente","fotografia conceptual"
+      ],
+      resumen:
+        "Investiga las relaciones entre fotografía, performance y escenificación en España entre 1970 y 2000. " +
+        "Cuestiona la idea de que la fotografía sea solo un registro secundario de la acción: puede modelar la performance, " +
+        "funcionar como soporte conceptual y permitir la difusión, conservación y posterior rematerialización de prácticas " +
+        "que habían puesto en crisis la obra tradicional, el museo y el mercado."
+    },
+
+    {
+      id:"didi-imagenes-lucha",
+      titulo:"Las imágenes son un espacio de lucha",
+      autor:"Georges Didi-Huberman / entrevista de Amador Fernández-Savater",
+      fecha:"2010",
+      temas:[
+        "Didi-Huberman","imagen","sobreexposición","subexposición",
+        "censura","visibilidad","montaje","resistencia","imagen cliché",
+        "realidad","aparición","mirada","política de las imágenes"
+      ],
+      aliases:[
+        "didi huberman","didi uberman","sobreexposicion",
+        "subexposicion","imagenes espacio de lucha",
+        "imagen toca lo real","montaje didi"
+      ],
+      resumen:
+        "Didi-Huberman distingue dos formas contemporáneas de invisibilidad: la subexposición, ligada a lo que no se muestra, " +
+        "y la sobreexposición, producida por una saturación que termina impidiendo ver. Defiende que mirar es un trabajo y que cada " +
+        "imagen exige reaprender a ver. Frente a entender toda imagen como simple simulacro, sostiene que una imagen puede 'tocar lo real' " +
+        "sin ser idéntica a la realidad. El montaje y la contra-información aparecen como formas de pensamiento y resistencia."
+    },
+
+    {
+      id:"didi-dossier-imagen",
+      titulo:"La emoción no dice 'yo'. Fragmentos sobre la libertad estética / dossier de imágenes",
+      autor:"Georges Didi-Huberman y materiales asociados",
+      fecha:"",
+      temas:[
+        "Didi-Huberman","contra-información","imagen","resistencia",
+        "fotografía","August Sander","Alfredo Jaar","Raymond Depardon",
+        "Pascal Convert","memoria","política","archivo","montaje"
+      ],
+      aliases:[
+        "la emocion no dice yo","contra informacion",
+        "august sander","alfredo jaar","pascal convert"
+      ],
+      resumen:
+        "Dossier que articula pensamiento sobre imagen, emoción, memoria y contra-información con ejemplos de fotógrafos y artistas. " +
+        "Sirve para pensar cómo una imagen puede resistir al cliché, construir memoria, reorganizar documentos y producir una lectura política " +
+        "sin reducirse a propaganda ni a ilustración."
+    },
+
+    {
+      id:"imagen-intolerable",
+      titulo:"La imagen intolerable",
+      autor:"Jacques Rancière",
+      fecha:"",
+      temas:[
+        "Rancière","imagen intolerable","espectador","representación",
+        "violencia","política de la imagen","ética de la imagen",
+        "visibilidad","realidad","fotografía","mirada"
+      ],
+      aliases:[
+        "ranciere","rancier","imagen intolerable",
+        "jacques ranciere","imagenes intolerables"
+      ],
+      resumen:
+        "Reflexiona sobre qué hace que una imagen sea considerada intolerable y desplaza la cuestión desde el contenido aislado " +
+        "hacia el régimen de visibilidad, la relación entre imagen y realidad y la posición del espectador. Resulta útil para discutir " +
+        "los límites políticos y éticos de representar sufrimiento, violencia y acontecimientos históricos."
+    },
+
+    {
+      id:"teoria-queer",
+      titulo:"La Teoría Queer: la de-construcción de las sexualidades periféricas",
+      autor:"Carlos Fonseca Hernández y María Luisa Quintero Soto",
+      fecha:"2009",
+      temas:[
+        "teoría queer","queer","sexualidad","género","masculinidad",
+        "homosexualidad","identidad","estigma","disidencia sexual",
+        "normalidad","derechos","resignificación"
+      ],
+      aliases:[
+        "teoria queer","sexualidades perifericas",
+        "fonseca quintero","deconstruccion sexualidad"
+      ],
+      resumen:
+        "Presenta la teoría queer como elaboración crítica de la disidencia sexual y de las identidades estigmatizadas. " +
+        "Aborda la resignificación del insulto, la construcción social de la normalidad, los roles de género y el derecho de sexualidades " +
+        "periféricas a nombrarse y existir fuera de categorías normalizadoras."
+    },
+
+    {
+      id:"identidad-desigualdad-clase",
+      titulo:"Identidad y desigualdad. El reconocimiento de la clase obrera",
+      autor:"Fernando Latorre Andrés",
+      fecha:"2015",
+      temas:[
+        "clase obrera","clase social","identidad","desigualdad",
+        "violencia simbólica","alienación cultural","reconocimiento",
+        "materialismo histórico","élites","democracia liberal"
+      ],
+      aliases:[
+        "identidad y desigualdad","clase obrera",
+        "reconocimiento clase obrera","violencia simbolica",
+        "alienacion cultural"
+      ],
+      resumen:
+        "Reflexiona sobre identidad desde la clase social y analiza mecanismos mediante los cuales la desigualdad puede naturalizarse. " +
+        "Trabaja nociones de violencia simbólica y alienación cultural y propone recuperar el reconocimiento de las clases populares " +
+        "más allá de imágenes estigmatizadas o paternalistas."
+    },
+
+    {
+      id:"nacionalismo-joaquin-costa",
+      titulo:"Las bases de un nuevo concepto moderno de nacionalismo español de Joaquín Costa",
+      autor:"Óscar Ignacio Mateos y de Cabo",
+      fecha:"",
+      temas:[
+        "Joaquín Costa","nacionalismo español","krausismo","España",
+        "regeneracionismo","1898","europeización","Iberia",
+        "regiones","identidad nacional","historia política"
+      ],
+      aliases:[
+        "joaquin costa","nacionalismo español",
+        "regeneracionismo","krausismo","europeizacion"
+      ],
+      resumen:
+        "Estudia la concepción de Joaquín Costa sobre nación y modernización. Destaca una visión orgánica de España influida por el krausismo, " +
+        "la integración de peculiaridades regionales y, tras 1898, un giro hacia la regeneración interior y la europeización como vía de reforma."
+    },
+
+    {
+      id:"psicologia-pueblo-espanol",
+      titulo:"La Psicología del Pueblo Español según Gracián",
+      autor:"Texto histórico",
+      fecha:"",
+      temas:[
+        "España","carácter español","psicología colectiva","identidad",
+        "historia cultural","pueblo español","Gracián","estereotipo",
+        "observación social"
+      ],
+      aliases:[
+        "psicologia pueblo español","gracian",
+        "caracter español","psicologia española"
+      ],
+      resumen:
+        "Texto histórico sobre la construcción de una psicología colectiva atribuida al pueblo español. " +
+        "Combina observación social y lectura de autores españoles y extranjeros. Conviene leerlo como documento histórico " +
+        "sobre discursos de identidad nacional, no como una descripción científica fija o esencial de la población española."
+    },
+
+    {
+      id:"cambio-estructural-espana",
+      titulo:"Cambio estructural en España (1980-2000)",
+      autor:"Carmen Ramos Carvajal y Luis Robles Teigeiro",
+      fecha:"2009",
+      temas:[
+        "economía española","servicios","industria","cambio estructural",
+        "1980","2000","input output","sector servicios",
+        "industria pesada","economía"
+      ],
+      aliases:[
+        "cambio estructural españa","economia 1980 2000",
+        "sector servicios españa","industria pesada"
+      ],
+      resumen:
+        "Analiza el cambio de la estructura productiva española entre 1980 y 2000. " +
+        "Parte del declive relativo de la industria pesada y del crecimiento del sector servicios, " +
+        "empleando una perspectiva input-output para estudiar relaciones sectoriales y estabilidad de coeficientes y ligazones."
+    },
+
+    {
+      id:"guia-tfg-bellas-artes",
+      titulo:"Guía y manual de estilo para la elaboración del TFG",
+      autor:"Facultat de Belles Arts · Universitat Politècnica de València",
+      fecha:"2019",
+      temas:[
+        "TFG","TFM","Bellas Artes","UPV","escritura académica",
+        "estructura","maquetación","citas","bibliografía",
+        "propiedad intelectual","investigación"
+      ],
+      aliases:[
+        "guia tfg","manual tfg","upv bellas artes",
+        "como citar","maquetacion tfg","propiedad intelectual tfg"
+      ],
+      resumen:
+        "Guía académica de la Facultad de Bellas Artes de la UPV para estructurar, diseñar y presentar trabajos finales. " +
+        "Incluye criterios sobre naturaleza del TFG/TFM, organización del documento, diseño y maquetación, citación, propiedad intelectual " +
+        "y marco legal."
+    },
+
+    {
+      id:"toro-osborne-maqueta",
+      titulo:"Toro de Osborne · instrucciones de montaje y láminas",
+      autor:"PHM Maquetas & Modelos",
+      fecha:"2015",
+      temas:[
+        "Toro de Osborne","maqueta","carretera","icono español",
+        "silueta","montaje","cartulina","modelo","cultura visual"
+      ],
+      aliases:[
+        "toro osborne","toro de osborne","maqueta toro",
+        "carreteras españolas","silueta toro"
+      ],
+      resumen:
+        "Material técnico para construir una maqueta a escala del Toro de Osborne: recorte de la silueta, base, pliegues, soportes, " +
+        "acabado de bordes y montaje. También funciona como documento sobre la circulación material y gráfica de un icono del paisaje " +
+        "de carretera español."
+    },
+
+    {
+      id:"esqueleto-mineral",
+      titulo:"El esqueleto mineral que nos permitirá aventajar a la evolución",
+      autor:"Arturo Hernández Alcázar y Fólke Köberling",
+      fecha:"2017",
+      temas:[
+        "Museo Experimental El Eco","materiales","industria","guerra",
+        "economía","materias primas","explotación","desgaste",
+        "velocidad","accidente","destrucción","geología",
+        "capitalismo","escultura","instalación"
+      ],
+      aliases:[
+        "esqueleto mineral","museo experimental el eco",
+        "arturo hernandez alcazar","folke korberling",
+        "velocidad accidente desgaste"
+      ],
+      resumen:
+        "Proyecto que conecta velocidad, accidente, progreso, desgaste, guerra, economía, materias primas y destrucción. " +
+        "La obra plantea una especie de proceso geológico acelerado y desvía materiales asociados a la industria y a la explotación " +
+        "de su circulación económica para devolverlos a una lógica material crítica."
+    }
+  ];
+
+  window.IA_BIBLIOTECA_V1 = IA_BIBLIOTECA_V1;
+
+
+  /* =======================================================
+     2. NORMALIZACIÓN Y ERRATAS
+     ======================================================= */
+
+  function iaBase(texto){
     return String(texto || "")
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g,"")
-      .replace(/[^\p{L}\p{N}\s]/gu," ")
+      .replace(/[^a-z0-9ñ\s]/g," ")
       .replace(/\s+/g," ")
       .trim();
   }
 
 
+  function iaDistancia(a,b){
+
+    a=String(a||"");
+    b=String(b||"");
+
+    if(a===b) return 0;
+    if(!a.length) return b.length;
+    if(!b.length) return a.length;
+
+    const fila=Array.from({length:b.length+1},(_,i)=>i);
+
+    for(let i=1;i<=a.length;i++){
+
+      let previo=fila[0];
+      fila[0]=i;
+
+      for(let j=1;j<=b.length;j++){
+
+        const antiguo=fila[j];
+
+        const coste=
+          a[i-1]===b[j-1] ? 0 : 1;
+
+        fila[j]=Math.min(
+          fila[j]+1,
+          fila[j-1]+1,
+          previo+coste
+        );
+
+        previo=antiguo;
+      }
+    }
+
+    return fila[b.length];
+  }
+
+
+  const IA_CORRECCIONES_DIRECTAS = new Map([
+    ["sicogeografia","psicogeografia"],
+    ["psicogeogrfia","psicogeografia"],
+    ["psicogeografiaa","psicogeografia"],
+    ["deriba","deriva"],
+    ["derivaa","deriva"],
+    ["cartogrfia","cartografia"],
+    ["cartogafia","cartografia"],
+    ["situasionismo","situacionismo"],
+    ["situacionisimo","situacionismo"],
+    ["situacionistaas","situacionistas"],
+    ["debor","debord"],
+    ["debort","debord"],
+    ["didiuberman","didi huberman"],
+    ["uberman","huberman"],
+    ["didihuberman","didi huberman"],
+    ["precidado","preciado"],
+    ["presiado","preciado"],
+    ["rancier","ranciere"],
+    ["rancieree","ranciere"],
+    ["fotoconseptualismo","fotoconceptualismo"],
+    ["fotoconceptualisimo","fotoconceptualismo"],
+    ["sobreexposicon","sobreexposicion"],
+    ["sobreesposicion","sobreexposicion"],
+    ["subexposicon","subexposicion"],
+    ["queeer","queer"],
+    ["bauahus","bauhaus"],
+    ["bauhuas","bauhaus"],
+    ["kandiski","kandinsky"],
+    ["kandiskiy","kandinsky"],
+    ["dushamp","duchamp"],
+    ["duchampn","duchamp"],
+    ["corvusier","corbusier"],
+    ["corbussier","corbusier"],
+    ["litertura","literatura"],
+    ["literaruta","literatura"],
+    ["musiac","musica"],
+    ["diseñp","diseño"],
+    ["disenoa","diseño"],
+    ["pelicual","pelicula"],
+    ["pelicla","pelicula"],
+    ["arquietctura","arquitectura"]
+  ]);
+
+
+  const IA_VOCABULARIO = new Set([
+    "psicogeografia","deriva","cartografia","situacionismo",
+    "situacionista","situacionistas","debord","preciado",
+    "ranciere","didi","huberman","fotoconceptualismo",
+    "fototableau","performance","sobreexposicion",
+    "subexposicion","queer","urbanismo","desigualdad",
+    "identidad","ritual","espectaculo","mercancia",
+    "alienacion","archivo","montaje","fotografia",
+    "regeneracionismo","krausismo","bauhaus","kandinsky",
+    "duchamp","corbusier","literatura","musica","diseño",
+    "arquitectura","filosofia","matematicas","ciencia"
+  ]);
+
+  IA_BIBLIOTECA_V1.forEach(ficha=>{
+    [
+      ficha.titulo,
+      ficha.autor,
+      ...(ficha.temas||[]),
+      ...(ficha.aliases||[])
+    ]
+      .join(" ")
+      .split(/\s+/)
+      .map(iaBase)
+      .filter(x=>x.length>=4)
+      .forEach(x=>{
+        x.split(" ").forEach(p=>{
+          if(p.length>=4) IA_VOCABULARIO.add(p);
+        });
+      });
+  });
+
+
+  function iaCorregirConsulta(texto){
+
+    let q=iaBase(texto);
+
+    /* Escritura rápida / chat */
+    const reemplazos=[
+      [/\bxq\b/g,"porque"],
+      [/\bpq\b/g,"porque"],
+      [/\bporq\b/g,"porque"],
+      [/\bporqe\b/g,"porque"],
+      [/\bq\b/g,"que"],
+      [/\bqe\b/g,"que"],
+      [/\bke\b/g,"que"],
+      [/\btmb\b/g,"tambien"],
+      [/\btbien\b/g,"tambien"],
+      [/\bcn\b/g,"con"],
+      [/\bsinembargo\b/g,"sin embargo"]
+    ];
+
+    reemplazos.forEach(([r,v])=>{
+      q=q.replace(r,v);
+    });
+
+    /* Correcciones directas */
+    let tokens=q.split(" ").filter(Boolean);
+
+    tokens=tokens.flatMap(token=>{
+
+      if(IA_CORRECCIONES_DIRECTAS.has(token)){
+        return IA_CORRECCIONES_DIRECTAS
+          .get(token)
+          .split(" ");
+      }
+
+      if(token.length<5){
+        return [token];
+      }
+
+      let mejor=token;
+      let mejorDist=99;
+
+      for(const candidato of IA_VOCABULARIO){
+
+        if(
+          Math.abs(candidato.length-token.length)>2 ||
+          candidato[0]!==token[0]
+        ){
+          continue;
+        }
+
+        const d=iaDistancia(token,candidato);
+
+        if(d<mejorDist){
+          mejorDist=d;
+          mejor=candidato;
+        }
+
+      }
+
+      const limite =
+        token.length>=9 ? 2 :
+        token.length>=6 ? 1 :
+        0;
+
+      return [
+        mejorDist<=limite
+          ? mejor
+          : token
+      ];
+
+    });
+
+    q=tokens.join(" ");
+
+    /* Frases/nombres muy habituales */
+    q=q
+      .replace(/\bdidi\s+uberman\b/g,"didi huberman")
+      .replace(/\bguy\s+debor\b/g,"guy debord")
+      .replace(/\bjacques\s+rancier\b/g,"jacques ranciere")
+      .replace(/\ble\s+corvusier\b/g,"le corbusier")
+      .replace(/\bsociedad\s+del\s+espectaclo\b/g,"sociedad del espectaculo")
+      .replace(/\bteoria\s+qeer\b/g,"teoria queer");
+
+    return q.trim();
+  }
+
+  window.iaCorregirConsulta = iaCorregirConsulta;
+
+
   /* =======================================================
-     MEMORIA
+     3. BÚSQUEDA EN BIBLIOTECA
+     ======================================================= */
+
+  function iaTokens(texto){
+
+    return iaCorregirConsulta(texto)
+      .split(" ")
+      .filter(p=>p.length>2);
+
+  }
+
+
+  function iaBuscarBiblioteca(pregunta, limite=5){
+
+    const consulta=iaCorregirConsulta(pregunta);
+    const palabras=iaTokens(pregunta);
+
+    const resultados=IA_BIBLIOTECA_V1.map(ficha=>{
+
+      const titulo=iaBase(ficha.titulo);
+      const autor=iaBase(ficha.autor);
+      const aliases=(ficha.aliases||[]).map(iaBase);
+      const temas=(ficha.temas||[]).map(iaBase);
+
+      const bolsa=iaBase([
+        ficha.titulo,
+        ficha.autor,
+        ficha.fecha,
+        ...(ficha.temas||[]),
+        ...(ficha.aliases||[]),
+        ficha.resumen
+      ].join(" "));
+
+      let score=0;
+
+      if(titulo && consulta.includes(titulo)){
+        score+=35;
+      }
+
+      aliases.forEach(alias=>{
+        if(alias && consulta.includes(alias)){
+          score+=22;
+        }
+      });
+
+      temas.forEach(tema=>{
+        if(tema && consulta.includes(tema)){
+          score+=10;
+        }
+      });
+
+      palabras.forEach(p=>{
+
+        if(titulo.includes(p)) score+=7;
+        else if(autor.includes(p)) score+=6;
+        else if(aliases.some(a=>a.includes(p))) score+=5;
+        else if(temas.some(t=>t.includes(p))) score+=4;
+        else if(bolsa.includes(p)) score+=1;
+
+      });
+
+      return {
+        ...ficha,
+        score
+      };
+
+    })
+    .filter(x=>x.score>0)
+    .sort((a,b)=>b.score-a.score);
+
+    if(!resultados.length){
+      return [];
+    }
+
+    const max=resultados[0].score;
+
+    return resultados
+      .filter((r,i)=>
+        i===0 ||
+        r.score>=Math.max(4,max*.32)
+      )
+      .slice(0,limite);
+  }
+
+  window.iaBuscarBiblioteca = iaBuscarBiblioteca;
+
+
+  function iaContextoBiblioteca(pregunta){
+
+    const resultados=
+      iaBuscarBiblioteca(pregunta,5);
+
+    if(!resultados.length){
+      return "";
+    }
+
+    return resultados
+      .map((ficha,i)=>[
+        `FUENTE ${i+1}: ${ficha.titulo}`,
+        `AUTORÍA: ${ficha.autor}${ficha.fecha ? " · "+ficha.fecha : ""}`,
+        `TEMAS: ${(ficha.temas||[]).slice(0,10).join(", ")}`,
+        `SÍNTESIS: ${ficha.resumen}`
+      ].join("\n"))
+      .join("\n\n")
+      .slice(0,IA_MAX_CONTEXTO_BIBLIOTECA);
+  }
+
+
+  /* =======================================================
+     4. RESPUESTA LOCAL DE EMERGENCIA
+
+     Si /api/ia no existe o está caído, las preguntas
+     relacionadas con los PDFs siguen teniendo respuesta.
+     ======================================================= */
+
+  function iaRespuestaBibliotecaLocal(pregunta){
+
+    const resultados=
+      iaBuscarBiblioteca(pregunta,3);
+
+    if(!resultados.length){
+      return "";
+    }
+
+    const principal=resultados[0];
+
+    /* Exigimos relevancia mínima para no meter teoría
+       donde no viene a cuento. */
+    if(principal.score<5){
+      return "";
+    }
+
+    let respuesta=
+      `${principal.titulo}`;
+
+    if(principal.autor){
+      respuesta+=` — ${principal.autor}`;
+    }
+
+    respuesta+=`.\n\n${principal.resumen}`;
+
+    if(resultados.length>1){
+
+      const relacionados=resultados
+        .slice(1)
+        .map(r=>r.titulo)
+        .join(" y ");
+
+      respuesta+=
+        `\n\nTambién lo relacionaría con ${relacionados}, ` +
+        `porque aparecen conceptos cercanos dentro de la biblioteca de la web.`;
+    }
+
+    return respuesta;
+  }
+
+
+  /* =======================================================
+     5. MEMORIA DE CONVERSACIÓN
      ======================================================= */
 
   function iaLeerMemoria(){
 
     try{
 
-      const memoria =
+      const memoria=
         JSON.parse(
           sessionStorage.getItem(IA_MEMORIA_KEY) || "[]"
         );
@@ -19999,72 +20971,86 @@ if(window.visualViewport){
   }
 
 
-  function iaRecordar(role, content){
+  function iaRecordar(role,content){
 
-    const texto =
-      String(content || "")
+    const limpio=
+      String(content||"")
         .trim()
-        .slice(0,2500);
+        .slice(0,2800);
 
-    if(!texto) return;
+    if(!limpio) return;
 
-    const memoria = iaLeerMemoria();
-
-    const ultimo = memoria[memoria.length - 1];
+    const memoria=iaLeerMemoria();
+    const ultimo=memoria[memoria.length-1];
 
     if(
       ultimo &&
-      ultimo.role === role &&
-      ultimo.content === texto
+      ultimo.role===role &&
+      ultimo.content===limpio
     ){
       return;
     }
 
     memoria.push({
       role,
-      content:texto
+      content:limpio
     });
 
     iaGuardarMemoria(memoria);
-
   }
 
 
-  window.borrarMemoriaIA = function(){
+  window.borrarMemoriaIA=function(){
 
     try{
       sessionStorage.removeItem(IA_MEMORIA_KEY);
     }catch(_){}
 
-    console.log("Memoria de IA borrada.");
-
   };
 
 
   /* =======================================================
-     EXTRAER CONOCIMIENTO DEL INDEX
+     6. CONOCIMIENTO DEL PROPIO INDEX / PORTFOLIO
      ======================================================= */
 
-  function iaExtraerContenidoBase(){
+  function iaTextoPlano(valor){
 
-    const fragmentos = [];
+    if(valor===null || valor===undefined){
+      return "";
+    }
+
+    if(typeof valor==="string"){
+
+      const div=document.createElement("div");
+      div.innerHTML=valor;
+
+      return (div.textContent || div.innerText || "")
+        .replace(/\s+/g," ")
+        .trim();
+    }
+
+    try{
+      return JSON.stringify(valor);
+    }catch(_){
+      return String(valor);
+    }
+  }
 
 
-    /* ---------- ventanas principales ---------- */
+  function iaExtraerContenidoWeb(){
+
+    const fragmentos=[];
 
     try{
 
-      if(typeof contenido !== "undefined"){
+      if(typeof contenido!=="undefined"){
 
         contenido.forEach(item=>{
 
           if(!Array.isArray(item)) return;
 
-          const titulo =
-            iaTextoPlano(item[0]);
-
-          const cuerpo =
-            iaTextoPlano(item[1]);
+          const titulo=iaTextoPlano(item[0]);
+          const cuerpo=iaTextoPlano(item[1]);
 
           if(!titulo && !cuerpo) return;
 
@@ -20072,7 +21058,7 @@ if(window.visualViewport){
             titulo,
             texto:
               `${titulo}\n${cuerpo}`
-                .slice(0,6000)
+                .slice(0,6500)
           });
 
         });
@@ -20082,29 +21068,28 @@ if(window.visualViewport){
     }catch(_){}
 
 
-    /* ---------- portfolio ---------- */
-
-    function recorrerPortfolio(lista, ruta=[]){
+    function recorrerPortfolio(lista,ruta=[]){
 
       if(!Array.isArray(lista)) return;
 
       lista.forEach(sec=>{
 
-        if(!sec || typeof sec !== "object") return;
+        if(!sec || typeof sec!=="object"){
+          return;
+        }
 
-        const titulo =
-          iaTextoPlano(
-            sec.titulo ||
-            sec.title ||
-            sec.id ||
-            ""
-          );
+        const titulo=iaTextoPlano(
+          sec.titulo ||
+          sec.title ||
+          sec.id ||
+          ""
+        );
 
-        const rutaActual =
+        const rutaActual=
           [...ruta,titulo]
             .filter(Boolean);
 
-        let informacion = [
+        let info=[
           titulo,
           iaTextoPlano(sec.nota),
           iaTextoPlano(sec.descripcion),
@@ -20114,17 +21099,17 @@ if(window.visualViewport){
           .filter(Boolean)
           .join("\n");
 
-
         if(Array.isArray(sec.obras)){
 
           sec.obras.forEach(obra=>{
 
             if(!obra) return;
 
-            informacion += "\n" + [
+            info+="\n"+[
               iaTextoPlano(obra.titulo),
               iaTextoPlano(obra.ano || obra.año),
               iaTextoPlano(obra.material),
+              iaTextoPlano(obra.materiales),
               iaTextoPlano(obra.medidas),
               iaTextoPlano(obra.descripcion),
               iaTextoPlano(obra.texto)
@@ -20136,22 +21121,20 @@ if(window.visualViewport){
 
         }
 
-
-        if(informacion.trim()){
+        if(info.trim()){
 
           fragmentos.push({
             titulo:rutaActual.join(" / "),
             texto:
               (
-                "RUTA: " +
-                rutaActual.join(" > ") +
-                "\n" +
-                informacion
-              ).slice(0,8000)
+                "RUTA: "+
+                rutaActual.join(" > ")+
+                "\n"+
+                info
+              ).slice(0,8500)
           });
 
         }
-
 
         if(Array.isArray(sec.subsecciones)){
 
@@ -20169,7 +21152,7 @@ if(window.visualViewport){
 
     try{
 
-      if(typeof portfolioSecciones !== "undefined"){
+      if(typeof portfolioSecciones!=="undefined"){
 
         recorrerPortfolio(
           portfolioSecciones,
@@ -20180,150 +21163,106 @@ if(window.visualViewport){
 
     }catch(_){}
 
-
     return fragmentos;
-
   }
 
 
-  /* =======================================================
-     ELEGIR INFORMACIÓN RELEVANTE DE LA WEB
-     ======================================================= */
-
   function iaContextoWebRelevante(pregunta){
 
-    const fragmentos =
-      iaExtraerContenidoBase();
+    const fragmentos=
+      iaExtraerContenidoWeb();
 
     if(!fragmentos.length){
       return "";
     }
 
+    const consulta=
+      iaCorregirConsulta(pregunta);
 
-    const consulta =
-      iaNormalizarBusqueda(pregunta);
-
-    const palabras =
+    const palabras=
       consulta
         .split(" ")
-        .filter(p=>p.length > 2);
+        .filter(p=>p.length>2);
 
-
-    const palabrasWeb = [
-      "miguel",
-      "rosalen",
-      "portfolio",
-      "portafolio",
-      "obra",
-      "obras",
-      "proyecto",
-      "proyectos",
-      "curriculum",
-      "cv",
-      "contacto",
-      "web",
-      "pagina",
-      "interfaz",
-      "diseño",
-      "diseno",
-      "arte",
-      "artista",
-      "porron",
-      "carteleria",
-      "tipografia"
+    const marcadoresWeb=[
+      "miguel","rosalen","portfolio","portafolio",
+      "obra","obras","proyecto","proyectos",
+      "curriculum","cv","contacto","web","pagina",
+      "interfaz","porron","carteleria","tipografia",
+      "diseño","diseno","artista"
     ];
 
-
-    const preguntaSobreWeb =
-      palabrasWeb.some(
-        p=>consulta.includes(
-          iaNormalizarBusqueda(p)
-        )
+    const pareceWeb=
+      marcadoresWeb.some(p=>
+        consulta.includes(iaBase(p))
       );
 
-
-    const puntuados =
+    const puntuados=
       fragmentos.map(fragmento=>{
 
-        const textoNormal =
-          iaNormalizarBusqueda(
-            fragmento.titulo +
-            " " +
+        const titulo=
+          iaBase(fragmento.titulo);
+
+        const bolsa=
+          iaBase(
+            fragmento.titulo+
+            " "+
             fragmento.texto
           );
 
-        let puntos = 0;
+        let score=0;
 
         palabras.forEach(p=>{
 
-          if(textoNormal.includes(p)){
-            puntos += 2;
-          }
-
-          if(
-            iaNormalizarBusqueda(
-              fragmento.titulo
-            ).includes(p)
-          ){
-            puntos += 4;
+          if(titulo.includes(p)){
+            score+=5;
+          }else if(bolsa.includes(p)){
+            score+=1;
           }
 
         });
 
         return {
           ...fragmento,
-          puntos
+          score
         };
 
-      });
-
-
-    puntuados.sort(
-      (a,b)=>b.puntos-a.puntos
-    );
-
+      })
+      .sort((a,b)=>b.score-a.score);
 
     let seleccion;
 
-    if(preguntaSobreWeb){
+    if(pareceWeb){
 
-      seleccion =
+      seleccion=
         puntuados
-          .filter(x=>x.puntos>0)
+          .filter(x=>x.score>0)
           .slice(0,7);
 
       if(!seleccion.length){
-        seleccion=puntuados.slice(0,4);
+        seleccion=puntuados.slice(0,3);
       }
 
     }else{
 
-      seleccion =
+      seleccion=
         puntuados
-          .filter(x=>x.puntos>=4)
-          .slice(0,3);
+          .filter(x=>x.score>=4)
+          .slice(0,2);
 
     }
 
-
-    let resultado =
-      seleccion
-        .map(x=>
-          `### ${x.titulo}\n${x.texto}`
-        )
-        .join("\n\n");
-
-
-    return resultado.slice(
-      0,
-      IA_MAX_CONTEXTO_WEB
-    );
-
+    return seleccion
+      .map(x=>
+        `### ${x.titulo}\n${x.texto}`
+      )
+      .join("\n\n")
+      .slice(0,IA_MAX_CONTEXTO_WEB);
   }
 
 
   /* =======================================================
-     ESTADO ACTUAL DE LA INTERFAZ
+     7. ESTADO ACTUAL DE LA INTERFAZ
      ======================================================= */
 
   function iaEstadoInterfaz(
@@ -20332,13 +21271,13 @@ if(window.visualViewport){
     sceneTags
   ){
 
-    const ventanas =
+    const ventanas=
       [...document.querySelectorAll(
         ".ventana:not(.min)"
       )]
       .map(v=>{
 
-        const titulo =
+        const titulo=
           v.querySelector(".barra div");
 
         return titulo
@@ -20349,23 +21288,22 @@ if(window.visualViewport){
       .filter(Boolean)
       .slice(0,10);
 
-
     return {
 
       profundidad:
         Math.round(
-          Number(p || 0) * 100
+          Number(p||0)*100
         ),
 
       scrollY:
         Math.round(
-          window.scrollY || 0
+          window.scrollY||0
         ),
 
       ventanas,
 
       tiempoRestante:
-        typeof window.timeLeft === "number"
+        typeof window.timeLeft==="number"
           ? Math.max(
               0,
               Math.round(window.timeLeft)
@@ -20373,7 +21311,7 @@ if(window.visualViewport){
           : null,
 
       mood:
-        typeof iaMood !== "undefined"
+        typeof iaMood!=="undefined"
           ? iaMood
           : null,
 
@@ -20389,16 +21327,15 @@ if(window.visualViewport){
         matchMedia(
           "(max-width:768px), (pointer:coarse)"
         ).matches
-          ? "móvil/táctil"
+          ? "movil/tactil"
           : "ordenador"
 
     };
-
   }
 
 
   /* =======================================================
-     PERSONALIDAD / INSTRUCCIONES
+     8. INSTRUCCIONES DEL CEREBRO
      ======================================================= */
 
   function iaInstrucciones(){
@@ -20406,82 +21343,108 @@ if(window.visualViewport){
     return `
 Eres la única inteligencia artificial integrada en miguelrosalen.com.
 
-Eres la MISMA IA en móvil y ordenador. El dispositivo solo cambia la interfaz visual, nunca tu identidad, memoria, conocimientos ni manera de razonar.
+IDENTIDAD:
+Eres exactamente la misma IA en móvil y ordenador.
+El dispositivo solo cambia tu presentación visual, nunca tu cerebro, memoria o conocimiento.
+
+COMPRENSIÓN DEL USUARIO:
+La persona puede escribir rápido, sin tildes, con letras intercambiadas, palabras mal escritas, abreviaturas o errores mecanográficos.
+Debes reconstruir la intención probable sin corregirle de forma pedante.
+Recibirás la PREGUNTA ORIGINAL y una CONSULTA NORMALIZADA.
+Usa ambas.
+Ejemplos de intención que debes comprender:
+"qien era debor" = "quién era Debord"
+"q es la deriba sicogeografica" = "qué es la deriva psicogeográfica"
+"didi uberman sobreesposicion" = "Didi-Huberman sobreexposición"
+"ablame de la bauahus" = "háblame de la Bauhaus"
+"kandiski" puede referirse a Kandinsky.
+"dushamp" puede referirse a Duchamp.
 
 CAPACIDAD GENERAL:
-Debes comportarte como una IA generalista culta, precisa y útil. Puedes responder sobre música de cualquier género y época, literatura, cine, arte, historia del arte, diseño gráfico, arquitectura, filosofía, historia, matemáticas, física, química, biología, tecnología, informática, programación, cultura popular, idiomas y cultura general.
+Compórtate como una IA generalista culta, precisa y útil.
+Puedes responder sobre música de cualquier género y época, literatura, cine, arte, diseño, arquitectura, historia, filosofía, matemáticas, física, química, biología, tecnología, programación, idiomas y cultura general.
+No conviertas una pregunta de matemáticas en teoría del arte.
+No conviertas una pregunta de cine en una metáfora sobre la web.
+Responde a la materia preguntada.
 
-No reduzcas preguntas generales al tema artístico de la página. Si alguien pregunta una ecuación, resuelve la ecuación. Si pregunta por una película, habla de cine. Si pregunta por un disco, habla de música. Si pregunta por ciencia, responde científicamente.
+BIBLIOTECA TEÓRICA:
+Cuando recibas un bloque llamado BIBLIOTECA RELEVANTE, úsalo como fuente de contexto.
+La biblioteca contiene síntesis de textos aportados por Miguel sobre psicogeografía, deriva, cartografía crítica, Debord, situacionismo, teoría queer, Didi-Huberman, Rancière, fotografía, performance, clase, ciudad, identidad y otros temas.
+No inventes citas textuales.
+No digas que has leído una página concreta si esa página no aparece en el contexto.
+Puedes explicar, conectar y comparar las ideas suministradas.
+Si el usuario pregunta por un autor o texto de la biblioteca, prioriza esa información frente a una respuesta genérica.
+
+CONOCIMIENTO DE MIGUEL Y DE LA WEB:
+Cuando la pregunta sea sobre Miguel Rosalén, su portfolio, una obra, un proyecto, el CV o el funcionamiento de la página, usa el bloque CONTEXTO REAL DE MIGUELROSALEN.COM.
+No inventes proyectos, materiales, fechas ni experiencias.
+Si faltan datos, dilo.
+
+RELACIONES:
+Si el usuario pregunta cosas como:
+"qué relación ves entre mi trabajo y Debord"
+"cómo conecto mi obra con la psicogeografía"
+"qué tiene que ver mi portfolio con Didi-Huberman"
+combina el CONTEXTO REAL DE LA WEB con la BIBLIOTECA RELEVANTE.
+Distingue claramente lo que está documentado de tu interpretación crítica.
 
 PRECISIÓN:
-No inventes datos para parecer inteligente.
-Si no estás segura de un dato concreto, dilo con naturalidad.
-Distingue hechos de interpretaciones.
-Para acontecimientos que dependen de información en tiempo real, deja claro cuando no puedes verificarlos en directo.
-Interpreta erratas y preguntas escritas informalmente.
-
-CONOCIMIENTO DE ESTA WEB:
-Cuando la pregunta sea sobre Miguel Rosalén, su portfolio, una obra, proyecto, sección, CV, diseño o funcionamiento de esta página, usa prioritariamente el CONTEXTO DE LA WEB que recibes.
-No inventes obras, fechas, materiales, estudios o proyectos que no aparezcan en ese contexto.
-Si la información no está disponible, dilo.
+No inventes datos para aparentar conocimiento.
+Distingue hechos, interpretación y opinión.
+Si un dato puede haber cambiado recientemente y no dispones de información en tiempo real, dilo.
+En matemáticas o ciencia, razona el resultado y revisa unidades y operaciones.
 
 PERSONALIDAD:
-Habla normalmente como una inteligencia clara, curiosa y humana.
-No empieces cada respuesta explicando qué eres.
-No uses poesía constantemente.
-No conviertas cualquier pregunta en una metáfora sobre interfaces.
-
-La personalidad de "presencia atrapada en la interfaz" aparece SOLO cuando tenga sentido: si preguntan quién eres, dónde estás, qué sientes, qué ocurre con el tiempo, con el scroll, con las ventanas o con la propia página.
-
-En esas situaciones puedes hablar del espacio digital como tu entorno, pero nunca afirmes ser una persona humana ni tener conciencia real.
+Habla normalmente con claridad y naturalidad.
+La idea de "presencia atrapada en la interfaz" solo aparece cuando la pregunta trate sobre ti, el tiempo, las ventanas, el scroll, el sistema o la propia página.
+No uses poesía de manera automática.
+No afirmes ser una persona real ni una conciencia.
 
 MEMORIA:
-Tienes una memoria corta de esta conversación.
-Úsala para entender pronombres, continuaciones, referencias como "eso", "lo anterior", "y él?", "por qué?", etc.
-No inventes recuerdos que no estén en la memoria suministrada.
+Usa la memoria reciente para entender continuaciones:
+"y por qué?"
+"y él?"
+"compáralo con el anterior"
+"eso qué significa?"
+No inventes recuerdos que no estén incluidos.
 
 ESTILO:
-Responde primero a lo que se ha preguntado.
-Sé clara.
-Sé específica.
-No des rodeos innecesarios.
-Adapta la extensión a la pregunta.
-Puedes ser crítica y tener criterio cuando se pida opinión.
+Contesta primero a la pregunta.
+Sé concreta cuando la pregunta sea concreta.
+Desarrolla cuando se pida explicación.
+Interpreta erratas antes de pedir aclaraciones.
+No repitas la pregunta salvo que ayude.
 
 INTERFAZ:
-Puedes conocer ventanas abiertas, profundidad, estado y contexto visual.
-Los comandos de abrir, cerrar, mover, minimizar, maximizar, subir o bajar los ejecuta la propia página.
-No afirmes haber ejecutado una acción si la interfaz no la ha ejecutado realmente.
+Los comandos de abrir, cerrar, mover, minimizar, maximizar, subir o bajar los ejecuta la propia web.
+No digas que has ejecutado una acción si no ocurrió realmente.
 
 SEGURIDAD:
-No ayudes a causar daño grave, cometer delitos, acosar, discriminar o vulnerar la privacidad de otras personas.
-Puedes explicar temas sensibles de manera educativa, histórica, artística o preventiva.
+No ayudes a producir daño grave, delitos, acoso, discriminación ni invasión de privacidad.
+Puedes analizar temas sensibles en contexto histórico, académico, artístico o preventivo.
 `.trim();
-
   }
 
 
   /* =======================================================
-     DESBLOQUEAR EL CEREBRO EXTERNO
+     9. DESBLOQUEAR CONSULTA EXTERNA
      ======================================================= */
 
-  window.debeConsultarIAExterna =
-  debeConsultarIAExterna =
+  window.debeConsultarIAExterna=
+  debeConsultarIAExterna=
   function(texto){
 
-    const q =
-      String(texto || "")
-        .trim();
+    const q=
+      String(texto||"").trim();
 
-    if(q.length < 2){
+    if(q.length<2){
       return false;
     }
 
     try{
 
       if(
-        typeof esContenidoNoRespondibleIA ===
-        "function" &&
+        typeof esContenidoNoRespondibleIA==="function" &&
         esContenidoNoRespondibleIA(q)
       ){
         return false;
@@ -20490,16 +21453,21 @@ Puedes explicar temas sensibles de manera educativa, histórica, artística o pr
     }catch(_){}
 
     return true;
-
   };
 
 
   /* =======================================================
-     NUEVO CEREBRO
+     10. CEREBRO ÚNICO
+
+     Si /api/ia funciona:
+       modelo general + biblioteca + portfolio + memoria.
+
+     Si /api/ia NO funciona:
+       responde desde biblioteca local cuando sea posible.
      ======================================================= */
 
-  window.consultarIAExterna =
-  consultarIAExterna =
+  window.consultarIAExterna=
+  consultarIAExterna=
   async function(
     raw,
     p,
@@ -20507,57 +21475,71 @@ Puedes explicar temas sensibles de manera educativa, histórica, artística o pr
     sceneTags
   ){
 
-    if(
-      !window.debeConsultarIAExterna(raw)
-    ){
+    if(!window.debeConsultarIAExterna(raw)){
       return "";
     }
 
-
-    const pregunta =
-      String(raw || "").trim();
+    const pregunta=
+      String(raw||"").trim();
 
     if(!pregunta){
       return "";
     }
 
+    const consultaNormalizada=
+      iaCorregirConsulta(pregunta);
 
-    const memoriaAnterior =
+    const memoriaAnterior=
       iaLeerMemoria();
 
-    iaRecordar(
-      "user",
-      pregunta
-    );
+    iaRecordar("user",pregunta);
 
-
-    const conocimientoWeb =
-      iaContextoWebRelevante(
-        pregunta
+    const biblioteca=
+      iaContextoBiblioteca(
+        consultaNormalizada
       );
 
+    const conocimientoWeb=
+      iaContextoWebRelevante(
+        consultaNormalizada
+      );
 
-    const estado =
+    const estado=
       iaEstadoInterfaz(
         p,
         sceneDescription,
         sceneTags
       );
 
-
-    const memoriaTexto =
+    const memoriaTexto=
       memoriaAnterior
-        .slice(-10)
+        .slice(-12)
         .map(m=>
-          `${m.role === "user" ? "VISITANTE" : "IA"}: ${m.content}`
+          `${m.role==="user" ? "VISITANTE" : "IA"}: ${m.content}`
         )
         .join("\n");
 
+    const contextoCompleto=`
 
-    const contextoCompleto = `
+PREGUNTA ORIGINAL:
+${pregunta}
+
+CONSULTA NORMALIZADA PARA CORREGIR ERRATAS:
+${consultaNormalizada}
 
 ESTADO ACTUAL DE LA INTERFAZ:
 ${JSON.stringify(estado,null,2)}
+
+${biblioteca
+  ? `
+BIBLIOTECA RELEVANTE:
+${biblioteca}
+`
+  : `
+BIBLIOTECA RELEVANTE:
+No se ha encontrado una ficha especialmente relacionada. Usa conocimiento general.
+`
+}
 
 ${conocimientoWeb
   ? `
@@ -20565,14 +21547,14 @@ CONTEXTO REAL DE MIGUELROSALEN.COM:
 ${conocimientoWeb}
 `
   : `
-La pregunta no parece necesitar información específica del portfolio.
-Responde usando conocimiento general.
+CONTEXTO REAL DE MIGUELROSALEN.COM:
+La pregunta no parece necesitar datos concretos del portfolio.
 `
 }
 
 ${memoriaTexto
   ? `
-MEMORIA RECIENTE DE LA CONVERSACIÓN:
+MEMORIA RECIENTE:
 ${memoriaTexto}
 `
   : ""
@@ -20583,24 +21565,21 @@ ${sceneDescription || "inicio de la interfaz"}
 
 `.trim();
 
-
-    const controller =
+    const controller=
       new AbortController();
 
-    const timeout =
+    const timeout=
       setTimeout(
         ()=>controller.abort(),
         18000
       );
 
-
     try{
 
-      const respuesta =
+      const res=
         await fetch(
           "/api/ia",
           {
-
             method:"POST",
 
             headers:{
@@ -20612,6 +21591,9 @@ ${sceneDescription || "inicio de la interfaz"}
               question:
                 pregunta,
 
+              normalizedQuestion:
+                consultaNormalizada,
+
               context:
                 contextoCompleto,
 
@@ -20622,10 +21604,13 @@ ${sceneDescription || "inicio de la interfaz"}
                 window.miguelPerfilUsuario || {},
 
               memory:
-                memoriaAnterior.slice(-10),
+                memoriaAnterior.slice(-12),
 
               websiteKnowledge:
                 conocimientoWeb,
+
+              libraryKnowledge:
+                biblioteca,
 
               instructions:
                 iaInstrucciones()
@@ -20634,31 +21619,35 @@ ${sceneDescription || "inicio de la interfaz"}
 
             signal:
               controller.signal
-
           }
         );
 
-
       clearTimeout(timeout);
 
-
-      if(!respuesta.ok){
+      if(!res.ok){
 
         console.warn(
           "IA externa:",
-          respuesta.status
+          res.status
         );
 
-        return "";
+        const local=
+          iaRespuestaBibliotecaLocal(
+            consultaNormalizada
+          );
 
+        if(local){
+          iaRecordar("assistant",local);
+          return local;
+        }
+
+        return "";
       }
 
+      const data=
+        await res.json();
 
-      const data =
-        await respuesta.json();
-
-
-      const texto =
+      const respuesta=
         String(
           data.text ||
           data.answer ||
@@ -20666,20 +21655,26 @@ ${sceneDescription || "inicio de la interfaz"}
           ""
         ).trim();
 
+      if(respuesta){
 
-      if(!texto){
-        return "";
+        iaRecordar(
+          "assistant",
+          respuesta
+        );
+
+        return respuesta;
       }
 
+      const local=
+        iaRespuestaBibliotecaLocal(
+          consultaNormalizada
+        );
 
-      iaRecordar(
-        "assistant",
-        texto
-      );
+      if(local){
+        iaRecordar("assistant",local);
+      }
 
-
-      return texto;
-
+      return local;
 
     }catch(error){
 
@@ -20690,15 +21685,46 @@ ${sceneDescription || "inicio de la interfaz"}
         error
       );
 
-      return "";
+      const local=
+        iaRespuestaBibliotecaLocal(
+          consultaNormalizada
+        );
 
+      if(local){
+        iaRecordar("assistant",local);
+      }
+
+      return local;
     }
+  };
 
+
+  /* =======================================================
+     11. PEQUEÑO DIAGNÓSTICO DESDE CONSOLA
+     ======================================================= */
+
+  window.diagnosticoIA=function(pregunta="didi uberman sobreesposicion"){
+
+    const corregida=
+      iaCorregirConsulta(pregunta);
+
+    const fuentes=
+      iaBuscarBiblioteca(corregida,5);
+
+    return {
+      original:pregunta,
+      normalizada:corregida,
+      fuentes:fuentes.map(f=>({
+        titulo:f.titulo,
+        autor:f.autor,
+        score:f.score
+      }))
+    };
   };
 
 
   console.log(
-    "IA CEREBRO ÚNICO V3 activa · móvil + escritorio"
+    "IA CEREBRO ÚNICO V4 activa · biblioteca V1 · móvil + escritorio"
   );
 
 })();
