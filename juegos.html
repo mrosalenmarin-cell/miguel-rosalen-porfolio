@@ -9112,6 +9112,39 @@ html.hub-juegos-activo #juegosCursorOverlay .juegos-cursor-glitter{
 }
 
 </style>
+
+<style>
+
+/* =========================================================
+   JUEGOS V13 · LOADER INMEDIATO / SIEMPRE VISIBLE AL PROCESAR
+   ========================================================= */
+#sistemaLoader{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:2147483646 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  pointer-events:none !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+  transform:none !important;
+}
+
+#sistemaLoader.visible{
+  opacity:1 !important;
+  visibility:visible !important;
+}
+
+/* El hub no puede pausar las flechas del loader. */
+html.hub-juegos-activo #sistemaLoader,
+html.hub-juegos-activo #sistemaLoader *,
+body.modo-juego-global #sistemaLoader,
+body.modo-juego-global #sistemaLoader *{
+  animation-play-state:running !important;
+}
+
+</style>
 </head>
 
 <body>
@@ -9207,32 +9240,105 @@ document.documentElement.classList.add("performance-mode");
   document.addEventListener("pointercancel",terminar,{passive:true,capture:true});
 })();
 
-function mostrarLoaderSistema(ms=650){
+function prepararLoaderSistema(){
   const loader=document.getElementById("sistemaLoader");
-  if(!loader) return;
+  if(!loader) return null;
 
   if(!loader.dataset.juegosReady){
     loader.dataset.juegosReady="1";
     loader.innerHTML='<div class="juegos-loader-core" aria-hidden="true"><div class="juegos-loader-flechas"><span class="juegos-loader-aro a">↻</span><span class="juegos-loader-aro b">↺</span></div><span class="juegos-loader-texto">CARGANDO<span class="juegos-loader-puntos"></span></span><span class="juegos-loader-sub">preparando una experiencia innecesariamente interactiva</span></div>';
   }
-
-  loader.classList.add("visible");
-  clearTimeout(window._loaderSistemaTimer);
-  window._loaderSistemaTimer=setTimeout(()=>{
-    loader.classList.remove("visible");
-  },ms);
+  return loader;
 }
+
+function ocultarLoaderSistema(){
+  const loader=document.getElementById("sistemaLoader");
+  if(!loader) return;
+  clearTimeout(window._loaderSistemaTimer);
+  window._loaderSistemaTimer=0;
+  loader.classList.remove("visible");
+}
+
+function mostrarLoaderSistema(ms=0){
+  const loader=prepararLoaderSistema();
+  if(!loader) return;
+
+  clearTimeout(window._loaderSistemaTimer);
+  window._loaderSistemaTimer=0;
+  loader.classList.add("visible");
+
+  if(ms>0){
+    window._loaderSistemaTimer=setTimeout(ocultarLoaderSistema,ms);
+  }
+}
+
+/* Muestra primero el loader, deja DOS frames para que el navegador lo pinte,
+   y después ejecuta la operación pesada. */
+function ejecutarConLoaderSistema(tarea,{minimo=560,maximo=2200}={}){
+  mostrarLoaderSistema(0);
+  const inicio=performance.now();
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      try{
+        tarea();
+      }finally{
+        const transcurrido=performance.now()-inicio;
+        const espera=Math.max(180,minimo-transcurrido);
+        clearTimeout(window._loaderSistemaTimer);
+        window._loaderSistemaTimer=setTimeout(ocultarLoaderSistema,Math.min(maximo,espera));
+      }
+    });
+  });
+}
+
+
+/* El loader aparece desde el primer contacto con una tarjeta.
+   Esto le da tiempo real de pintarse antes del trabajo pesado del click. */
+document.addEventListener("pointerdown",e=>{
+  const tarjeta=e.target.closest?.("[data-juego-tipo]");
+  if(!tarjeta) return;
+  mostrarLoaderSistema(0);
+},{capture:true,passive:true});
+
+/* También al activar JUEGOS desde un botón/enlace del propio documento. */
+document.addEventListener("pointerdown",e=>{
+  const boton=e.target.closest?.("#modoJuegoGlobal");
+  if(!boton) return;
+  mostrarLoaderSistema(0);
+},{capture:true,passive:true});
 
 if("PerformanceObserver" in window){
   try{
     const longTaskObserver=new PerformanceObserver((list)=>{
-      if(list.getEntries().some(entry=>entry.duration>140)){
-        mostrarLoaderSistema(620);
+      if(list.getEntries().some(entry=>entry.duration>120)){
+        mostrarLoaderSistema(700);
       }
     });
     longTaskObserver.observe({entryTypes:["longtask"]});
   }catch(e){}
 }
+
+/* Watchdog de lag: detecta retrasos grandes del event loop.
+   Durante un bloqueo completo el navegador no puede repintar; en cuanto
+   recupera el control muestra el loader para indicar que sigue procesando. */
+(function instalarDetectorLagJuegos(){
+  if(window.__detectorLagJuegos) return;
+  window.__detectorLagJuegos=true;
+
+  const intervalo=120;
+  let esperado=performance.now()+intervalo;
+
+  setInterval(()=>{
+    const ahora=performance.now();
+    const retraso=ahora-esperado;
+    esperado=ahora+intervalo;
+
+    if(retraso>170){
+      mostrarLoaderSistema(620);
+    }
+  },intervalo);
+})();
 
 /* =========================
 FAVICON
@@ -20131,7 +20237,12 @@ function asegurarHubJuegos(){
     const tarjeta=e.target.closest("[data-juego-tipo]");
     if(!tarjeta)return;
     e.preventDefault();
-    abrirJuegoDesdeHub(tarjeta.dataset.juegoTipo);
+    e.stopPropagation();
+
+    const tipoJuego=tarjeta.dataset.juegoTipo;
+    ejecutarConLoaderSistema(()=>{
+      abrirJuegoDesdeHub(tipoJuego);
+    },{minimo:720,maximo:2200});
   });
 
   hub.addEventListener("keydown",e=>{
@@ -20150,7 +20261,6 @@ function asegurarHubJuegos(){
 }
 function mostrarHubJuegos(){
   instalarCursorJuegos();
-  mostrarLoaderSistema(520);
   detenerSonidoMinijuego();
   document.querySelectorAll(".ventana").forEach(v=>{limpiarMinijuego(v);v.classList.remove("max");v.style.display="none"});
   document.body.classList.remove("ventana-max-activa");
@@ -20168,7 +20278,7 @@ function instalarAvisoGiroJuego(v){
 }
 function abrirJuegoDesdeHub(tipo){
   instalarCursorJuegos();
-  mostrarLoaderSistema(920);
+  mostrarLoaderSistema(0);
   const hub=asegurarHubJuegos();hub.hidden=true;
   document.documentElement.classList.remove("hub-juegos-activo");
   document.querySelectorAll(".ventana").forEach(v=>{limpiarMinijuego(v);v.style.display="none"});
@@ -20227,9 +20337,10 @@ function activarModoJuegoGlobal(){
   const boton=document.getElementById("modoJuegoGlobal");if(boton) boton.title="volver al modo web";
   if(typeof autoScrollActive!=="undefined") autoScrollActive=false;
   window.scrollTo({top:0,left:0,behavior:"auto"});
-  mostrarLoaderSistema(820);
-  mostrarHubJuegos();
-  mostrarAvisoModo("juego");
+  ejecutarConLoaderSistema(()=>{
+    mostrarHubJuegos();
+    mostrarAvisoModo("juego");
+  },{minimo:620,maximo:1800});
 }
 
 function instalarModoJuegoGlobal(){
