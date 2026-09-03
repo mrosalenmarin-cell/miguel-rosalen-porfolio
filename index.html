@@ -3,6 +3,46 @@
 <html lang="es">
 
 <head>
+
+<script>
+/* =========================================================
+   INDEX · ARRANQUE SEGURO TEMPRANO
+   Evita que el navegador recupere una posición antigua.
+   ========================================================= */
+(()=>{
+  try{
+    if("scrollRestoration" in history){
+      history.scrollRestoration="manual";
+    }
+  }catch(_){}
+
+  /* Marca de arranque: evita flashes de IA/interferencias
+     automáticas antes de que la portada esté lista. */
+  document.documentElement.classList.add("arranque-seguro");
+
+  const arriba=()=>{
+    try{
+      window.scrollTo(0,0);
+      document.documentElement.scrollTop=0;
+      if(document.body) document.body.scrollTop=0;
+    }catch(_){}
+  };
+
+  arriba();
+})();
+</script>
+
+<style>
+/* Durante los primeros instantes nunca dejamos que una ventana
+   automática de IA/interferencia se pinte antes que el inicio. */
+html.arranque-seguro .ventana-ia,
+html.arranque-seguro .ventana-interferencia{
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+</style>
+
     <link
 rel="icon"
 type="image/svg+xml"
@@ -19889,6 +19929,198 @@ if(window.visualViewport){
 
 </script>
 
+
+
+
+<script>
+/* =========================================================
+   INDEX · ARRANQUE SEGURO FINAL
+   - Inicio siempre arriba
+   - Una restauración del navegador NO cuenta como scroll humano
+   - IA/interferencias solo reaccionan tras interacción real
+   ========================================================= */
+(()=>{
+  if(window.__arranqueSeguroInstalado) return;
+  window.__arranqueSeguroInstalado=true;
+
+  try{
+    if("scrollRestoration" in history){
+      history.scrollRestoration="manual";
+    }
+  }catch(_){}
+
+  let usuarioHaNavegado=false;
+  let gestoHumano=false;
+  let arranqueTerminado=false;
+
+  const subirAlInicio=()=>{
+    try{
+      window.scrollTo(0,0);
+      document.documentElement.scrollTop=0;
+      if(document.body) document.body.scrollTop=0;
+    }catch(_){}
+  };
+
+  const limpiarVentanasAutomaticasDeArranque=()=>{
+    if(usuarioHaNavegado) return;
+
+    /* Interferencias solo tienen sentido después de navegar. */
+    document.querySelectorAll(".ventana-interferencia").forEach(v=>v.remove());
+
+    /* Si la IA se abrió únicamente porque el navegador restauró
+       una posición antigua, también la retiramos. */
+    document.querySelectorAll(".ventana-ia").forEach(v=>{
+      const out=v.querySelector(".ia-output");
+      const contenido=(out?.textContent||"").toLowerCase();
+
+      if(
+        contenido.includes("scroll detectado") ||
+        contenido.includes("sé que todavía estás ahí") ||
+        contenido.includes("sigues dentro aunque no escribas") ||
+        contenido.includes("tu dedo deja ruido")
+      ){
+        v.remove();
+      }
+    });
+  };
+
+  const estabilizarInicio=()=>{
+    subirAlInicio();
+    limpiarVentanasAutomaticasDeArranque();
+  };
+
+  /* Forzamos varias veces porque los navegadores pueden restaurar
+     el scroll en momentos distintos del ciclo de carga. */
+  estabilizarInicio();
+
+  requestAnimationFrame(()=>{
+    estabilizarInicio();
+
+    requestAnimationFrame(()=>{
+      estabilizarInicio();
+    });
+  });
+
+  window.addEventListener("load",()=>{
+    estabilizarInicio();
+
+    setTimeout(estabilizarInicio,40);
+    setTimeout(estabilizarInicio,160);
+    setTimeout(()=>{
+      estabilizarInicio();
+      arranqueTerminado=true;
+      document.documentElement.classList.remove("arranque-seguro");
+    },320);
+  },{once:true});
+
+  /* BFCache / botones atrás y adelante. */
+  window.addEventListener("pageshow",()=>{
+    usuarioHaNavegado=false;
+    gestoHumano=false;
+    arranqueTerminado=false;
+
+    document.documentElement.classList.add("arranque-seguro");
+
+    estabilizarInicio();
+
+    requestAnimationFrame(()=>{
+      estabilizarInicio();
+
+      requestAnimationFrame(()=>{
+        estabilizarInicio();
+        arranqueTerminado=true;
+        document.documentElement.classList.remove("arranque-seguro");
+      });
+    });
+  });
+
+  /* ---------------------------------------------------------
+     Detectar navegación HUMANA.
+     --------------------------------------------------------- */
+
+  const marcarGesto=()=>{
+    if(!arranqueTerminado) return;
+    gestoHumano=true;
+  };
+
+  window.addEventListener("wheel",marcarGesto,{passive:true});
+  window.addEventListener("touchstart",marcarGesto,{passive:true});
+  window.addEventListener("touchmove",marcarGesto,{passive:true});
+
+  document.addEventListener("pointerdown",marcarGesto,{
+    passive:true,
+    capture:true
+  });
+
+  document.addEventListener("keydown",e=>{
+    if(
+      e.key==="ArrowDown" ||
+      e.key==="ArrowUp" ||
+      e.key==="PageDown" ||
+      e.key==="PageUp" ||
+      e.key==="Home" ||
+      e.key==="End" ||
+      e.key===" "
+    ){
+      marcarGesto();
+    }
+  },true);
+
+  window.addEventListener("scroll",()=>{
+    /* Un scroll disparado por restauración, scrollTo() o carga
+       no desbloquea la IA. Tiene que venir precedido de gesto humano. */
+    if(
+      arranqueTerminado &&
+      gestoHumano &&
+      Math.abs(window.scrollY)>12
+    ){
+      usuarioHaNavegado=true;
+    }
+  },{passive:true});
+
+
+  /* ---------------------------------------------------------
+     PROTEGER IA AUTÓNOMA
+     --------------------------------------------------------- */
+
+  if(typeof window.hablarIAAlScrollear==="function"){
+    const originalHablarIA=window.hablarIAAlScrollear;
+
+    window.hablarIAAlScrollear=function(...args){
+      if(!usuarioHaNavegado) return;
+      return originalHablarIA.apply(this,args);
+    };
+  }
+
+
+  /* ---------------------------------------------------------
+     PROTEGER VENTANAS DE INTERFERENCIA
+     --------------------------------------------------------- */
+
+  if(typeof window.abrirInterferenciaIA==="function"){
+    const originalInterferencia=window.abrirInterferenciaIA;
+
+    window.abrirInterferenciaIA=function(...args){
+      if(!usuarioHaNavegado) return;
+      return originalInterferencia.apply(this,args);
+    };
+  }
+
+
+  /* Si el navegador ya había restaurado la posición antes de
+     ejecutar este script, corregimos cualquier efecto residual. */
+  estabilizarInicio();
+
+  /* Si por alguna razón load ya ocurrió antes de este script. */
+  if(document.readyState==="complete"){
+    setTimeout(()=>{
+      estabilizarInicio();
+      arranqueTerminado=true;
+      document.documentElement.classList.remove("arranque-seguro");
+    },80);
+  }
+})();
+</script>
 
 </body>
 </html>
