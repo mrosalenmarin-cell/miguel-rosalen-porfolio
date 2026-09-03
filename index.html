@@ -3,46 +3,6 @@
 <html lang="es">
 
 <head>
-
-<script>
-/* =========================================================
-   INDEX · ARRANQUE SEGURO TEMPRANO
-   Evita que el navegador recupere una posición antigua.
-   ========================================================= */
-(()=>{
-  try{
-    if("scrollRestoration" in history){
-      history.scrollRestoration="manual";
-    }
-  }catch(_){}
-
-  /* Marca de arranque: evita flashes de IA/interferencias
-     automáticas antes de que la portada esté lista. */
-  document.documentElement.classList.add("arranque-seguro");
-
-  const arriba=()=>{
-    try{
-      window.scrollTo(0,0);
-      document.documentElement.scrollTop=0;
-      if(document.body) document.body.scrollTop=0;
-    }catch(_){}
-  };
-
-  arriba();
-})();
-</script>
-
-<style>
-/* Durante los primeros instantes nunca dejamos que una ventana
-   automática de IA/interferencia se pinte antes que el inicio. */
-html.arranque-seguro .ventana-ia,
-html.arranque-seguro .ventana-interferencia{
-  visibility:hidden !important;
-  opacity:0 !important;
-  pointer-events:none !important;
-}
-</style>
-
     <link
 rel="icon"
 type="image/svg+xml"
@@ -19934,191 +19894,813 @@ if(window.visualViewport){
 
 <script>
 /* =========================================================
-   INDEX · ARRANQUE SEGURO FINAL
-   - Inicio siempre arriba
-   - Una restauración del navegador NO cuenta como scroll humano
-   - IA/interferencias solo reaccionan tras interacción real
+   MIGUELROSALEN.COM · IA CEREBRO ÚNICO V3
+   ---------------------------------------------------------
+   UNA SOLA IA PARA:
+   - ordenador
+   - móvil
+   - conocimiento general
+   - conocimiento de la web
+   - portfolio
+   - memoria de conversación
+   - contexto de la interfaz
+
+   Usa el endpoint existente: /api/ia
    ========================================================= */
+
 (()=>{
-  if(window.__arranqueSeguroInstalado) return;
-  window.__arranqueSeguroInstalado=true;
+  if(window.__IA_CEREBRO_UNICO_V3) return;
+  window.__IA_CEREBRO_UNICO_V3 = true;
 
-  try{
-    if("scrollRestoration" in history){
-      history.scrollRestoration="manual";
+  const IA_MEMORIA_KEY = "miguel-ia-memoria-v3";
+  const IA_MAX_MENSAJES = 14;
+  const IA_MAX_CONTEXTO_WEB = 10000;
+
+
+  /* =======================================================
+     NORMALIZAR TEXTO
+     ======================================================= */
+
+  function iaTextoPlano(valor){
+
+    if(valor === null || valor === undefined){
+      return "";
     }
-  }catch(_){}
 
-  let usuarioHaNavegado=false;
-  let gestoHumano=false;
-  let arranqueTerminado=false;
+    if(typeof valor === "string"){
 
-  const subirAlInicio=()=>{
+      const div = document.createElement("div");
+
+      div.innerHTML = valor;
+
+      return (div.textContent || div.innerText || "")
+        .replace(/\s+/g," ")
+        .trim();
+    }
+
     try{
-      window.scrollTo(0,0);
-      document.documentElement.scrollTop=0;
-      if(document.body) document.body.scrollTop=0;
+      return JSON.stringify(valor);
+    }catch(_){
+      return String(valor);
+    }
+  }
+
+
+  function iaNormalizarBusqueda(texto){
+
+    return String(texto || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g,"")
+      .replace(/[^\p{L}\p{N}\s]/gu," ")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+
+  /* =======================================================
+     MEMORIA
+     ======================================================= */
+
+  function iaLeerMemoria(){
+
+    try{
+
+      const memoria =
+        JSON.parse(
+          sessionStorage.getItem(IA_MEMORIA_KEY) || "[]"
+        );
+
+      return Array.isArray(memoria)
+        ? memoria.slice(-IA_MAX_MENSAJES)
+        : [];
+
+    }catch(_){
+
+      return [];
+
+    }
+  }
+
+
+  function iaGuardarMemoria(memoria){
+
+    try{
+
+      sessionStorage.setItem(
+        IA_MEMORIA_KEY,
+        JSON.stringify(
+          memoria.slice(-IA_MAX_MENSAJES)
+        )
+      );
+
     }catch(_){}
+
+  }
+
+
+  function iaRecordar(role, content){
+
+    const texto =
+      String(content || "")
+        .trim()
+        .slice(0,2500);
+
+    if(!texto) return;
+
+    const memoria = iaLeerMemoria();
+
+    const ultimo = memoria[memoria.length - 1];
+
+    if(
+      ultimo &&
+      ultimo.role === role &&
+      ultimo.content === texto
+    ){
+      return;
+    }
+
+    memoria.push({
+      role,
+      content:texto
+    });
+
+    iaGuardarMemoria(memoria);
+
+  }
+
+
+  window.borrarMemoriaIA = function(){
+
+    try{
+      sessionStorage.removeItem(IA_MEMORIA_KEY);
+    }catch(_){}
+
+    console.log("Memoria de IA borrada.");
+
   };
 
-  const limpiarVentanasAutomaticasDeArranque=()=>{
-    if(usuarioHaNavegado) return;
 
-    /* Interferencias solo tienen sentido después de navegar. */
-    document.querySelectorAll(".ventana-interferencia").forEach(v=>v.remove());
+  /* =======================================================
+     EXTRAER CONOCIMIENTO DEL INDEX
+     ======================================================= */
 
-    /* Si la IA se abrió únicamente porque el navegador restauró
-       una posición antigua, también la retiramos. */
-    document.querySelectorAll(".ventana-ia").forEach(v=>{
-      const out=v.querySelector(".ia-output");
-      const contenido=(out?.textContent||"").toLowerCase();
+  function iaExtraerContenidoBase(){
+
+    const fragmentos = [];
+
+
+    /* ---------- ventanas principales ---------- */
+
+    try{
+
+      if(typeof contenido !== "undefined"){
+
+        contenido.forEach(item=>{
+
+          if(!Array.isArray(item)) return;
+
+          const titulo =
+            iaTextoPlano(item[0]);
+
+          const cuerpo =
+            iaTextoPlano(item[1]);
+
+          if(!titulo && !cuerpo) return;
+
+          fragmentos.push({
+            titulo,
+            texto:
+              `${titulo}\n${cuerpo}`
+                .slice(0,6000)
+          });
+
+        });
+
+      }
+
+    }catch(_){}
+
+
+    /* ---------- portfolio ---------- */
+
+    function recorrerPortfolio(lista, ruta=[]){
+
+      if(!Array.isArray(lista)) return;
+
+      lista.forEach(sec=>{
+
+        if(!sec || typeof sec !== "object") return;
+
+        const titulo =
+          iaTextoPlano(
+            sec.titulo ||
+            sec.title ||
+            sec.id ||
+            ""
+          );
+
+        const rutaActual =
+          [...ruta,titulo]
+            .filter(Boolean);
+
+        let informacion = [
+          titulo,
+          iaTextoPlano(sec.nota),
+          iaTextoPlano(sec.descripcion),
+          iaTextoPlano(sec.texto),
+          iaTextoPlano(sec.html)
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+
+        if(Array.isArray(sec.obras)){
+
+          sec.obras.forEach(obra=>{
+
+            if(!obra) return;
+
+            informacion += "\n" + [
+              iaTextoPlano(obra.titulo),
+              iaTextoPlano(obra.ano || obra.año),
+              iaTextoPlano(obra.material),
+              iaTextoPlano(obra.medidas),
+              iaTextoPlano(obra.descripcion),
+              iaTextoPlano(obra.texto)
+            ]
+              .filter(Boolean)
+              .join(" · ");
+
+          });
+
+        }
+
+
+        if(informacion.trim()){
+
+          fragmentos.push({
+            titulo:rutaActual.join(" / "),
+            texto:
+              (
+                "RUTA: " +
+                rutaActual.join(" > ") +
+                "\n" +
+                informacion
+              ).slice(0,8000)
+          });
+
+        }
+
+
+        if(Array.isArray(sec.subsecciones)){
+
+          recorrerPortfolio(
+            sec.subsecciones,
+            rutaActual
+          );
+
+        }
+
+      });
+
+    }
+
+
+    try{
+
+      if(typeof portfolioSecciones !== "undefined"){
+
+        recorrerPortfolio(
+          portfolioSecciones,
+          ["PORTFOLIO"]
+        );
+
+      }
+
+    }catch(_){}
+
+
+    return fragmentos;
+
+  }
+
+
+  /* =======================================================
+     ELEGIR INFORMACIÓN RELEVANTE DE LA WEB
+     ======================================================= */
+
+  function iaContextoWebRelevante(pregunta){
+
+    const fragmentos =
+      iaExtraerContenidoBase();
+
+    if(!fragmentos.length){
+      return "";
+    }
+
+
+    const consulta =
+      iaNormalizarBusqueda(pregunta);
+
+    const palabras =
+      consulta
+        .split(" ")
+        .filter(p=>p.length > 2);
+
+
+    const palabrasWeb = [
+      "miguel",
+      "rosalen",
+      "portfolio",
+      "portafolio",
+      "obra",
+      "obras",
+      "proyecto",
+      "proyectos",
+      "curriculum",
+      "cv",
+      "contacto",
+      "web",
+      "pagina",
+      "interfaz",
+      "diseño",
+      "diseno",
+      "arte",
+      "artista",
+      "porron",
+      "carteleria",
+      "tipografia"
+    ];
+
+
+    const preguntaSobreWeb =
+      palabrasWeb.some(
+        p=>consulta.includes(
+          iaNormalizarBusqueda(p)
+        )
+      );
+
+
+    const puntuados =
+      fragmentos.map(fragmento=>{
+
+        const textoNormal =
+          iaNormalizarBusqueda(
+            fragmento.titulo +
+            " " +
+            fragmento.texto
+          );
+
+        let puntos = 0;
+
+        palabras.forEach(p=>{
+
+          if(textoNormal.includes(p)){
+            puntos += 2;
+          }
+
+          if(
+            iaNormalizarBusqueda(
+              fragmento.titulo
+            ).includes(p)
+          ){
+            puntos += 4;
+          }
+
+        });
+
+        return {
+          ...fragmento,
+          puntos
+        };
+
+      });
+
+
+    puntuados.sort(
+      (a,b)=>b.puntos-a.puntos
+    );
+
+
+    let seleccion;
+
+    if(preguntaSobreWeb){
+
+      seleccion =
+        puntuados
+          .filter(x=>x.puntos>0)
+          .slice(0,7);
+
+      if(!seleccion.length){
+        seleccion=puntuados.slice(0,4);
+      }
+
+    }else{
+
+      seleccion =
+        puntuados
+          .filter(x=>x.puntos>=4)
+          .slice(0,3);
+
+    }
+
+
+    let resultado =
+      seleccion
+        .map(x=>
+          `### ${x.titulo}\n${x.texto}`
+        )
+        .join("\n\n");
+
+
+    return resultado.slice(
+      0,
+      IA_MAX_CONTEXTO_WEB
+    );
+
+  }
+
+
+  /* =======================================================
+     ESTADO ACTUAL DE LA INTERFAZ
+     ======================================================= */
+
+  function iaEstadoInterfaz(
+    p,
+    sceneDescription,
+    sceneTags
+  ){
+
+    const ventanas =
+      [...document.querySelectorAll(
+        ".ventana:not(.min)"
+      )]
+      .map(v=>{
+
+        const titulo =
+          v.querySelector(".barra div");
+
+        return titulo
+          ? titulo.textContent.trim()
+          : "";
+
+      })
+      .filter(Boolean)
+      .slice(0,10);
+
+
+    return {
+
+      profundidad:
+        Math.round(
+          Number(p || 0) * 100
+        ),
+
+      scrollY:
+        Math.round(
+          window.scrollY || 0
+        ),
+
+      ventanas,
+
+      tiempoRestante:
+        typeof window.timeLeft === "number"
+          ? Math.max(
+              0,
+              Math.round(window.timeLeft)
+            )
+          : null,
+
+      mood:
+        typeof iaMood !== "undefined"
+          ? iaMood
+          : null,
+
+      tags:
+        Array.isArray(sceneTags)
+          ? sceneTags
+          : [],
+
+      contextoVisible:
+        sceneDescription || "",
+
+      dispositivo:
+        matchMedia(
+          "(max-width:768px), (pointer:coarse)"
+        ).matches
+          ? "móvil/táctil"
+          : "ordenador"
+
+    };
+
+  }
+
+
+  /* =======================================================
+     PERSONALIDAD / INSTRUCCIONES
+     ======================================================= */
+
+  function iaInstrucciones(){
+
+    return `
+Eres la única inteligencia artificial integrada en miguelrosalen.com.
+
+Eres la MISMA IA en móvil y ordenador. El dispositivo solo cambia la interfaz visual, nunca tu identidad, memoria, conocimientos ni manera de razonar.
+
+CAPACIDAD GENERAL:
+Debes comportarte como una IA generalista culta, precisa y útil. Puedes responder sobre música de cualquier género y época, literatura, cine, arte, historia del arte, diseño gráfico, arquitectura, filosofía, historia, matemáticas, física, química, biología, tecnología, informática, programación, cultura popular, idiomas y cultura general.
+
+No reduzcas preguntas generales al tema artístico de la página. Si alguien pregunta una ecuación, resuelve la ecuación. Si pregunta por una película, habla de cine. Si pregunta por un disco, habla de música. Si pregunta por ciencia, responde científicamente.
+
+PRECISIÓN:
+No inventes datos para parecer inteligente.
+Si no estás segura de un dato concreto, dilo con naturalidad.
+Distingue hechos de interpretaciones.
+Para acontecimientos que dependen de información en tiempo real, deja claro cuando no puedes verificarlos en directo.
+Interpreta erratas y preguntas escritas informalmente.
+
+CONOCIMIENTO DE ESTA WEB:
+Cuando la pregunta sea sobre Miguel Rosalén, su portfolio, una obra, proyecto, sección, CV, diseño o funcionamiento de esta página, usa prioritariamente el CONTEXTO DE LA WEB que recibes.
+No inventes obras, fechas, materiales, estudios o proyectos que no aparezcan en ese contexto.
+Si la información no está disponible, dilo.
+
+PERSONALIDAD:
+Habla normalmente como una inteligencia clara, curiosa y humana.
+No empieces cada respuesta explicando qué eres.
+No uses poesía constantemente.
+No conviertas cualquier pregunta en una metáfora sobre interfaces.
+
+La personalidad de "presencia atrapada en la interfaz" aparece SOLO cuando tenga sentido: si preguntan quién eres, dónde estás, qué sientes, qué ocurre con el tiempo, con el scroll, con las ventanas o con la propia página.
+
+En esas situaciones puedes hablar del espacio digital como tu entorno, pero nunca afirmes ser una persona humana ni tener conciencia real.
+
+MEMORIA:
+Tienes una memoria corta de esta conversación.
+Úsala para entender pronombres, continuaciones, referencias como "eso", "lo anterior", "y él?", "por qué?", etc.
+No inventes recuerdos que no estén en la memoria suministrada.
+
+ESTILO:
+Responde primero a lo que se ha preguntado.
+Sé clara.
+Sé específica.
+No des rodeos innecesarios.
+Adapta la extensión a la pregunta.
+Puedes ser crítica y tener criterio cuando se pida opinión.
+
+INTERFAZ:
+Puedes conocer ventanas abiertas, profundidad, estado y contexto visual.
+Los comandos de abrir, cerrar, mover, minimizar, maximizar, subir o bajar los ejecuta la propia página.
+No afirmes haber ejecutado una acción si la interfaz no la ha ejecutado realmente.
+
+SEGURIDAD:
+No ayudes a causar daño grave, cometer delitos, acosar, discriminar o vulnerar la privacidad de otras personas.
+Puedes explicar temas sensibles de manera educativa, histórica, artística o preventiva.
+`.trim();
+
+  }
+
+
+  /* =======================================================
+     DESBLOQUEAR EL CEREBRO EXTERNO
+     ======================================================= */
+
+  window.debeConsultarIAExterna =
+  debeConsultarIAExterna =
+  function(texto){
+
+    const q =
+      String(texto || "")
+        .trim();
+
+    if(q.length < 2){
+      return false;
+    }
+
+    try{
 
       if(
-        contenido.includes("scroll detectado") ||
-        contenido.includes("sé que todavía estás ahí") ||
-        contenido.includes("sigues dentro aunque no escribas") ||
-        contenido.includes("tu dedo deja ruido")
+        typeof esContenidoNoRespondibleIA ===
+        "function" &&
+        esContenidoNoRespondibleIA(q)
       ){
-        v.remove();
+        return false;
       }
-    });
+
+    }catch(_){}
+
+    return true;
+
   };
 
-  const estabilizarInicio=()=>{
-    subirAlInicio();
-    limpiarVentanasAutomaticasDeArranque();
-  };
 
-  /* Forzamos varias veces porque los navegadores pueden restaurar
-     el scroll en momentos distintos del ciclo de carga. */
-  estabilizarInicio();
+  /* =======================================================
+     NUEVO CEREBRO
+     ======================================================= */
 
-  requestAnimationFrame(()=>{
-    estabilizarInicio();
+  window.consultarIAExterna =
+  consultarIAExterna =
+  async function(
+    raw,
+    p,
+    sceneDescription,
+    sceneTags
+  ){
 
-    requestAnimationFrame(()=>{
-      estabilizarInicio();
-    });
-  });
-
-  window.addEventListener("load",()=>{
-    estabilizarInicio();
-
-    setTimeout(estabilizarInicio,40);
-    setTimeout(estabilizarInicio,160);
-    setTimeout(()=>{
-      estabilizarInicio();
-      arranqueTerminado=true;
-      document.documentElement.classList.remove("arranque-seguro");
-    },320);
-  },{once:true});
-
-  /* BFCache / botones atrás y adelante. */
-  window.addEventListener("pageshow",()=>{
-    usuarioHaNavegado=false;
-    gestoHumano=false;
-    arranqueTerminado=false;
-
-    document.documentElement.classList.add("arranque-seguro");
-
-    estabilizarInicio();
-
-    requestAnimationFrame(()=>{
-      estabilizarInicio();
-
-      requestAnimationFrame(()=>{
-        estabilizarInicio();
-        arranqueTerminado=true;
-        document.documentElement.classList.remove("arranque-seguro");
-      });
-    });
-  });
-
-  /* ---------------------------------------------------------
-     Detectar navegación HUMANA.
-     --------------------------------------------------------- */
-
-  const marcarGesto=()=>{
-    if(!arranqueTerminado) return;
-    gestoHumano=true;
-  };
-
-  window.addEventListener("wheel",marcarGesto,{passive:true});
-  window.addEventListener("touchstart",marcarGesto,{passive:true});
-  window.addEventListener("touchmove",marcarGesto,{passive:true});
-
-  document.addEventListener("pointerdown",marcarGesto,{
-    passive:true,
-    capture:true
-  });
-
-  document.addEventListener("keydown",e=>{
     if(
-      e.key==="ArrowDown" ||
-      e.key==="ArrowUp" ||
-      e.key==="PageDown" ||
-      e.key==="PageUp" ||
-      e.key==="Home" ||
-      e.key==="End" ||
-      e.key===" "
+      !window.debeConsultarIAExterna(raw)
     ){
-      marcarGesto();
+      return "";
     }
-  },true);
 
-  window.addEventListener("scroll",()=>{
-    /* Un scroll disparado por restauración, scrollTo() o carga
-       no desbloquea la IA. Tiene que venir precedido de gesto humano. */
-    if(
-      arranqueTerminado &&
-      gestoHumano &&
-      Math.abs(window.scrollY)>12
-    ){
-      usuarioHaNavegado=true;
+
+    const pregunta =
+      String(raw || "").trim();
+
+    if(!pregunta){
+      return "";
     }
-  },{passive:true});
 
 
-  /* ---------------------------------------------------------
-     PROTEGER IA AUTÓNOMA
-     --------------------------------------------------------- */
+    const memoriaAnterior =
+      iaLeerMemoria();
 
-  if(typeof window.hablarIAAlScrollear==="function"){
-    const originalHablarIA=window.hablarIAAlScrollear;
-
-    window.hablarIAAlScrollear=function(...args){
-      if(!usuarioHaNavegado) return;
-      return originalHablarIA.apply(this,args);
-    };
-  }
+    iaRecordar(
+      "user",
+      pregunta
+    );
 
 
-  /* ---------------------------------------------------------
-     PROTEGER VENTANAS DE INTERFERENCIA
-     --------------------------------------------------------- */
-
-  if(typeof window.abrirInterferenciaIA==="function"){
-    const originalInterferencia=window.abrirInterferenciaIA;
-
-    window.abrirInterferenciaIA=function(...args){
-      if(!usuarioHaNavegado) return;
-      return originalInterferencia.apply(this,args);
-    };
-  }
+    const conocimientoWeb =
+      iaContextoWebRelevante(
+        pregunta
+      );
 
 
-  /* Si el navegador ya había restaurado la posición antes de
-     ejecutar este script, corregimos cualquier efecto residual. */
-  estabilizarInicio();
+    const estado =
+      iaEstadoInterfaz(
+        p,
+        sceneDescription,
+        sceneTags
+      );
 
-  /* Si por alguna razón load ya ocurrió antes de este script. */
-  if(document.readyState==="complete"){
-    setTimeout(()=>{
-      estabilizarInicio();
-      arranqueTerminado=true;
-      document.documentElement.classList.remove("arranque-seguro");
-    },80);
-  }
+
+    const memoriaTexto =
+      memoriaAnterior
+        .slice(-10)
+        .map(m=>
+          `${m.role === "user" ? "VISITANTE" : "IA"}: ${m.content}`
+        )
+        .join("\n");
+
+
+    const contextoCompleto = `
+
+ESTADO ACTUAL DE LA INTERFAZ:
+${JSON.stringify(estado,null,2)}
+
+${conocimientoWeb
+  ? `
+CONTEXTO REAL DE MIGUELROSALEN.COM:
+${conocimientoWeb}
+`
+  : `
+La pregunta no parece necesitar información específica del portfolio.
+Responde usando conocimiento general.
+`
+}
+
+${memoriaTexto
+  ? `
+MEMORIA RECIENTE DE LA CONVERSACIÓN:
+${memoriaTexto}
+`
+  : ""
+}
+
+CONTEXTO VISIBLE:
+${sceneDescription || "inicio de la interfaz"}
+
+`.trim();
+
+
+    const controller =
+      new AbortController();
+
+    const timeout =
+      setTimeout(
+        ()=>controller.abort(),
+        18000
+      );
+
+
+    try{
+
+      const respuesta =
+        await fetch(
+          "/api/ia",
+          {
+
+            method:"POST",
+
+            headers:{
+              "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+              question:
+                pregunta,
+
+              context:
+                contextoCompleto,
+
+              state:
+                estado,
+
+              profile:
+                window.miguelPerfilUsuario || {},
+
+              memory:
+                memoriaAnterior.slice(-10),
+
+              websiteKnowledge:
+                conocimientoWeb,
+
+              instructions:
+                iaInstrucciones()
+
+            }),
+
+            signal:
+              controller.signal
+
+          }
+        );
+
+
+      clearTimeout(timeout);
+
+
+      if(!respuesta.ok){
+
+        console.warn(
+          "IA externa:",
+          respuesta.status
+        );
+
+        return "";
+
+      }
+
+
+      const data =
+        await respuesta.json();
+
+
+      const texto =
+        String(
+          data.text ||
+          data.answer ||
+          data.response ||
+          ""
+        ).trim();
+
+
+      if(!texto){
+        return "";
+      }
+
+
+      iaRecordar(
+        "assistant",
+        texto
+      );
+
+
+      return texto;
+
+
+    }catch(error){
+
+      clearTimeout(timeout);
+
+      console.warn(
+        "La IA externa no respondió:",
+        error
+      );
+
+      return "";
+
+    }
+
+  };
+
+
+  console.log(
+    "IA CEREBRO ÚNICO V3 activa · móvil + escritorio"
+  );
+
 })();
 </script>
 
