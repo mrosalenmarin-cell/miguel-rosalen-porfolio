@@ -8479,6 +8479,43 @@ body.juegos-movil-real.modo-juego-global .mundo-menu-cerrar:active{
 
 </style>
 
+
+<style>
+
+/* =========================================================
+   FIX IPHONE · HUB JUEGOS NO SE DESPLAZA AL TOCAR TARJETAS
+   Mantiene ¿POR QUÉ? y el resto exactamente igual.
+   ========================================================= */
+
+/* El hub SIEMPRE es una pantalla fija.
+   position:relative se añadió solo para colocar ¿POR QUÉ?,
+   pero no era necesario: fixed también sirve como referencia
+   para sus hijos position:absolute. */
+.juegos-hub{
+  position:fixed !important;
+  inset:0 !important;
+  width:auto !important;
+  height:auto !important;
+  max-width:none !important;
+  max-height:none !important;
+}
+
+/* Mientras se ve el selector, el documento de fondo no puede
+   desplazarse al recibir foco una tarjeta en Safari/iPhone. */
+html.hub-juegos-activo,
+html.hub-juegos-activo > body{
+  overflow:hidden !important;
+  overscroll-behavior:none !important;
+}
+
+/* El toque es un toque, no un gesto que Safari deba recolocar. */
+@media (pointer:coarse){
+  .juegos-hub .juego-tarjeta{
+    touch-action:manipulation !important;
+  }
+}
+
+</style>
 </head>
 
 <body>
